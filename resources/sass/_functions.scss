@@ -1,0 +1,130 @@
+/// Test if `$value` is a valid direction
+/// @param {*} $value - Value to test
+/// @return {Bool}
+@function is-direction($value) {
+  $is-keyword: index((to top, to top right, to right top, to right, to bottom right, to right bottom, to bottom, to bottom left, to left bottom, to left, to left top, to top left), $value);
+  $is-angle: type-of($value) == 'number' and index('deg' 'grad' 'turn' 'rad', unit($value));
+
+  @return $is-keyword or $is-angle;
+}
+
+/// Convert a direction to legacy syntax
+/// @param {Keyword | Angle} $value - Value to convert
+/// @require {function} is-direction
+/// @require {function} convert-angle
+/// @throw Cannot convert `#{$value}` to legacy syntax because it doesn't seem to be a direction.;
+@function legacy-direction($value) {
+  @if is-direction($value) == false {
+    @error "Cannot convert `#{$value}` to legacy syntax because it doesn't seem to be a direction.";
+  }
+
+  $conversion-map: (
+          to top : bottom,
+          to top right : bottom left,
+          to right top : left bottom,
+          to right : left,
+          to bottom right : top left,
+          to right bottom : left top,
+          to bottom : top,
+          to bottom left : top right,
+          to left bottom : right top,
+          to left : right,
+          to left top : right bottom,
+          to top left : bottom right
+  );
+
+  @if map-has-key($conversion-map, $value) {
+    @return map-get($conversion-map, $value);
+  }
+
+  @return 90deg - $value;
+}
+
+@mixin linear-gradient($direction, $color-stops...) {
+  // Direction has been omitted and happens to be a color-stop
+  @if is-direction($direction) == false {
+    $color-stops: $direction, $color-stops;
+    $direction: 180deg;
+  }
+
+  background: nth(nth($color-stops, 1), 1);
+  background: -webkit-linear-gradient(legacy-direction($direction), $color-stops);
+  background: linear-gradient($direction, $color-stops);
+}
+
+//examples
+
+//@include linear-gradient(#31B7D7, #EDAC7D);
+//@include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);
+//@include linear-gradient(42deg, #B58234 0%, #D2B545 50%, #D7C04D 50.01%, #FFFFFF 100%);
+
+@mixin pb_box-shadow($top, $left, $blur, $offset, $color, $inset: false) {
+  @if $inset {
+    -webkit-box-shadow: inset $top $left $blur $offset $color;
+    -moz-box-shadow: inset $top $left $blur $offset $color;
+    box-shadow: inset $top $left $blur $offset $color;
+  } @else {
+    -webkit-box-shadow: $top $left $blur $offset $color;
+    -moz-box-shadow: $top $left $blur $offset $color;
+    box-shadow: $top $left $blur $offset $color;
+  }
+}
+
+@mixin pb_gradient($from, $to, $deg) {
+  background: $from !important; /* Old browsers */
+  background: -moz-linear-gradient($deg, $from 0%, $to 100%) !important; /* FF3.6-15 */
+  background: -webkit-linear-gradient($deg, $from 0%, $to 100%) !important; /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient($deg, $from 0%, $to 100%) !important; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$from}', endColorstr='#{$to}', GradientType=1) !important; /* IE6-9 fallback on horizontal gradient */
+}
+
+@mixin pb_text-gradient($from, $to, $deg) {
+  background: $from; /* Old browsers */
+  background: -moz-linear-gradient($deg, $from 0%, $to 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient($deg, $from 0%, $to 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient($deg, $from 0%, $to 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@mixin scaleOnHover($scale) {
+  -webkit-animation: none;
+  -webkit-transform: scale($scale);
+  -moz-animation: none;
+  -moz-transform: scale($scale);
+  -ms-transform: scale($scale);
+  -o-animation: none;
+  -o-transform: scale($scale);
+  animation: none;
+  transform: scale($scale);
+}
+
+@mixin transition($time) {
+  //-webkit-transition: width 0.3s ease, margin 0.3s ease;
+  -webkit-transition: $time all ease !important;
+  -moz-transition: $time all ease !important;
+  -o-transition: $time all ease !important;
+  transition: $time all ease !important;
+}
+
+@mixin rotate($deg) {
+
+  transform: rotate($deg);
+  -webkit-transform: rotate($deg);
+  -moz-transform: rotate($deg);
+  -ms-transform: rotate($deg);
+  -o-transform: rotate($deg);
+
+  @if $deg==0 {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0);
+  }
+  @if $deg==90 {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+  }
+  @if $deg==180 {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  }
+  @if $deg==270 or $deg==-90 {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  }
+}

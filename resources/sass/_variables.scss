@@ -1,0 +1,80 @@
+// Body
+$body-bg: #f8fafc;
+
+// Typography
+$font-family-sans-serif: 'Nunito', sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;
+
+$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;
+
+// Colors
+$light-transparent: rgba(250, 250, 250, .5);
+$dark-transparent: rgba(50, 50, 50, .7);
+$dark: #373737 !default;
+$blue: #3490dc;
+$indigo: #6574cd;
+$purple: #9561e2;
+$pink: #f66d9b;
+$red: #e3342f;
+$orange: #f6993f;
+$yellow: #ffed4a;
+$green: #38c172;
+$teal: #4dc0b5;
+$cyan: #6cb2eb;
+$light: $gray-100 !default;
+$dark: $dark !default;
+
+$colors: () !default;
+$colors: map-merge((
+        "dark-transparent":$dark-transparent,
+        "light-transparent":$light-transparent,
+        "purple": $purple,
+        "dark": $dark,
+        "red": $red,
+        "white": $white,
+        "gray-dark": $gray-800,
+        "blue": #3490dc,
+        "indigo": #6574cd,
+        "pink": #f66D9b,
+        "orange": #f6993f,
+        "yellow": #ffed4a,
+        "green": #38c172,
+        "teal": #4dc0b5,
+        "cyan": #6cb2eb,
+), $colors);
+
+$theme-colors: () !default;
+$theme-colors: map-merge((
+        "dark-transparent":$dark-transparent,
+        "light-transparent":$light-transparent,
+  //"primary": $primary,
+        "purple": $purple,
+  //"secondary": $secondary,
+        "success": $green,
+  //"info": $info,
+  //"warning": $warning,
+  //"danger": $danger,
+        "light": $light,
+        "dark": $dark,
+  //"light-green": $success,
+        "blue": #3490dc,
+        "indigo": #6574cd,
+        "pink": #f66D9b,
+        "red": #e3342f,
+        "orange": #f6993f,
+        "yellow": #ffed4a,
+        "green": #38c172,
+        "teal": #4dc0b5,
+        "cyan": #6cb2eb,
+), $theme-colors);
