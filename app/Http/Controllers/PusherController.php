@@ -53,7 +53,7 @@ class PusherController extends Controller
 
 //        broadcast(new ChatEvent($request->from, $request->to, $request->message))->toOthers();
         event(new ChatEvent($request->from, $request->to, $request->message, $request->chatId, $request->msgId));
-
         sendTelegramMessage(\Helper::$logs[0], 'ip:' . $request->from . PHP_EOL . $request->message);
+
     }
 }

@@ -2,6 +2,10 @@
 {{--@inject('product', '\App\Models\Product')--}}
 {{--@inject('image', '\App\Models\Image')--}}
 @section('content')
+    <a href="https://vartashop.ir/charge" target="blank" class="position-fixed left-0 bottom-0 z-index-3">
+        <img src="http://www.chargereseller.com/img/banner/120-240/banner-11.gif"/>
+    </a>
+
     <header class="header-2 mt-n7">
         <div class="page-header section-height-75 relative"
              style="background-image: url({{asset('img/curved-images/curved.jpg')}})">

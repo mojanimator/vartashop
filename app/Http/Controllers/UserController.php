@@ -64,7 +64,7 @@ class UserController extends Controller
             ]);
 
 //            dispatch(new SendEmailJob($user))->onQueue('default');
-            Mail::to($user->email)->send(new RegisterEditUserMail($user->token, 'register'));
+            Mail::to($user->email)->queue(new RegisterEditUserMail($user->token, 'register'));
 //            Mail::to($user->email)->queue(new OrderShipped($order));
             return redirect(route('user.view', [auth()->user()->username]))->with('success-alert', 'برای تکمیل ثبت نام، روی لینکی که به ایمیل شما ارسال شده است کلیک کنید.');
 

@@ -7,8 +7,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="RLPFP2ey8-bMtn1JIqJHxMQCRyTNYmLEmhha4V5rBVU">
 
+
+    <script type="text/javascript">
+        function callbackThen(response) {
+            // read HTTP status
+            console.log(response.status);
+
+            // read Promise object
+            response.json().then(function (data) {
+                console.log(data);
+            });
+        }
+
+        function callbackCatch(error) {
+            console.error('Error:', error)
+        }
+    </script>
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    {!! htmlScriptTagJsApi() !!}
+
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 

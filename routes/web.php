@@ -16,6 +16,30 @@ use Illuminate\Support\Str;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('test', function () {
+    return;
+    foreach (\App\Models\Order::get() as $order) {
+        $txt = '✅ سفارش جدید' . PHP_EOL .
+            "⏰ تاریخ ثبت: " . \Morilog\Jalali\Jalalian::fromDateTime($order->created_at)->format('%A, %d %B %Y ⏰ H:i') . PHP_EOL .
+            "🏩 فروشنده: " . $order->shop->name . PHP_EOL .
+            "📰 توضیح مشتری: " . $order->description . PHP_EOL .
+            "📭 آدرس: " . $order->province->name . " - " . $order->county->name . " - " . $order->address . PHP_EOL .
+            "📤 کد پستی: " . $order->postal_code . PHP_EOL .
+            "💵 مجموع: " . number_format($order->total_price) . " ت " . PHP_EOL .
+            "📱 تلفن: " . $order->phone . PHP_EOL .
+            "";
+        foreach ($order->products as $product) {
+            $txt .=
+                "🔮 نام محصول: " . $product->name . PHP_EOL .
+                "🔹 تعداد: " . $product->pivot->qty . PHP_EOL .
+                "💵 قیمت واحد: " . number_format($product->pivot->unit_price) . " ت " . PHP_EOL .
+                "";
+
+            return json_encode($txt);
+        }
+    }
+});
+
 Route::post('/chat/broadcast', [App\Http\Controllers\PusherController::class, 'broadcast'])->name('chat.broadcast');
 Route::post('/chat/chatsupporthistory', [App\Http\Controllers\PusherController::class, 'chatSupportHistory'])->name('chat.support.history');
 
@@ -26,15 +50,6 @@ Route::get('/resendemail/{token}', [App\Http\Controllers\Auth\RegisterController
 
 Route::post('/user/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('user.edit');
 
-
-Route::get('/test', function () {
-//    return DB::connection(env('DB_CONNECTION'))->getPdo();
-    foreach (Product::get() as $item) {
-        $item->slug = str_replace(['%', ' ', "\n"], ['درصد', '-', '-'], $item->name);
-        $item->save();
-    }
-    return Product::on(env('DB_CONNECTION'))->get();
-});
 
 Route::get('/blog', function () {
     return view('pages/blog');
@@ -115,12 +130,17 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('/'
 Route::post('/order/create', [App\Http\Controllers\OrderController::class, 'create'])->name('order.create');
 Route::post('/order/delete', [App\Http\Controllers\OrderController::class, 'delete'])->name('order.delete');
 
-Route::middleware(['auth', 'verify'])->prefix('panel')->group(function () {
+Route::middleware(['auth',])->prefix('panel')->group(function () {
 
 
     Route::get('', function () {
         return view('pages.panel');
     })->name('panel.view');
+
+    Route::get('my-orders/checkout', function () {
+        return view('pages.panel');
+    })->middleware('verify');
+
 
 //    Route::get('my-orders', [App\Http\Controllers\OrderController::class, 'groups'])->name('panel.my-orders');
 

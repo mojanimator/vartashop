@@ -11,9 +11,11 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use phpseclib3\Math\BigInteger\Engines\PHP;
+use PHPUnit\TextUI\Help;
 
 class RegisterController extends Controller
 {
@@ -57,17 +59,30 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $token = bin2hex(openssl_random_pseudo_bytes(30));
+        $user = User::create([
             'username' => $data['username'],
             'name' => $data['name'],
             'email' => $data['email'],
             'phone' => $data['phone'],
             'password' => Hash::make($data['password']),
             'score' => \Helper::$initScore,
-            'token' => bin2hex(openssl_random_pseudo_bytes(30)),
+            'token' => $token,
 
 //                'expires_at' => $data['ex_date'] ? CalendarUtils::createCarbonFromFormat('Y/m/d', $data['ex_date'])->addDays(1)->timezone('Asia/Tehran') : null,
         ]);
+
+        foreach (\Helper::$logs as $log) {
+            sendTelegramMessage($log, '✨ کاربر در ورتاشاپ ثبت نام کرد' . PHP_EOL . PHP_EOL .
+                "$user->name\n$user->username\n$user->email\n$user->phone"
+            );
+        }
+
+        Mail::to($user->email)->/*queue*/
+        queue
+        (new RegisterEditUserMail($token, 'register'));
+
+        return $user;
     }
 
     public function verifyEmail($token, $from)
@@ -100,10 +115,9 @@ class RegisterController extends Controller
 
     protected function registered(Request $request, $user)
     {
-//        $this->guard()->logout();
+        $this->guard()->logout();
 //        flash('flash-success', 'برای تکمیل ثبت نام لطفا ایمیل خود را تایید کنید پیام تایید ایمیل  برای شما ارسال شده است');
-        return view('auth.login')->with('success-alert', 'برای تکمیل ثبت نام لطفا ایمیل خود را تایید کنید پیام تایید ایمیل  برای شما ارسال شده است')
-            ->render();
+        return redirect('login')->with('success-alert', 'برای تکمیل ثبت نام لطفا ایمیل خود را تایید کنید پیام تایید ایمیل  برای شما ارسال شده است');
     }
 
     public function resendEmail(Request $request)
@@ -148,8 +162,10 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
 
+
         return Validator::make($data, [
-            'recaptcha' => ['required', new  Recaptcha()],
+//            'recaptcha' => ['required', new  Recaptcha()],
+            'g-recaptcha-response' => 'recaptcha',
             'name' => 'required|string|min:5|max:30',
             'username' => 'required|string|min:5|max:30|regex:/^[A-Za-z]+[A-Za-z0-9@_][A-Za-z0-9@]{1,28}$/|unique:users,username',
             'email' => ['required', 'string', 'email', 'min:6', 'max:50', 'unique:users,email'],

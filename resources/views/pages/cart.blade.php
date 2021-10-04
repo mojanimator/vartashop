@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <x-cart></x-cart>
+    <x-user.cart></x-user.cart>
 
 @endsection
 

@@ -38,7 +38,7 @@ class User extends Authenticatable implements /*Auditable,*/
     protected $table = 'users';
     protected $fillable = [
         'id', 'name', 'username', 'telegram_username', 'email', 'email_verified', 'phone_verified', 'phone', 'telegram_id', 'img', 'role', 'password', 'img', 'score', 'step',
-        'expires_at', 'created_at', 'updated_at', 'active'
+        'expires_at', 'created_at', 'updated_at', 'active', 'token',
     ];
 
     /**

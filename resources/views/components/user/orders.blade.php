@@ -75,7 +75,7 @@
                 <div class="d-flex flex-row">
                     @foreach ($order->products as $product)
                         <div class="d-flex flex-column   align-items-center">
-                            <a href="{{route('product.view',[$product->slug,$product->id])}}"
+                            <a href="{{route('product.view',[$product->name,$product->id])}}"
                                title="{{$product->name}}" data-toggle="tooltip"
                                class=" m-1 ">
                                 <img src="{{$product->image()}}" alt=""

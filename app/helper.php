@@ -2,14 +2,15 @@
 
 Class Helper
 {
-
+    static $create_shop_score = 50;
+    static $create_product_score = 5;
 
     static $lang = 'fa';
     static $admin = '@develowper';
     static $app_version = 1;
     static $initScore = 5;
     static $test = true;
-    static $Dev = [72534783, /*225594412, 871016407, 225594412*/]; // آیدی عددی ادمین را از بات @userinfobot بگیرید
+    static $Devs = [72534783, /*225594412, 871016407, 225594412*/]; // آیدی عددی ادمین را از بات @userinfobot بگیرید
     static $logs = [72534783, /*225594412*/];
     static $admins = [1 => ['username' => '@develowper', 'chat_id' => 72534783], 2 => ['username' => '@fazelbabaeirudsari', 'chat_id' => 225594412],];
 
@@ -78,6 +79,73 @@ function deleteTelegramMessage($chatid, $massege_id)
         'chat_id' => $chatid,
         'message_id' => $massege_id
     ]);
+}
+
+function sendTelegramPhoto($chat_id, $photo, $caption, $reply = null, $keyboard = null)
+{
+
+
+    return Helper::creator('sendPhoto', [
+        'chat_id' => $chat_id,
+        'photo' => $photo,
+        'caption' => $caption,
+        'parse_mode' => 'Markdown',
+        'reply_to_message_id' => $reply,
+        'reply_markup' => $keyboard
+    ]);
+
+}
+
+function sendTelegramMediaGroup($chat_id, $media, $keyboard = null, $reply = null)
+{
+//2 to 10 media can be send
+
+    return Helper::creator('sendMediaGroup', [
+        'chat_id' => $chat_id,
+        'media' => json_encode($media),
+        'reply_to_message_id' => $reply,
+
+    ]);
+
+}
+
+function sendTelegramSticker($chat_id, $file_id, $keyboard, $reply = null, $set_name = null)
+{
+    return Helper::creator('sendSticker', [
+        'chat_id' => $chat_id,
+        'sticker' => $file_id,
+        "set_name" => $set_name,
+        'reply_to_message_id' => $reply,
+        'reply_markup' => $keyboard
+    ]);
+}
+
+function creator2($method, $datas = [])
+{
+
+    $datas['method'] = $method;
+    $datas['token'] = env('TELEGRAM_BOT_TOKEN');
+
+    $url = "https://qr-image-creator.com/magnetgram_en/api/telegram";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $datas);
+    $res = curl_exec($ch);
+    $res = json_decode($res);
+
+    if ($res && $res->ok == false)
+        sendTelegramMessage(Helper::$logs[0], /*"[" . $datas['chat_id'] . "](tg://user?id=" . $datas['chat_id'] . ") \n" .*/
+            json_encode($datas) . "\n" . $res->description, null, null, null);
+
+//        Helper::sendMessage(Helper::$logs[0], ..$res->description, null, null, null);
+    if (curl_error($ch)) {
+        sendTelegramMessage(Helper::$logs[0], 'curl error' . PHP_EOL . json_encode(curl_error($ch)), null, null, null);
+        var_dump(curl_error($ch));
+        return null;
+    } else {
+        return $res;
+    }
 }
 
 function creator($method, $datas = [])

@@ -58,7 +58,7 @@ class OrderPolicy
     public function create(User $user)
     {
         $link = url('panel/user-settings');
-        $link = "<a href='$link' class='text-white hoverable-text-dark'>حساب کاربری</a>";
+        $link = "<a href='$link' class='text-success hoverable-text-dark'>حساب کاربری</a>";
 
         if (!$user->email_verified && !$user->phone_verified) {
             return abort(403, "ابتدا ایمیل و شماره تلفن خود را از قسمت $link تایید کنید");

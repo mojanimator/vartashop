@@ -8,7 +8,7 @@
 
     <div class="alert alert-danger mt-5 m-4 text-right  text-light" dir="rtl">
         <strong class="text-white">خطای دسترسی!</strong> <br>
-        {{ $exception->getMessage() }}
+        {!!  $exception->getMessage() !!}
         <br>
         <strong>
             <a

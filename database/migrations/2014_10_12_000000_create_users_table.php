@@ -28,7 +28,7 @@ class CreateUsersTable extends Migration
             $table->string('phone', 20)->nullable();
             $table->boolean('email_verified')->default(false);
             $table->boolean('phone_verified')->default(false);
-            $table->tinyInteger('step')->unsigned()->nullable()->default(0);
+            $table->tinyInteger('step')->unsigned()->nullable();
             $table->boolean('active')->default(true);
             $table->string('remember_token', 255)->nullable();
             $table->dateTime('expires_at')->nullable()->default(null);

@@ -39,8 +39,8 @@ class ChatEvent implements ShouldBroadcastNow  // ShouldBroadcastNow =>for sync 
 
     public function broadcastOn() //channel
     {
-        return new Channel('support.' . $this->msgId);
-        return new PrivateChannel('support.' . $this->msgId);
+        return new Channel('support.' . $this->chatId);
+        return new PrivateChannel('support.' . $this->chatId);
         return ['support'];
     }
 

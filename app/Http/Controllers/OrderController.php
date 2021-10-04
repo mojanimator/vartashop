@@ -104,6 +104,10 @@ class OrderController extends Controller
             }
             $order->total_price = $totalPrice;
             $order->save();
+
+            Cart::clear();
+
+            $this->reportToAdmin($order);
         }
         return redirect()->to('panel/my-orders/search?status=2')->with('success-alert', 'سفارش شما با موفقیت ثبت شد. بزودی با شما تماس می گیریم');
     }
@@ -123,5 +127,30 @@ class OrderController extends Controller
 //
 //        $orders = $query->selectRaw('status,COUNT(status) AS count')->groupBy('status')->get();
         return view('pages.panel'/*, ['orders' => $orders]*/);
+    }
+
+    private function reportToAdmin($order)
+    {
+        $txt = '✅ سفارش جدید' . PHP_EOL .
+            "👤 نام مشتری: " . $order->name . PHP_EOL .
+            "⏰ تاریخ ثبت: " . \Morilog\Jalali\Jalalian::fromDateTime($order->created_at)->format('%A, %d %B %Y ⏰ H:i') . PHP_EOL .
+            "🏩 فروشنده: " . $order->shop->name . PHP_EOL .
+            "📰 توضیح مشتری: " . $order->description . PHP_EOL .
+            "📭 آدرس: " . $order->province->name . " - " . $order->county->name . " - " . $order->address . PHP_EOL .
+            "📤 کد پستی: " . $order->postal_code . PHP_EOL .
+            "💵 مجموع: " . number_format($order->total_price) . " ت " . PHP_EOL .
+            "📱 تلفن: " . $order->phone . PHP_EOL .
+            "";
+        foreach ($order->products as $product) {
+            $txt .=
+                "📦 نام محصول: " . $product->name . PHP_EOL .
+                "🔹 تعداد: " . $product->pivot->qty . PHP_EOL .
+                "💵 قیمت واحد: " . number_format($product->pivot->unit_price) . " ت " . PHP_EOL .
+                "";
+        }
+        foreach (\Helper::$logs as $log) {
+
+            sendTelegramMessage($log, $txt);
+        }
     }
 }

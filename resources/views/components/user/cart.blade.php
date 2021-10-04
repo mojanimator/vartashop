@@ -34,7 +34,7 @@
                                 <img src="{{$product->image()}}" alt=""
                                      class="max-width-100 max-height-100 rounded-lg  ">
                                 <div class="px-4 d-flex flex-column align-items-start">
-                                    <a href="{{route('product.view',[$product->slug,$product->id])}}" target="_blank"
+                                    <a href="{{route('product.view',[$product->name,$product->id])}}" target="_blank"
                                        class="  ">
                                         <h6
                                                 class="hoverable-text-info text-primary">{{$product->name}}

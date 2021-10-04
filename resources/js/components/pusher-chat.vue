@@ -1,7 +1,7 @@
 <template>
     <div class="position-fixed shadow-large  bottom-1 right-1" style="z-index:10000 !important;">
         <!--:class="maximize?' left-2 top-2 bottom-2 right-2  ':'bottom-1 right-1'"-->
-        <div v-if="showChat" class=" overflow-hidden   rounded-3 "
+        <div v-show="showChat" class=" overflow-hidden   rounded-3 "
              :style=" maximize?'height: 90vh;width: 90vw; ':'height:  75vh; ;min-width: 25rem;width:40vw; '">
             <div class="d-flex flex-column card justify-content-around h-100">
 
@@ -17,6 +17,7 @@
                     <span @click="maximize=!maximize" class="text-dark ml-auto mr-2">
                     پشتیبان آنلاین
                         <i class="fa fa-headset text-success" aria-hidden="true"></i>
+                        ({{supporterName}})
                 </span>
                     <span @click="clearHistory()" class="text-dark  hoverable-light">
                         <i class="fa fa-trash text-danger move-on-hover" aria-hidden="true"></i>
@@ -51,10 +52,10 @@
             </div>
 
         </div>
-        <div v-if="!showChat"
+        <div v-show="!showChat"
              class="rounded-circle bg-red     d-flex flex-column justify-content-center text-center hoverable-dark move-on-hover"
              style="height: 4rem;width: 4rem;"
-             @click="showChat=true">
+             @click="showChat=!showChat;container.scrollTop = container.scrollHeight;">
 
             <div class="      ">
                 <i class="fa fa-2x fa-headset text-white "
@@ -70,25 +71,34 @@
     import Echo from 'laravel-echo';
 
     window.Pusher = require('pusher-js');
-    let container;
+
 
     export default {
         mounted() {
 
             this.initPusher();
-            container = $('#chats-container');
-
+            this.container = $('#chats-container');
         },
         props: ['broadcastLink', 'key', 'cluster', 'ip', 'supportHistoryLink'],
 
 //        components: {paginator, refEditor},
+        watch: {
+            showChat: (newVal, oldVal) => {
+                if (newVal) {
+                    $('#chats-container').animate({scrollTop: 100000}, 100);
+
+
+                }
+            }
+        },
         data() {
             return {
                 msg: null,
                 messages: [],
                 showChat: false,
                 maximize: false,
-
+                supporterName: null,
+                container: null,
             }
         },
         methods: {
@@ -101,12 +111,12 @@
                         message: this.msg,
                         from: this.ip,
                         to: null,
-                        chatId: new Date().getTime(),
-                        msgId: this.ip,
+                        msgId: new Date().getTime(),
+                        chatId: this.ip,
                     },).then(resp => {
 
                         this.msg = null;
-                        container.animate({scrollTop: container.prop('scrollHeight') + 100}, 200);
+
 
                     });
 
@@ -159,6 +169,9 @@
                         });
                         this.addToHistory(e);
 
+                        if (e.from !== null && e.from.includes('support'))
+                            this.supporterName = e.from;
+                        this.container.animate({scrollTop: this.container.prop('scrollHeight') + 100}, 200);
                         if ('Notification' in window) {
 
                             if (Notification.permission === "granted") {
@@ -240,6 +253,7 @@
 //                    console.log(response.data);
                     this.messages = response.data;
                 });
+
             },
             clearHistory() {
 

@@ -1,6 +1,15 @@
 {
   "my-orders": "سفارشات من",
+  "checkout": "ثبت سفارش",
+  "cart": "سبد خرید",
   "panel": "پنل",
   "user-settings": "حساب کاربری",
-  "search": "جست و جو"
+  "search": "جست و جو",
+  "E-Mail Address": "ایمیل",
+  "Password": "رمز ورود",
+  "Confirm Password": "تایید رمز ورود",
+  "name": "نام",
+  "phone": "تلفن همراه",
+  "Register": "ثبت نام",
+  "username": "نام کاربری"
 }
