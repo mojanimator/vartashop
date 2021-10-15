@@ -1,5 +1,8 @@
 <?php
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+
 Class Helper
 {
     static $create_shop_score = 50;
@@ -9,6 +12,8 @@ Class Helper
     static $admin = '@develowper';
     static $app_version = 1;
     static $initScore = 5;
+    static $vip_limit = 20;
+    static $product_image_limit = 5;
     static $test = true;
     static $Devs = [72534783, /*225594412, 871016407, 225594412*/]; // آیدی عددی ادمین را از بات @userinfobot بگیرید
     static $logs = [72534783, /*225594412*/];
@@ -85,7 +90,7 @@ function sendTelegramPhoto($chat_id, $photo, $caption, $reply = null, $keyboard 
 {
 
 
-    return Helper::creator('sendPhoto', [
+    return creator('sendPhoto', [
         'chat_id' => $chat_id,
         'photo' => $photo,
         'caption' => $caption,
@@ -96,11 +101,42 @@ function sendTelegramPhoto($chat_id, $photo, $caption, $reply = null, $keyboard 
 
 }
 
+function createChatImage($photo, $shop_id)
+{
+
+
+    if (!isset($photo) || !isset($photo->big_file_id)) return null;
+
+    $timestamp = Carbon::now()->timestamp;
+
+    $client = new \GuzzleHttp\Client();
+    $res = creator('getFile', [
+        'file_id' => $photo->big_file_id,
+
+    ])->result->file_path;
+
+    $image = "https://api.telegram.org/file/bot" . env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN') . "/" . $res;
+    if (Storage::exists("public/shops/$shop_id.jpg")) {
+        Storage::delete("public/shops/$shop_id.jpg");
+    }
+    Storage::put("public/shops/$shop_id.jpg", $client->get($image)->getBody());
+
+
+//    $img = \Intervention\Image\Facades\Image::make(storage_path("app/public/chats/$timestamp.jpg"));
+//    $img2 = \Intervention\Image\Facades\Image::make(storage_path("app/public/magnetgramcover.png"));
+//    $img2->resize($img->width(), $img->height());
+//    $img->insert($img2, 'center');
+//    $img->save(storage_path("app/public/chats/$timestamp.jpg"));
+
+    return $timestamp;
+
+}
+
 function sendTelegramMediaGroup($chat_id, $media, $keyboard = null, $reply = null)
 {
 //2 to 10 media can be send
 
-    return Helper::creator('sendMediaGroup', [
+    return creator('sendMediaGroup', [
         'chat_id' => $chat_id,
         'media' => json_encode($media),
         'reply_to_message_id' => $reply,
@@ -111,7 +147,7 @@ function sendTelegramMediaGroup($chat_id, $media, $keyboard = null, $reply = nul
 
 function sendTelegramSticker($chat_id, $file_id, $keyboard, $reply = null, $set_name = null)
 {
-    return Helper::creator('sendSticker', [
+    return creator('sendSticker', [
         'chat_id' => $chat_id,
         'sticker' => $file_id,
         "set_name" => $set_name,
@@ -148,6 +184,13 @@ function creator2($method, $datas = [])
     }
 }
 
+function logAdmins($msg, $mode = null)
+{
+    foreach (Helper::$logs as $log)
+        sendTelegramMessage($log, $msg, $mode);
+
+}
+
 function creator($method, $datas = [])
 {
     $url = "https://api.telegram.org/bot" . env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN') . "/" . $method;
@@ -169,4 +212,15 @@ function creator($method, $datas = [])
     } else {
         return $res;
     }
+}
+
+function MarkDown($string)
+{
+    $string = str_replace(["_",], '\_', $string);
+    $string = str_replace(["`",], '\`', $string);
+    $string = str_replace(["*",], '\*', $string);
+    $string = str_replace(["~",], '\~', $string);
+
+
+    return $string;
 }

@@ -16,7 +16,6 @@ require('soft-ui-dashboard/assets/js/soft-ui-dashboard.min.js?v=1.0.1');
 require('lity');
 window.swal = require('sweetalert2');
 
-
 window.toastr = require('toastr/build/toastr.min');
 
 window.showDialog = (type, message, onclick = null) => {
@@ -28,7 +27,7 @@ window.showDialog = (type, message, onclick = null) => {
         swal.fire({
             title: "<h3 class='text-danger'>" + message + "</h3>",
             text: ' ',
-            type: 'error',
+            icon: 'error',
             showCancelButton: true,
             showCloseButton: true,
             cancelButtonText: 'انصراف',
@@ -42,10 +41,10 @@ window.showDialog = (type, message, onclick = null) => {
         });
     else if (type === 1) {
         swal.fire({
-            title: 'توجه',
+            title: "<h3 class='text-success'>" + message + "</h3>",
             text: ' با موفقیت حذف شد!',
             confirmButtonColor: '#60aa2f',
-            type: 'success',
+            icon: 'success',
             confirmButtonText: ' باشه',
         }).then((result) => {
             if (result.value) {
@@ -57,10 +56,10 @@ window.showDialog = (type, message, onclick = null) => {
     } else {
         swal.fire({
             title: 'خطایی رخ داد',
-            html: ` <p   class="text-danger">` + this.errors + `</p>`,
+            html: ` <p   class="text-danger">` + message + `</p>`,
 //                        text: this.errors,
             confirmButtonColor: '#d33',
-            type: 'error',
+            icon: 'error',
             confirmButtonText: ' باشه',
         });
     }

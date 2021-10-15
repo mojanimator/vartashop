@@ -2,9 +2,9 @@
 {{--@inject('product', '\App\Models\Product')--}}
 {{--@inject('image', '\App\Models\Image')--}}
 @section('content')
-    <a href="https://vartashop.ir/charge" target="blank" class="position-fixed left-0 bottom-0 z-index-3">
-        <img src="http://www.chargereseller.com/img/banner/120-240/banner-11.gif"/>
-    </a>
+    <!--<a href="https://vartashop.ir/charge" target="blank" class="position-fixed left-0 bottom-0 z-index-3">-->
+    <!--    <img src="http://www.chargereseller.com/img/banner/120-240/banner-11.gif"/>-->
+    <!--</a>-->
 
     <header class="header-2 mt-n7">
         <div class="page-header section-height-75 relative"
@@ -251,7 +251,7 @@
     </section>
 
     <section class="py-3 mx-5 my-4  bg-gradient-faded-light p-3 rounded-lg position-relative">
-        @php ($shops=\App\Models\Shop::on(env('DB_CONNECTION'))->inRandomOrder()->with('group')->take(4)->get() )
+        @php ($shops=\App\Models\Shop::on(env('DB_CONNECTION'))->inRandomOrder()->with('group')->take(6)->get() )
         <div class="container">
             <div class="d-flex flex-row justify-content-between align-content-center   ">
 
@@ -271,7 +271,7 @@
                             <a href="{{route('shop',['name'=>$shop->name,'id'=>$shop->id])}}"
                                class=" ">
                                 <img
-                                        class=" border-radius-lg  move-on-hover shadow  height-300 max-width-300  cursor-pointer  mx-auto"
+                                        class=" border-radius-lg  move-on-hover shadow  w-100 cursor-pointer  mx-auto"
 
                                         src="{{$shop->image}}">
                             </a>
@@ -281,8 +281,9 @@
                                 <div class="text-dark font-weight-bold ">{{$shop->name}}</div>
 
                                 <div>
-                                    {{explode("\n",$shop->description)[0]}} <br>
-                                    {{explode("\n",$shop->description)[1]}}
+                                    @php($dsc=explode("\n",$shop->description))
+                                    {{$dsc[0]}} <br>
+                                    {{count($dsc)> 1 ?$dsc[1]:''}}
                                 </div>
                                 <div><a href="{{route('shop',['name'=>$shop->name,'id'=>$shop->id])}}"
                                         class="text-primary icon-move-right">مشاهده

@@ -14,7 +14,7 @@ class CreateShopsTable extends Migration
     public function up()
     {
         Schema::create('shops', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->bigInteger('user_id')->unsigned();
             $table->smallInteger('county_id')->nullable()->unsigned();
             $table->smallInteger('province_id')->nullable()->unsigned();
@@ -30,8 +30,6 @@ class CreateShopsTable extends Migration
             $table->boolean('active')->default(true);
             $table->timestamp('expires_at')->nullable();
             $table->timestamp('created_at')->useCurrent();
-            $table->boolean('auto_channel_post')->default(true);
-            $table->boolean('auto_tag')->default(true);
 
 
             $table->foreign('user_id')->references('id')->on('users');

@@ -14,13 +14,19 @@
 
             @php($totalPrice=0)
             @foreach(\App\Models\Cart::get() as $idx=>$shop)
-                @php($s=\App\Models\Shop::on(env('DB_CONNECTION'))->find( $idx) )
-                <div></div>
-                <h5 class="col-12 mt-4  text-right  ">
-                    <a href="{{route('shop',['id'=>$s->id,'name'=>$s->name])}}">
-                        <div class="hoverable-text-blue my-1">{{$s->name}}</div>
-                    </a>
 
+                @php($s=\App\Models\Shop::find( $idx) )
+
+                <h5 class="col-12 mt-4  text-right  ">
+                    @if ($s)
+                        <a href="{{route('shop',['id'=>$s->id,'name'=>$s->name])}}">
+                            <div class="hoverable-text-blue my-1">{{$s->name}}</div>
+                        </a>
+                    @else
+                        <a href="">
+                            <div class="hoverable-text-blue my-1">{{$s->name ??''}}</div>
+                        </a>
+                    @endif
                 </h5>
                 <div class="border-blue border border-1 border-primary rounded-lg">
                     @foreach($shop['prods'] as $id=>$cart)

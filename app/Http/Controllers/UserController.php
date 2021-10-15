@@ -80,7 +80,7 @@ class UserController extends Controller
         $request->validate([
 
             'name' => 'sometimes|string|min:5|max:30',
-            'username' => 'sometimes|string|min:5|max:30|regex:/^[A-Za-z]+[A-Za-z0-9@_][A-Za-z0-9@]{1,28}$/|unique:users,username',
+            'username' => 'sometimes|string|min:5|max:30|regex:/^[A-Za-z]+[A-Za-z0-9_][A-Za-z0-9]{1,28}$/|unique:users,username',
             'email' => ['sometimes', 'email', 'min:6', 'max:50', Rule::unique('users')->ignore(auth()->user())],
             'phone' => 'sometimes|numeric|digits:11|regex:/^09[0-9]+$/',
 
@@ -94,7 +94,7 @@ class UserController extends Controller
                 'username.max' => 'طول نام کاربری حداکثر 30 باشد',
                 'username.unique' => 'نام کاربری تکراری است',
 //            'username.alpha_dash' => 'نام کاربری فقط شامل حروف، عدد و - و _ باشد',
-                'username.regex' => 'نام کاربری با حروف شروع شود و می تواند شامل عدد و _ و @ باشد',
+                'username.regex' => 'نام کاربری با حروف شروع شود و می تواند شامل عدد و _  باشد',
                 'email.email' => 'ایمیل نامعتبر است',
                 'email.min' => 'ایمیل حداقل 6 حرف باشد',
                 'email.max' => 'ایمیل حداکثر 50 حرف باشد',

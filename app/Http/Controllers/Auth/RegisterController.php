@@ -167,7 +167,7 @@ class RegisterController extends Controller
 //            'recaptcha' => ['required', new  Recaptcha()],
             'g-recaptcha-response' => 'recaptcha',
             'name' => 'required|string|min:5|max:30',
-            'username' => 'required|string|min:5|max:30|regex:/^[A-Za-z]+[A-Za-z0-9@_][A-Za-z0-9@]{1,28}$/|unique:users,username',
+            'username' => 'required|string|min:5|max:30|regex:/^[A-Za-z]+[A-Za-z0-9_][A-Za-z0-9]{1,28}$/|unique:users,username',
             'email' => ['required', 'string', 'email', 'min:6', 'max:50', 'unique:users,email'],
             'phone' => 'required|numeric|digits:11|regex:/^09[0-9]+$/',
 
@@ -187,7 +187,7 @@ class RegisterController extends Controller
                 'username.max' => 'طول نام کاربری حداکثر 30 باشد',
                 'username.unique' => 'نام کاربری تکراری است',
 //            'username.alpha_dash' => 'نام کاربری فقط شامل حروف، عدد و - و _ باشد',
-                'username.regex' => 'نام کاربری با حروف شروع شود و می تواند شامل عدد و _ و @ باشد',
+                'username.regex' => 'نام کاربری با حروف شروع شود و می تواند شامل عدد و _  باشد',
                 'email.required' => 'ایمیل نمی تواند خالی باشد',
                 'email.email' => 'ایمیل نامعتبر است',
                 'email.min' => 'ایمیل حداقل 6 حرف باشد',

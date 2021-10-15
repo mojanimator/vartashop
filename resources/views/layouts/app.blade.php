@@ -24,6 +24,18 @@
         }
     </script>
 
+    {{--richat--}}
+    <script type="text/javascript">!function () {
+            function t() {
+                var t = document.createElement("script");
+                t.type = "text/javascript", t.async = !0, localStorage.getItem("rayToken") ? t.src = "https://app.raychat.io/scripts/js/" + o + "?rid=" + localStorage.getItem("rayToken") + "&href=" + window.location.href : t.src = "https://app.raychat.io/scripts/js/" + o + "?href=" + window.location.href;
+                var e = document.getElementsByTagName("script")[0];
+                e.parentNode.insertBefore(t, e)
+            }
+
+            var e = document, a = window, o = "860662b5-d034-41b2-b306-735050423b2b";
+            "complete" == e.readyState ? t() : a.attachEvent ? a.attachEvent("onload", t) : a.addEventListener("load", t, !1)
+        }();</script>
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {!! htmlScriptTagJsApi() !!}
@@ -42,10 +54,11 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
 </head>
-<body class="index-page {{Route::is('panel.view')?'g-sidenav-show rtl':''}} ">
+<body class="  {{Route::is('panel.view')?'g-sidenav-show rtl':''}} ">
 
 
 <div id="app">
+
     @if(! str_contains( url()->current(),'/panel'))
         <div class="container position-sticky z-index-sticky top-0">
             <div class="row">
@@ -93,8 +106,8 @@
                                         <div class="  dropdown-menu dropdown-menu-animation dropdown-md p-3 border-radius-lg mt-3   left-0 right-0  position-lg-fixed  "
                                              aria-labelledby="dropdownMenuPages">
                                             <div class="   row   text-right">
-                                                @foreach(\App\Models\Group::on(env('DB_CONNECTION'))->whereIn('id',[31,40])->orderByDesc('id')->get() as $g)
-                                                    <div class="col-md-6  ">
+                                                @foreach(\App\Models\Group::on(env('DB_CONNECTION'))->whereIn('id',[31,40,66])->orderByDesc('id')->get() as $g)
+                                                    <div class="col-md-4   ">
                                                         <div class="dropdown-header text-dark font-weight-bolder      ">
                                                             <i class="fa fa-cart-arrow-down   mx-1"
                                                                aria-hidden="true"></i>
@@ -146,7 +159,7 @@
                                                                     <div>
                                                                         <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">
                                                                             {{$shop->name}}</h6>
-                                                                        <span class="text-sm">{{$shop->group->name}}</span>
+                                                                        <span class="text-sm">{{$shop->group->name??''}}</span>
                                                                     </div>
                                                                     {{--<img src="{{asset('img/down-arrow.svg')}}"--}}
                                                                     {{--alt="down-arrow"--}}
@@ -176,7 +189,7 @@
                                         <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center text-dark"
                                            id="weblog" aria-expanded="false"
                                            href="{{route('blog.view')}}">
-                                            وبلاگ
+                                            شارژ
                                         </a>
                                     </li>
 
@@ -394,11 +407,11 @@
             @php(session()->forget('success-alert'))
         @endif
 
-        <pusher-chat key="{{env('PUSHER_APP_KEY')}}"
-                     cluster="{{env('PUSHER_APP_CLUSTER')}}" ip="{{request()->ip()}}"
-                     broadcast-link="{{route('chat.broadcast')}}"
-                     support-history-link="{{route('chat.support.history')}}"
-                     id="chat-support"></pusher-chat>
+        {{--<pusher-chat key="{{env('PUSHER_APP_KEY')}}"--}}
+        {{--cluster="{{env('PUSHER_APP_CLUSTER')}}" ip="{{request()->ip()}}"--}}
+        {{--broadcast-link="{{route('chat.broadcast')}}"--}}
+        {{--support-history-link="{{route('chat.support.history')}}"--}}
+        {{--id="chat-support"></pusher-chat>--}}
         {{--@php( event(new App\Events\ChatEvent(null, null, "his")))--}}
         @yield('content')
 
@@ -467,7 +480,7 @@
                         <li class="nav-item hoverable-text-primary">
                             <a class="nav-link " href="{{route('blog.view')}}"
                                target="_blank">
-                                وبلاگ
+                                شارژ
                             </a>
                         </li>
                     </ul>
@@ -476,7 +489,7 @@
             <div class="col-md-4  text-center ">
                 <a href="{{route('/')}}">
                     <img src="{{asset('img/vartashop_logo.png')}}" alt=""
-                         class="rounded-lg    move-on-hover   " height="300" width="300">
+                         class="rounded-lg    move-on-hover w-100 max-width-300 ">
                 </a>
             </div>
             <hr class="horizontal dark  ">
@@ -568,9 +581,7 @@
 
 
     </script>
-    <script type="text/javascript">
 
-    </script>
 @endif
 @yield('script')
 </body>

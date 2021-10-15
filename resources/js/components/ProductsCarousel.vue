@@ -115,6 +115,14 @@
     let self;
 
     let owlRefresh = false;
+
+    function onImageError(e) {
+        console.log(e);
+//        $(imgTag).removeClass('loading');
+
+        e.src = '/img/noimage.png';
+    }
+
     export default {
 
 
@@ -177,9 +185,6 @@
         mounted() {
 
 
-            this.setEvents();
-
-
         },
 
         updated() {
@@ -196,6 +201,8 @@
         },
         methods: {
             addToCarousel(data, vueId) {
+
+
                 let html;
                 for (let idx in data) {
                     let d = data[idx];
@@ -227,7 +234,7 @@
                         <div class=" position-relative">
                             <a href="${this.imgLink + '/' + d.img}" data-lity class="  ">
                                 <div class="    img-overlay">⌕</div>
-                                <img class="card-img  " src="${this.imgLink + '/' + d.img}" alt="">
+                                <img id="p-img-${d.id}" class="card-img  " onError="this.onerror=null;this.src='/img/vartashop_logo.png';this.parentElement.href='/img/noimage.png'"   src="${this.imgLink + '/' + d.img}"   alt="">
                             </a>
                         </div>
 
@@ -256,7 +263,7 @@
                             <i class="fas  fa-money-bill-alt"></i>
                             <span class="mx-1 ${d.discount_price > 0 ? 'text-decoration-line-through' : ''} "
 
-                                >${this.separator(d.price) + ' ت '}    </span>
+                                >${d.price > 0 ? this.separator(d.price) + ' ت ' : 'تماس بگیرید'}    </span>
                             <span class="mx-1 ${d.discount_price > 0 ? '' : 'd-none'}"
                                   > ${this.separator(d.discount_price) + ' ت '} </span>
 
@@ -292,9 +299,9 @@
 
                             </form>
                             <a class="link-white rounded-left py-2   bg-gradient-info text-white small d-inline-block px-1 w-50 move-on-hover hoverable"
-                               href="${'/product/' + d.slug + '/' + d.id}">
+                               href="${'/product/' + d.name + '/' + d.id}">
 
-                                مشاهده</a>
+                                جزییات</a>
                         </div>
                     </div>
 
@@ -310,6 +317,7 @@
                             $('#cart-form-' + vueId + '-' + d.id).submit()
                         }
                     );
+
                 }
 
 
@@ -476,42 +484,37 @@
                 });
             }
             ,
+            errorImage(e) {
+                console.log(e);
+                e.target.src = './img/noimage.png';
+            },
+            setImageEvents(datas) {
 
-            setEvents() {
+                $('.card-img').onerror();
+//                console.log(datas);
 //                this.$root.$on('paginate_click', data => {
 //                    this.page = data['page'];
 //                    this.getRefs();
 //                });
 
-                $(document).ready(function () {
-
-                });
-
-//                let carouselVitrin = document.getElementById(self.id);
-//
-//                let carouselVitrinObj = new bootstrap.Carousel(carouselVitrin, {
-//                    interval: false,
-//                    wrap: false
-//                });
-//                carouselVitrin.addEventListener('slid.bs.carousel', function (e) {
-//                    carouselVitrinObj.interval = false;
-//                    console.log(e);
-//                    self.getData();
-//                });
-
-
+//                $(document).ready(function () {
                 //loader for images
-                $(".card-img").each((i, el) => {
+
+                $.each(datas, (i, el) => {
+                    el.onload = null;
+                    el.onerror = null;
+
 
                     let imgTag = el;
                     let img = new Image();
                     img.src = imgTag.src;
+                    console.log(el.src);
 //                    imgTag.src = '';
-                    $(imgTag).addClass('loading');
+//                    $(imgTag).addClass('loading');
                     img.onload = () => {
-                        imgTag.src = './img/noimage.png';
+//                        imgTag.src = './img/noimage.png';
 
-//                        $(imgTag).removeClass('loading');
+                        $(imgTag).removeClass('loading');
                         imgTag.setAttribute('src', img.src);
                         // Fade out and hide the loading image.
 //                $('.loading').fadeOut(100); // Time in milliseconds.
@@ -519,10 +522,13 @@
                     img.onerror = (e) => {
 //                console.log(e);
                         $(imgTag).removeClass('loading');
-                        $(imgTag).prop('src', './img/noimage.png');
+                        $(imgTag).prop('src', '/img/noimage.png');
                     };
 
                 });
+//                });
+
+
             }
         }
     }

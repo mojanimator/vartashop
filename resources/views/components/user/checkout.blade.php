@@ -97,7 +97,7 @@
                                     class="px-4 form-control{{ $errors->has('county_id')  ? ' is-invalid' : '' }}">
                                 @if(old('county_id') && $cId=\App\Models\County::find(old('county_id') ))
 
-                                    <option value="{{$cId}}" selected>{{$cId->name}}</option>
+                                    <option value="{{$cId->id}}" selected>{{$cId->name}}</option>
                                 @else
                                     <option value="0">انتخاب شهر</option>
                                 @endif

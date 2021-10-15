@@ -20,7 +20,7 @@
 
     {{--{{Route::currentRouteName()=='panel.order'?'hi':'no'}}--}}
     @includeWhen(auth()->user()->role=='go','pages.panel.god-panel')
-    @includeWhen(auth()->user()->role=='ad','pages.panel.admin-panel')
+    {{--@includeWhen(auth()->user()->role=='ad','pages.panel.admin-panel')--}}
     @includeWhen(auth()->user()->role=='us','pages.panel.user-panel')
 
 
@@ -32,13 +32,13 @@
 @section('script')
 
 
-    <script type="text/javascript">
+    {{--<script type="text/javascript">--}}
 
 
-        $(document).ready(function () {
-            console.log('hi');
-        });
+    {{--$(document).ready(function () {--}}
+    {{--console.log('hi');--}}
+    {{--});--}}
 
-    </script>
+    {{--</script>--}}
 
 @endsection

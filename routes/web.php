@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Group;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ use Illuminate\Support\Str;
 |
 */
 Route::get('test', function () {
-    return;
+    return Group::orWhereIn('parent', [46])->orWhereIn('id', [46])->pluck('id');
     foreach (\App\Models\Order::get() as $order) {
         $txt = '✅ سفارش جدید' . PHP_EOL .
             "⏰ تاریخ ثبت: " . \Morilog\Jalali\Jalalian::fromDateTime($order->created_at)->format('%A, %d %B %Y ⏰ H:i') . PHP_EOL .
@@ -52,6 +53,7 @@ Route::post('/user/edit', [App\Http\Controllers\UserController::class, 'edit'])-
 
 
 Route::get('/blog', function () {
+    return redirect('charge');
     return view('pages/blog');
 })->name('blog.view');
 
@@ -130,26 +132,38 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('/'
 Route::post('/order/create', [App\Http\Controllers\OrderController::class, 'create'])->name('order.create');
 Route::post('/order/delete', [App\Http\Controllers\OrderController::class, 'delete'])->name('order.delete');
 
-Route::middleware(['auth',])->prefix('panel')->group(function () {
+
+Route::post('/shop/edit', [App\Http\Controllers\ShopController::class, 'edit'])->name('shop.edit');
+Route::post('/shop/create', [App\Http\Controllers\ShopController::class, 'create'])->name('shop.create');
+
+Route::middleware(['auth'])->prefix('panel')->group(function () {
 
 
     Route::get('', function () {
         return view('pages.panel');
     })->name('panel.view');
 
-    Route::get('my-orders/checkout', function () {
-        return view('pages.panel');
-    })->middleware('verify');
+//    Route::get('my-orders/checkout', function () {
+//        return view('pages.panel');
+//    })->middleware('verify');
 
 
 //    Route::get('my-orders', [App\Http\Controllers\OrderController::class, 'groups'])->name('panel.my-orders');
 
+    Route::prefix('{route?}')->group(function () {
 
-    Route::get('{route?}/{route2?}', function () {
-        return view('pages.panel');
-    })->name('panel.view');
+        Route::get('checkout', function () {
+
+            return view('pages.panel');
+        })->name('panel.view')->middleware('verify');
+
+        Route::get('{route2?}', function () {
+
+            return view('pages.panel');
+        })->name('panel.view');
 
 
+    });
 });
 
 //firebase

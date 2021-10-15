@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 
 use App\Events\ChatEvent;
-use App\Models\Chat;
+use App\Models\Channel;
 use App\Models\Group;
 use App\Models\Image;
 use App\Models\Product;
 
 
+use App\Models\Rule;
 use App\Models\Shop;
 use App\Models\User;
 use Carbon\Carbon;
@@ -155,7 +156,7 @@ class BotController extends Controller
 //            return json_encode($this->inviteToChat($this->channel));
             $buy_button = json_encode(['inline_keyboard' => [
                 [['text' => "📪 ارتباط با ما 📪", 'url' => "telegram.me/" . 'develowper']],
-                [['text' => "📌 دریافت بنر تبلیغاتی 📌", 'callback_data' => "بنر"]],
+//                [['text' => "📌 دریافت بنر تبلیغاتی 📌", 'callback_data' => "بنر"]],
             ], 'resize_keyboard' => true]);
 
             $divar_button = json_encode(['keyboard' => [
@@ -175,8 +176,8 @@ class BotController extends Controller
 //                [/*['text' => 'ثبت گروه💥'],*/
 //                    ['text' => 'ثبت کانال💥']
 //                ],
-                [/*['text' => 'مدیریت گروه ها📢'],*/
-                    ['text' => 'مدیریت کانال ها📣']],
+                /* [['text' => 'مدیریت گروه ها📢'],*/
+//                    ['text' => 'مدیریت کانال ها📣']],
                 [['text' => "🎴 ساخت دکمه شیشه ای 🎴"], ['text' => "📌 دریافت بنر تبلیغاتی 📌"]],
                 [['text' => "📱 خرید شارژ 📱"], ['text' => "📱 خرید اینترنت 📱"], ['text' => "🙏 حمایت از ما 🙏"]],
 
@@ -197,7 +198,7 @@ class BotController extends Controller
                 [['text' => "بازگشت⬅", 'callback_data' => "edit_cancel"]],
             ], 'resize_keyboard' => true]);
             $edit_button = json_encode(['inline_keyboard' => [
-                [['text' => 'ویرایش نام', 'callback_data' => "edit_name"], ['text' => 'ویرایش گذرواژه', 'callback_data' => "edit_password"],],
+                [['text' => 'ویرایش نام', 'callback_data' => "edit_name"], ['text' => 'ویرایش نام کاربری', 'callback_data' => "edit_username"], ['text' => 'ویرایش گذرواژه', 'callback_data' => "edit_password"],],
             ], 'resize_keyboard' => true]);
             $admin_button = json_encode(['inline_keyboard' => [
                 [['text' => "📬 ارسال همگانی به کاربران", 'callback_data' => 'send_to_users']],
@@ -218,8 +219,7 @@ class BotController extends Controller
 //                $first_name = $this->MarkDown($first_name);
 //                sendTelegramMessage($chat_id, " \n آموزش ربات\n" . $this->tut_link, null, $message_id, null);
 
-                foreach (Helper::$logs as $log)
-                    sendTelegramMessage($log, "■  کاربر [$first_name](tg://user?id=$from_id) ربات ورتاشاپ را استارت کرد.", 'MarkDown');
+                logAdmins("■  کاربر [$first_name](tg://user?id=$from_id) ربات ورتاشاپ را استارت کرد.", 'MarkDown');
 
             } elseif ($reply) {
 //                sendTelegramMessage($from_id, json_encode($reply), null, null);
@@ -254,42 +254,20 @@ class BotController extends Controller
                 sendTelegramMessage($chat_id, "منوی اصلی", 'MarkDown', $message_id, $button);
 
 
-            } elseif ($text == 'تبادل لیستی🔃') {
-                $txt = "🚨  لطفا قبل از استفاده، *یکبار قوانین را مطالعه کنید*" . PHP_EOL . PHP_EOL;
-                $txt .= "1⃣ *کانال خود را در دیوار ثبت کنید (دکمه دیوار)،از قسمت مدیریت کانال ها، تب اتوماتیک را فعال کنید و ربات را ادمین کانال خود کنید. شما در لیست تبادل خواهید بود*" . PHP_EOL;
-                $txt .= "2⃣ کانال شما حداقل 20 پست و 20 عضو واقعی داشته باشد." . PHP_EOL;
-                $txt .= "3⃣ ربات لیست تبادل را ساعت شروع تبادل به کانال های شما ارسال می کند و ساعت پایان تبادل آن را پاک می کند. تب روزانه ۲ تا ۳ ظهر و تب شبانه ۱۲ شب تا ۸ صبح است" . PHP_EOL . PHP_EOL;
-                $txt .= "با انجام موارد زیر *در بازه های تبادل*، کانال شما برای همیشه از تبادل حذف خواهد شد:" . PHP_EOL . PHP_EOL;
-                $txt .= "4⃣ *حذف پست تبادل* از کانال و یا *جابجایی آن* و *درج پست جدید* بعد از پست تبادل" . PHP_EOL;
-                $txt .= "5⃣ *عکس و فیلم غیر اخلاقی*، *تعویض اسم و محتوای کانال*" . PHP_EOL;
-                $txt .= "6⃣ لیستی که به کانال شما ارسال می شود برای کانال های آن لیست هم ارسال خواهد شد. در صورت مشاهده تخلف به پشتیبانی اطلاع دهید" . PHP_EOL;
-                $txt .= " پشتیبانی: " . Helper::$admin . PHP_EOL;
-                sendTelegramMessage($chat_id, $txt, "Markdown", null, null);
-
-            } elseif ($text == 'تگ اتوماتیک🏁') {
-                $txt = "🏆 *با فعالسازی این قابلیت، هنگام کپی یا فورواد مطالب در کانال خود، تگ های اضافی حذف و تگ کانال شما زیر هر پست قرار میگیرد  *" . PHP_EOL . PHP_EOL;
-                $txt .= "1⃣ *ابتدا ربات را ادمین کانال خود کنید*" . PHP_EOL;
-                $txt .= "2⃣ *کانال خود را حداقل یک بار در دیوار ثبت کنید (دکمه دیوار->ثبت در دیوار)*" . PHP_EOL;
-                $txt .= "3⃣ *از قسمت مدیریت کانال ها، کانال خود را انتخاب و دکمه تگ اتوماتیک را بزنید*" . PHP_EOL . PHP_EOL;
-
-                $txt .= "در صورت مشاهده ایراد در عملکرد ربات،  به پشتیبانی اطلاع دهید" . PHP_EOL;
-                $txt .= " پشتیبانی: " . Helper::$admin . PHP_EOL;
-                sendTelegramMessage($chat_id, $txt, "Markdown", null, null);
-
             } elseif ($text == "📱 خرید شارژ 📱" || $text == "📱 خرید اینترنت 📱") {
                 sendTelegramMessage($chat_id, "از طریق ربات دیگر ما، به راحتی و به سرعت شارژ و اینترنت تهیه کنید" . PHP_EOL . "@vartastudiobot", "Markdown", $message_id, null);
 
             } elseif ($text == "🙏 حمایت از ما 🙏") {
                 sendTelegramMessage($chat_id, "در صورت رضایت از ربات و در جهت رایگان ماندن خدمات ما، می توانید مبلغی را بعنوان حمایت از ربات پرداخت نماید." . PHP_EOL . "🙏 این کار را کاملا اختیاری و تنها در صورت رضایت انجام دهید 🙏" . "https://idpay.ir/vartastudio", "Markdown", $message_id, null);
 
-            } elseif ($text == '📌ثبت کانال در دیوار📌' || $Data == "insert_divar") {
+            } elseif ($text == '📌ثبت کانال در فروشگاه📌' || $Data == "insert_divar") {
 
                 if (!$this->user) {
                     sendTelegramMessage($chat_id, "ابتدا از قسمت منوی اصلی در ربات ثبت نام نمایید.", "Markdown", $message_id, null);
                     return;
                 }
                 $groups_channels = array();
-                foreach (Chat::where('user_id', $this->user->id)->get(['chat_id', 'chat_username']) as $gc) {
+                foreach (Channel::orWhere('user_id', $this->user->id)->orWhereIn('shop_id', Rule::where('user_id', $this->user->id)->pluck('shop_id'))->get(['chat_id', 'chat_username']) as $gc) {
 //                    $res = $this->user_in_chat($gc, $this->bot_id);
 //                    if ($res == 'administrator' || $res == 'creator')
                     array_push($groups_channels, [['text' => $gc->chat_username, 'callback_data' => 'divar$' . $gc->chat_id]]);
@@ -307,183 +285,31 @@ class BotController extends Controller
                 $this->user->step = 2; // for register channel
                 $this->user->save();
                 sendTelegramMessage($chat_id, "❓راهنمای ثبت کانال" . PHP_EOL .
-                    "🚩 خط اول توضیحات کانال شما (بیو) به همراه تگ کانال شما، در لیست تبادل نمایش داده خواهد شد" . PHP_EOL .
-                    "🚩در صورتی که می خواهید کاربران را تشویق به عضو شدن کنید ربات باید ادمین کانال شما باشد(اختیاری)" . PHP_EOL .
-                    "🚩کانال خود را انتخاب کرده و گزینه مدیران (Administrators) را انتخاب کنید" . PHP_EOL .
-                    "🚩گزینه جستجو را زده و نام ربات را سرچ کنید ( " . Helper::$bot . " ) و آن را انتخاب کنید تا به کانال اضافه شود" . PHP_EOL .
-                    "🚧در صورت هر گونه راهنمایی پیام خود را ارسال کنید " . Helper::$admin
+                    "گزینه اضافه کردن مدیران را در کانال خود بزنید و نام ربات را جست و جو کنید (" . Helper::$bot . " ) " . PHP_EOL .
+                    "پس از نمایش ربات، آن را به کانال خود اضافه کنید" . PHP_EOL .
+                    "🚧در صورت هر گونه نیاز به راهنمایی پیام خود را ارسال کنید " . Helper::$admin
                     ,
                     null, $message_id, $cancelbutton);
 
 
                 //***********
 
-                if (count($groups_channels) == 0) {
-                    sendTelegramMessage($chat_id, "نام کانال خود را با @ وارد کنید \n مثال: " . PHP_EOL . "@vartastudio", 'MarkDown', $message_id, $cancelbutton);
+//                if (count($groups_channels) == 0) {
+                sendTelegramMessage($chat_id, "نام کانال خود را با @ وارد کنید \n مثال: " . PHP_EOL . "@vartashop", null, $message_id, $cancelbutton);
 
 //                    if ($text) sendTelegramMessage($chat_id, "گروه/کانال ثبت شده ای ندارید\nابتدا از منوی اصلی *ثبت گروه یا کانال* را بزنید", null, $message_id, $divar_button);
-                } else {
-                    $groups_channels = json_encode(['inline_keyboard' => $groups_channels, 'resize_keyboard' => true]);
-                    if ($Data) $this->EditMessageText($chat_id, $message_id, "🔥گزینه مورد نظر خود را برای درج در دیوار انتخاب کنید و یا اگر در دکمه های زیر نیست " . "نام کانال خود را با @ وارد کنید \n مثال: ", "Markdown", $groups_channels);
-                    else sendTelegramMessage($chat_id, "🔥گزینه مورد نظر خود را برای درج در دیوار انتخاب کنید و یا اگر در دکمه های زیر نیست " . "نام کانال خود را با @ وارد کنید \n مثال: " . PHP_EOL . "@vartastudio", "Markdown", $message_id, $groups_channels);
-                }
+//                }
+//                else {
+//                    $groups_channels = json_encode(['inline_keyboard' => $groups_channels, 'resize_keyboard' => true]);
+//                    if ($Data) $this->EditMessageText($chat_id, $message_id, "🔥گزینه مورد نظر خود را برای درج در دیوار انتخاب کنید و یا اگر در دکمه های زیر نیست " . "نام کانال خود را با @ وارد کنید \n مثال: ", "Markdown", $groups_channels);
+//                    else sendTelegramMessage($chat_id, "🔥گزینه مورد نظر خود را برای درج در دیوار انتخاب کنید و یا اگر در دکمه های زیر نیست " . "نام کانال خود را با @ وارد کنید \n مثال: " . PHP_EOL . "@vartastudio", "Markdown", $message_id, $groups_channels);
+//                }
 
-
-            } elseif ($text == '📍ثبت تبلیغ در دیوار📍' || $Data == "insert_need") {
-
-                $group_id_button = [];
-                foreach (Group::where('id', '>=', 20)->where('id', '<', 30)->get() as $g) {
-                    $group_id_button[] = [['text' => "$g->name $g->emoji", 'callback_data' => "add_need$$g->id"]];
-                }
-                $group_id_button = json_encode(['inline_keyboard' => $group_id_button, 'resize_keyboard' => true]);
-
-                $txt = "📌 با استفاده از این بخش می توانید خدمات تلگرامی خود را در میان ادمین های تلگرام تبلیغ کنید." . PHP_EOL .
-                    "  💳 هزینه هر ثبت: " . Helper::$add_needing_score . " سکه " . PHP_EOL . "  💰 سکه های شما: " . $this->user->score;
-                sendTelegramMessage($from_id, $txt, null, null, $group_id_button);
-
-            } elseif (strpos($Data, "add_divar$") !== false) {
-
-
-                $splitter = explode("$", $Data);
-                $time = $splitter[1];
-                $id = $splitter[2];
-                $f_score = count($splitter) > 3 ? $splitter[3] : 0;
-                $r_score = count($splitter) > 4 ? $splitter[4] : 0;
-                $end = count($splitter) > 5 ? true : false;
-                if ($end) {
-
-
-                    if ($this->user->score < ($this->divar_scores[$time] + $f_score + $r_score)) {
-                        $s = $this->divar_scores[$time] . '+' . $f_score . '+' . $r_score . ' = ';
-                        $sc = $this->divar_scores[$time] + $f_score + $r_score;
-                        $this->popupMessage($data_id, "📛 سکه کافی برای این کار ندارید." . PHP_EOL . "💰 حداقل سکه مورد نیاز:" . $s . $sc . PHP_EOL . "برای دریافت سکه، در کانال/گروه های دیگران عضو شوید و یا از قسمت  سکه های من  اقدام کنید");
-
-                    } elseif ($f_score == 0 && $r_score > 0) {
-                        $this->popupMessage($data_id, "📛 در صورت تعیین جایزه عضو گیری، جایزه عضویت هم ضروری است.");
-
-                    } else {
-                        $info = $this->getChatInfo($id);
-                        if ($info == null || $info->username == null) {
-                            $this->popupMessage($data_id, "کانال/گروهی با این نام کاربری وجود ندارد و یا ربات ادمین آن نیست!");
-                            return;
-                        }
-                        $info_id = $info->id;
-                        $divar_ids = Divar::pluck('chat_id')->toArray();
-                        $queue_ids = Queue::pluck('chat_id')->toArray();
-
-                        $divar = Divar::where('chat_id', "$info_id")->first();
-
-                        $expireTime = Carbon::parse($divar->expire_time);
-                        if (in_array($info_id, $divar_ids)) {
-
-                            if ($expireTime > Carbon::now('Asia/Tehran')) {
-                                $this->popupMessage($data_id, "📛این گروه/کانال از قبل در دیوار وجود دارد !" . PHP_EOL . "پس از اتمام زمان نمایش:" . PHP_EOL . Jalalian::fromCarbon($expireTime->setTimezone('Asia/Tehran')) . PHP_EOL . "می توانید مجدد آن را در دیوار قرار دهید");
-                                return;
-                            } elseif ($divar->blocked == true) {
-                                $this->popupMessage($data_id, "📛این گروه/کانال به علت عدم رعایت قوانین بلاک شده است !" . PHP_EOL . "پس از اتمام زمان نمایش:" . PHP_EOL . Jalalian::fromCarbon($expireTime->setTimezone('Asia/Tehran')) . PHP_EOL . "می توانید مجدد آن را در دیوار قرار دهید");
-                                return;
-                            } else {
-                                $divar->delete();
-                                deleteTelegramMessage(Helper::$divarChannel, $divar->message_id);
-
-                            }
-                        }
-                        if (in_array($info_id, $queue_ids)) {
-                            $this->popupMessage($data_id, "📛این گروه/کانال در صف است و به محض خالی شدن دیوار ثبت خواهد شد!");
-                            return;
-                        }
-//                    if (!$this->user_in_chat($id, $this->bot_id) == 'administrator') {
-//                        $this->popupMessage($data_id, "ابتدا ربات را در گروه/کانال ادمین کنید!");
-//                        return;
-//                    }
-
-                        if (Divar::count() < $this->divar_show_items) {
-
-                            if (!Helper::addChatToDivar($info, $time, $f_score, $r_score)) return;
-
-
-                            //                        Helper::addChatToDivar($info, $first_name, $last_name);
-                            deleteTelegramMessage($chat_id, $message_id - 1);
-                            sendTelegramMessage($chat_id, "🌹کانال شما با موفقیت در دیوار ثبت شد!" . PHP_EOL . "🚧پشتیبانی: " . Helper::$admin, 'MarkDown', null, $button);
-
-                            $txt = "✅*گروه/کانال شما با موفقیت به دیوار اضافه شد!*";
-//                        sendTelegramMessage($from_id, $txt, 'MarkDown', null, null);
-
-                            foreach (Helper::$logs as $log)
-                                sendTelegramMessage($log, "■ کاربر  [$first_name](tg://user?id=$from_id) کانال/گروه @$info->username را وارد دیوار کرد", null, null, null);
-
-                            $ref = Ref::where('new_telegram_id', $from_id)->first();
-                            if ($ref) {
-                                $user = User::where('telegram_id', $ref->invited_by)->first();
-                                if ($user) {
-                                    $user->score += $this->ref_score;
-                                    $user->save();
-                                    sendTelegramMessage($ref->invited_by, "■  کاربر [$first_name](tg://user?id=$from_id)  یک کانال را وارد دیوار کرد و $this->ref_score سکه به شما اضافه شد!  .", 'MarkDown', null, null);
-                                }
-                            }
-
-                        } else {
-                            $chat_type = $info->type == 'channel' ? 'c' : ($info->type == 'group' || $info->type == 'supergroup' ? 'g' : ($info->type == 'bot' ? 'b' : null));
-
-                            $txt = "*به علت پر بودن دیوار, کانال/گروه شما در صف قرار گرفت و به محض خالی شدن دیوار, به آن اضافه خواهد شد.*";
-                            Queue::create(['user_id' => $this->user->id, 'chat_id' => "$info_id", 'chat_type' => $chat_type, 'chat_username' => "@$info->username",
-                                'chat_title' => $info->title, 'chat_description' => $info->description,
-                                'chat_main_color' => simple_color_thief(storage_path("app/public/chats/$info_id.jpg")), 'show_time' => $time,]);
-                            //'photo'=>small_file_id or small_file_unique_id
-                        }
-//                        Helper::createChatImage($info->photo, "$info_id");
-
-                        $this->user->score -= $this->divar_scores[$time];
-                        $this->user->save();
-                        $return_button = json_encode(['inline_keyboard' => [
-                            [['text' => "بازگشت⬅", 'callback_data' => "insert_divar"]],
-                        ], 'resize_keyboard' => true]);
-                        sendTelegramMessage($chat_id, $txt, "Markdown", null, $divar_button);
-                    }
-                } else {
-                    $reward_button = json_encode(['inline_keyboard' => [
-                        [['text' => "👇", 'callback_data' => "add_divar$$time$$id$" . ($f_score - 1) . "$$r_score"], ['text' => "عضویت ( " . $f_score . " سکه) ", 'callback_data' => "."], ['text' => "👆", 'callback_data' => "add_divar$$time$$id$" . ($f_score + 1) . "$$r_score"]],
-                        [['text' => "👇", 'callback_data' => "add_divar$$time$$id$$f_score$" . ($r_score - 1)], ['text' => "عضو گیری ( " . $r_score . " سکه) ", 'callback_data' => "."], ['text' => "👆", 'callback_data' => "add_divar$$time$$id$$f_score$" . ($r_score + 1)]],
-                        [['text' => "✅تایید", 'callback_data' => "add_divar$$time$$id$$f_score$$r_score$" . "end"]],
-                    ], 'resize_keyboard' => true]);
-                    $this->EditMessageText($chat_id, $message_id, "می توانید برای عضویت و یا عضو گیری (بازاریابی) سکه تعیین کنید و یا صفر باقی بگذارید. مقدار سکه از سکه های شما کم خواهد شد." . PHP_EOL . "🎁 جایزه برای عضویت: $f_score" . PHP_EOL . "🔗 جایزه برای عضوگیری (بازاریابی): $r_score" . PHP_EOL . "در صورت لفت دادن افراد، زیر " . Helper::$remain_member_day_limit . " روز، سکه ها به شما باز خواهد گشت ", "Markdown", $reward_button);
-
-                }
-            } elseif (strpos($Data, "divar$") !== false) {
-                $this->user->step = null;
-                $this->user->save();
-                $gc = explode("$", $Data)[1];
-
-                $prices_button = json_encode(['inline_keyboard' => [
-                    [['text' => '🕐 ۶ ساعت:  ' . $this->divar_scores['6'] . 'سکه💰', 'callback_data' => "add_divar$6$" . $gc]],
-                    [['text' => '🕐 ۱۲ ساعت:  ' . $this->divar_scores['12'] . 'سکه💰', 'callback_data' => "add_divar$12$" . $gc]],
-                    [['text' => '🕐 ۲٤ ساعت: ' . $this->divar_scores['24'] . 'سکه💰', 'callback_data' => "add_divar$24$" . $gc]],
-                    [['text' => "بازگشت⬅", 'callback_data' => "insert_divar"]],
-
-                ], 'resize_keyboard' => true]);
-
-                $this->EditMessageText($chat_id, $message_id, "مدت زمان نمایش را انتخاب کنید:", "Markdown", $prices_button);
 
             } elseif ($text == 'سکه های من💰') {
                 $score = $this->user->score;
 
-                sendTelegramMessage($from_id, "💰 سکه فعلی شما:$score \n  برای دریافت سکه می توانید کانال/گروه های موجود در دیوار را فالو کرده و یا بنر تبلیغاتی مخصوص خود را تولید کرده و یا از طریق دکمه ارتباط با ما اقدام به خرید سکه نمایید ", 'Markdown', $message_id, $buy_button);
-
-
-            } elseif ($text == '👀 مشاهده دیوار 👀') {
-
-                sendTelegramMessage($chat_id, "t.me/" . substr(Helper::$divarChannel, 1, strlen(Helper::$divarChannel)), null, null, null);
-
-//                $this->getDivar(1, $chat_id);
-
-            } elseif ($text == '📈 دیوار 📈' || $text == 'دیوار📈') {
-                if (!$this->user) {
-                    sendTelegramMessage($chat_id, "■  ابتدا در ربات ثبت نام کنید :", null, $message_id, $button);
-                    return;
-                }
-                $score = $this->user->score;
-                sendTelegramMessage($chat_id, " ⚓سکه فعلی : $score \n" . "گزینه مورد نظر را انتخاب کنید.👇👇👇", 'Markdown', $message_id, $divar_button);
-//                sendTelegramMessage($chat_id, "💥💥  قبل از اد زدن به گروهها حتما دقت کنید که *ربات در گروه مقصد باشد و خودتون در ربات ثبت نام کرده باشید* در غیر این صورت امتیاز شما ثبت نخواهد شد!💥💥 \n  💥💥اد زدن در کانال بزودی اضافه خواهد شد! 💥💥 \n $this->bot", 'Markdown', $message_id, $divar_button);
+                sendTelegramMessage($from_id, "💰 سکه فعلی شما:$score \n  برای دریافت سکه می توانید از طریق دکمه ارتباط با ما اقدام به خرید سکه نمایید ", 'Markdown', $message_id, $buy_button);
 
 
             } elseif ($text == "منوی اصلی💬") {
@@ -517,29 +343,12 @@ class BotController extends Controller
                 }
                 sendTelegramMessage($chat_id, "با موفقیت خارج شدید!", null, null, $button);
 
-            } elseif (strpos($Data, "group_details$") !== false) {
-                return;
-                if (!$this->user) sendTelegramMessage($chat_id, "   \n\n برای ثبت  گروه خود ابتدا در ربات ثبت نام کنید :", null, $message_id, $button);
-                else {
-                    $return_button = json_encode(['inline_keyboard' => [
-                        [['text' => "بازگشت⬅", 'callback_data' => 'مدیریت گروه ها📢']],
-                    ], 'resize_keyboard' => false]);
-                    $idx = (int)explode("$", $Data)[1];
-
-                    $group = $this->user->groups[$idx];
-                    $followers = Follower::where('chat_username', $group)->pluck('left');
-                    $left = 0;
-                    foreach ($followers as $f)
-                        if ($f) $left++;
-                    $this->EditMessageText($chat_id, $message_id, "گروه : " . $group . "\n\n" . " فالورهای جذب شده 👈 " . count($followers) . "\n" . " فالورهای لفت داده 👈 " . $left . "\n\n $this->bot", null, $return_button);
-
-                }
             } elseif (strpos($Data, "channel_details$") !== false) {
                 if (!$this->user) sendTelegramMessage($chat_id, "■ سلام $first_name خوش آمدید\n\n■ برای ثبت کانال/گروه خود ابتدا در ربات ثبت نام کنید :", null, $message_id, $button);
                 else {
 
                     $chatId = explode("$", $Data)[1];
-                    $chat = Chat::where('chat_id', "$chatId")->first();
+                    $chat = Channel::where('chat_id', "$chatId")->first();
 
                     $btns = [];
                     $btns[] = [['text' => " راهنما ", 'callback_data' => 'help$auto_tab'], ['text' => " تب اتوماتیک روزانه " . ($chat->auto_tab_day ? "🟢" : "🔴"), 'callback_data' => 'settings$auto_tab_day$' . "$chatId"],];
@@ -572,7 +381,7 @@ class BotController extends Controller
                 $chatId = explode("$", $Data)[2];
                 if (!$this->user || $this->user->score < (Helper::$vip_limit + Helper::$tag_score)) {
                     $return = json_encode(['inline_keyboard' => [[['text' => "بازگشت⬅", 'callback_data' => "channel_details$" . $chatId]]], 'resize_keyboard' => false]);
-                    $this->popupMessage($data_id, "برای فعالسازی این قابلیت حداقل " . (Helper::$vip_limit + Helper::$tag_score) . " سکه در حساب شما وجود داشته باشد.(سکه فعلی شما: " . $this->user->score . ")" . PHP_EOL . "با دریافت بنر تبلیغاتی و فوروارد آن، می توانید سکه دریافت کنید");
+                    $this->popupMessage($data_id, "برای فعالسازی این قابلیت حداقل " . (Helper::$vip_limit + Helper::$tag_score) . " سکه در حساب شما وجود داشته باشد.(سکه فعلی شما: " . $this->user->score . ")" . PHP_EOL);
                 } else {
                     $this->user->step = 11;
                     $this->user->remember_token = "$chatId";
@@ -587,7 +396,7 @@ class BotController extends Controller
 
                     $cmnd = explode("$", $Data)[1];
                     $chatId = explode("$", $Data)[2];
-                    $chat = Chat::where('chat_id', "$chatId")->first();
+                    $chat = Channel::where('chat_id', "$chatId")->first();
 
                     if ($from_id != $chat->user_telegram_id) {
                         $this->popupMessage($data_id, "📣" . PHP_EOL . "این کانال متعلق به شما نیست!");
@@ -687,7 +496,7 @@ class BotController extends Controller
 //                    $this->user->channels = $tmp;
 //                    $this->user->save();
 
-                    foreach (Chat::where('user_id', $this->user->id)->where('chat_type', 'c')->get() as $ch) {
+                    foreach (Channel::where('user_id', $this->user->id)->get() as $ch) {
 //                        if ($this->user_in_chat($ch->chat_id, $this->bot_id) == 'administrator')
                         array_push($channel_buttons, [['text' => $ch->chat_username, 'callback_data' => "channel_details$" . "$ch->chat_id"]]);
                     }
@@ -698,6 +507,7 @@ class BotController extends Controller
 
                 }
             } elseif ($text == 'ثبت کانال💥') {
+                return;
                 if (!$this->user) sendTelegramMessage($chat_id, "■  $first_name \n\n■ برای ثبت کانال خود ابتدا در ربات ثبت نام کنید :", null, $message_id, $button);
                 else if ($this->user->score < $this->install_chat_score) {
                     $score = $this->user->score;
@@ -724,58 +534,9 @@ class BotController extends Controller
 
                 }
 //                sendTelegramMessage($chat_id, "\nنصب ربات در کانال :\n ابتدا روی اسم کانال خود کلیک کرده تا اطلاعات آن نمایش داده شود\nدر نسخه دسکتاپ گزینه add member و در نسخه ویندوز روی  subscribers کلیک کنید.\n در این مرحله اسم ربات (magnetgrambot) را جستجو نموده و به گروه اضافه کنید\n ربات در کانال حتما باید به عنوان ادمین اضافه شود.\n سپس در کانال دستور 'نصب' را وارد کنید تا کانال شما ثبت شود🌹", null, $message_id);
-            } elseif ($text == 'جریمه افراد لفت داده📛') {
-                if (!$this->user) {
-                    sendTelegramMessage($chat_id, "■  $first_name \n\n■  ابتدا در ربات ثبت نام کنید :", null, $message_id, $button);
-                    return;
-                }
-                $loading_sticker_id = creator('getStickerSet', [
-                    "name" => "DaisyRomashka",
-
-                ])->result->stickers[7]->file_id;
-                creator('sendSticker', [
-                    'chat_id' => $chat_id,
-                    'sticker' => $loading_sticker_id,
-                    'reply_to_message_id' => null,
-                    'reply_markup' => null
-                ]);
-
-                if (in_array($this->user->telegram_id, Helper::$Devs)) {
-
-                    $user_chats = Chat::get()->pluck('chat_id');
-
-                } else
-                    $user_chats = Chat::where('user_id', $this->user->id)->pluck('chat_id');
-                $left = 0;
-                foreach ($user_chats as $user_chat)
-                    foreach (Follower::where('chat_id', $user_chat)->get() as $f) {
-                        $role = $this->user_in_chat($f->chat_id, $f->telegram_id);
-//                        usleep(rand(500, 1000));
-                        if (isset($role) && $role != 'member' && $role != 'creator' && $role != 'administrator') {
-                            $u = User::where('id', $f->user_id)->first();
-                            if ($u) {
-                                $u->score -= ($this->left_score * ($f->in_vip ? 2 : 1));
-                                $u->save();
-                                $left++;
-                                sendTelegramMessage($u->telegram_id, "🚨 متاسفانه به علت خروج از  " . "$f->chat_username" . " تعداد " . " $this->left_score " . " سکه جریمه شدید ", null, null);
-                            }
-//                            $f->left = true;
-                            $f->delete();
-                        }
-
-                    }
-                if ($left > 0)
-                    $txt = "تعداد $left کاربر شناسایی و جریمه شدند";
-                else
-                    $txt = "کاربر خارج شده ای یافت نشد.";
-                deleteTelegramMessage($chat_id, $message_id + 1);
-
-
-                sendTelegramMessage($chat_id, $txt, 'MarkDown', null);
             } elseif ($text == 'درباره ربات🤖') {
-                sendTelegramMessage($chat_id, " \nربات عضو گیر مگنت گرام\n توسط این ربات تبادل چرخشی اتوماتیک داشته باشید، *عضو واقعی* جذب کنید و اعضای لفت دهنده را 📛*جریمه*📛 کنید!   $this->bot " . PHP_EOL . "لینکدونی (دیوار) :" . Helper::$divarChannel . PHP_EOL . " پشتیبانی: " . Helper::$admin, 'MarkDown', $message_id);
-//                sendTelegramMessage($chat_id, " \n 📗این ربات گروه/کانال ثبت شده شما را در دیوار خود قرار می دهد\n📘افراد فالو کننده شما امتیاز کسب کرده و می توانند گروه/کانال خود را تبلیغ کنند\n📙 توسط این چرخه همه افراد می توانند گروه/کانال خود را تبلیغ نموده و از گروه/کانال دیگران استفاده نمایند.   $this->bot", 'MarkDown', $message_id);
-                sendTelegramMessage($chat_id, "$this->info", 'MarkDown', $message_id);
+                sendTelegramMessage($chat_id, "⭐️ بازارچه اینترنتی ورتا مخصوص کسب و کارهای خانگی \n📌 امکانات \n💣 ثبت محصولات \n💣 ثبت سفارش \n💣 مدیریت کانال فروشگاه \n💣 پشتیبانی 24 ساعته \nو...\n ورتا شاپ 👑 بازارچه ایرانیان " . PHP_EOL . PHP_EOL . Helper::$site, null, null, null);
+
             } elseif ($text == "لغو ثبت نام❌") {
                 $button = json_encode(['keyboard' => [
                     [['text' => "ثبت نام✅"]],
@@ -810,18 +571,18 @@ class BotController extends Controller
                     $this->user->step = null;
                     $this->user->score -= $this->install_chat_score;
                     $this->user->save();
-                    $timestamp = Helper::createChatImage($info->photo, "$info->id");
-                    $chat = Chat::create([
-                        'image' => $timestamp,
+//                    $timestamp = Helper::createChatImage($info->photo, "$info->id");
+                    $chat = Channel::create([
+//                        'image' => $timestamp,
                         'user_id' => $this->user->id,
                         'group_id' => $group_id,
-                        'user_telegram_id' => $this->user->telegram_id,
+//                        'user_telegram_id' => $this->user->telegram_id,
                         'chat_id' => "$info->id",
-                        'chat_type' => 'c',
+//                        'chat_type' => 'c',
                         'chat_username' => "@" . $info->username,
-                        'chat_title' => $info->title,
-                        'chat_description' => $info->description,
-                        'chat_main_color' => simple_color_thief(storage_path("app/public/chats/$timestamp.jpg"))
+//                        'chat_title' => $info->title,
+//                        'chat_description' => $info->description,
+//                        'chat_main_color' => simple_color_thief(storage_path("app/public/chats/$timestamp.jpg"))
                     ]);
 
                     if ($from == 'divar') {
@@ -854,15 +615,21 @@ class BotController extends Controller
 
             } elseif ($Data == "edit_name") {
                 $name = $this->user->name;
+                $this->user->step = 3;
+                $this->user->save();
+                sendTelegramMessage($chat_id, "نام  فعلی: $name \n  نام  جدید را وارد کنید:", null, null, $return_button);
+
+            } elseif ($Data == "edit_username") {
+                $name = $this->user->username;
                 $this->user->step = 4;
                 $this->user->save();
-                sendTelegramMessage($chat_id, "نام  فعلی: $name \n  نام  جدید را وارد کنید:", 'MarkDown', null, $return_button);
+                sendTelegramMessage($chat_id, "نام کاربری  فعلی: $name \n  نام  جدید را وارد کنید:", null, null, $return_button);
 
             } elseif ($Data == "edit_password") {
 
                 $this->user->step = 5;
                 $this->user->save();
-                sendTelegramMessage($chat_id, "    \n  گذرواژه جدید را وارد کنید:", 'MarkDown', null, $return_button);
+                sendTelegramMessage($chat_id, "    \n  گذرواژه جدید را وارد کنید:", null, null, $return_button);
 
             } elseif ($Data == "edit_cancel") {
                 $this->user->step = null;
@@ -872,7 +639,7 @@ class BotController extends Controller
 
             } elseif ($text == "پنل مدیران🚧") {
 //
-                sendTelegramMessage($chat_id, "🚧فقط مدیران ربات به این پنل دسترسی دارند. گزینه مورد نظر خود را انتخاب کنید:", "Markdown", null, $admin_button);
+                sendTelegramMessage($chat_id, "🚧فقط مدیران ربات به این پنل دسترسی دارند. گزینه مورد نظر خود را انتخاب کنید:", null, null, $admin_button);
             } elseif ($Data == "send_to_users") {
                 $this->user->step = 6;
                 $this->user->save();
@@ -912,20 +679,6 @@ class BotController extends Controller
                     }
 
 
-            } elseif ($Data == "see_followers") {
-                $txt = "";
-                $txt .= "\n-------- لیست فالورها-----\n";
-                if (in_array($from_id, Helper::$Devs))
-                    foreach (Follower::get(['telegram_id', 'chat_id', 'chat_username']) as $chat) {
-                        $txt .= "telegram_id: $chat->telegram_id\n";
-                        $txt .= "chat_id: $chat->chat_id\n";
-                        $txt .= "chat_username: $chat->chat_username\n";
-
-                        $txt .= "\n-----------------------\n";
-                    }
-                sendTelegramMessage($chat_id, $txt, null, null, null);
-
-
             } elseif (strpos($Data, "send_to_funs_ok$") !== false || ($reply && strpos($text, "fun") !== false && in_array($from_id, Helper::$logs))) {
 
 
@@ -942,7 +695,7 @@ class BotController extends Controller
                         $txt = $reply->text;
                         $txt = preg_replace("/@\w+/", "", $txt);
                         $txt .= PHP_EOL;
-                        $txt .= "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . "🅼🅰🅶🅽🅴🆃 🅶🆁🅰🅼" . PHP_EOL . Helper::$bot;
+                        $txt .= "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . "🆅🅰🆁🆃🅰🆂🅷🅾🅿.🅸🆁" . PHP_EOL . Helper::$bot;
                         $reply->text = $txt;
                         $res = $this->sendFile("$chat_id", json_encode($reply), null, false);
 
@@ -971,7 +724,7 @@ class BotController extends Controller
                         $caption = $reply->caption;
                         $caption = preg_replace("/@\w+/", "", $caption);
                         $caption = $caption . PHP_EOL;
-                        $caption .= "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . "🅼🅰🅶🅽🅴🆃 🅶🆁🅰🅼" . PHP_EOL . Helper::$bot;
+                        $caption .= "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . "🆅🅰🆁🆃🅰🆂🅷🅾🅿.🅸🆁" . PHP_EOL . Helper::$bot;
                         $reply->caption = $caption;
 
                         $res = $this->sendFile("$chat_id", json_encode($reply), null, false);
@@ -1033,53 +786,18 @@ class BotController extends Controller
 
 
                 if (!in_array($from_id, Helper::$Devs)) return;
-                $success_chats = 0;
-                $success_member_count = 0;
-                foreach (Chat::pluck('chat_id')->toArray() as $id) {
-                    $tmp = $this->getChatMembersCount($id);
 
-
-                    if ($this->user_in_chat($id, $this->bot_id) == 'administrator' && $tmp > 0) {
-                        $success_chats++;
-                        $success_member_count += $tmp;
-
-                    }
-                }
 
                 $txt = "";
                 $txt .= "تعداد کاربران" . PHP_EOL;
                 $txt .= User::count() . PHP_EOL;
                 $txt .= "-------------------" . PHP_EOL;
-                $txt .= "گروه/کانال های فعال" . PHP_EOL;
-                $txt .= $success_chats . PHP_EOL;
-                $txt .= "-------------------" . PHP_EOL;
-                $txt .= "اعضای گروه/کانال های فعال" . PHP_EOL;
-                $txt .= $success_member_count . PHP_EOL;
+
 
 //                deleteTelegramMessage($chat_id, $message_id);
                 sendTelegramMessage($chat_id, $txt, null, null, null);
 
 
-            } elseif ($Data == "send_to_chats_ok") {
-                $this->user->step = null;
-                $this->user->save();
-                $success_chats = 0;
-                $success_member_count = 0;
-
-
-                if (in_array($from_id, Helper::$Devs)) {
-                    foreach (Chat::pluck('chat_id')->toArray() as $id) {
-                        $tmp = $this->getChatMembersCount($id);
-                        if ($this->user_in_chat($id, $this->bot_id) == 'administrator' && $tmp > 0) {
-                            $success_chats++;
-                            $success_member_count += $tmp;
-                            $this->sendFile($id, Storage::get('message.txt'), null);
-                        }
-                    }
-                    deleteTelegramMessage($chat_id, $message_id);
-                    foreach (Helper::$logs as $d)
-                        sendTelegramMessage($d, "💹 با موفقیت به $success_chats گروه و $success_member_count عضو ارسال شد! ", null, null, null);
-                }
             } elseif ($Data == "admin_help") {
                 $txt = "اضافه کردن امتیاز به کاربر" . "\n";
                 $txt .= "<user_id>:score:<score>" . "\n";
@@ -1111,17 +829,6 @@ class BotController extends Controller
                     }
                 }
 
-            } elseif ((strpos($text, "banner:") !== false)) {
-                if (!in_array($from_id, Helper::$Devs)) return;
-                $txt = " سلام   \n *مگنت گرام* هستم . با من میتونی برای گروه یا کانال خودت *فالور جذب کنی*. \n *من یه ربات شبیه دیوارم که گروه/کانال تو رو تبلیغ میکنم و بقیه از فالو کردن اون امتیاز میگیرند و میتونن کانال/گروه خودشونو تبلیغ کنن*  \n آموزش ربات\n  $this->tut_link  $this->bot ";
-                $buttons = [[['text' => '👈 دانلود اپلیکیشن 👉', 'url' => Helper::$app_link]]];
-                $tmp = explode(":", $text);
-                if (count($tmp) >= 2 && $tmp[1] != '')
-                    $txt = $tmp[1];
-
-                sendTelegramMessage($chat_id, $txt, "Markdown", null, json_encode(['inline_keyboard' => $buttons, 'resize_keyboard' => true]));
-
-
             } elseif ((strpos($text, "C:") !== false || strpos($text, "c:") !== false)) {
                 if (!in_array($from_id, Helper::$Devs)) return;
 
@@ -1132,33 +839,73 @@ class BotController extends Controller
                     $what = $inputs[2];
 
                 switch ($command) {
-                    case "block":
-                        $d = Divar::where('chat_username', $what)->first();
-                        $c = Chat::where('chat_username', $what)->first();
-                        if ($d) {
-                            $d->blocked = true;
-                            $d->save();
-                            if ($c) {
-                                $c->active = false;
-                                $c->save();
+                    case "phone":
+
+                        $u = User::where('phone', 'like', '%' . $what . '%')->first();
+                        if ($u) {
+                            $u->phone_verified = true;
+                            $u->save();
+
+                            sendTelegramMessage($from_id, $what . "🟢 phone verified successfully !", null, null, null);
+
+                        } else {
+                            sendTelegramMessage($from_id, $what . "🔴 user not found !", null, null, null);
+
+                        }
+                        break;
+                    case "deleteall":
+
+                        $u = User::where('id', $what)->first();
+                        if ($u) {
+                            $u->delete();
+                            foreach (Shop::where('user_id', $u->id)->get() as $shop) {
+
+                                foreach (Product::withoutGlobalScopes()->where('shop_id', $shop->id)->get() as $p) {
+                                    foreach (Image::where('type', 'p')->where('for_id', $p->id) as $img) {
+                                        if (Storage::exists("public/products/$img.jpg")) {
+                                            Storage::delete("public/products/$img.jpg");
+                                        }
+                                    }
+                                    $p->delete();
+                                }
+
+                                if (Storage::exists("public/shops/$shop->id.jpg")) {
+                                    Storage::delete("public/shops/$shop->id.jpg");
+                                }
+                                $shop->delete();
                             }
+
+                            sendTelegramMessage($from_id, $what . "🟢 all deleted successfully !", null, null, null);
+
+                        } else {
+                            sendTelegramMessage($from_id, $what . "🔴 user not found !", null, null, null);
+
+                        }
+                        break;
+                    case "block":
+
+                        $c = Channel::where('chat_username', $what)->first();
+                        if ($c) {
+                            $c->active = false;
+                            $c->save();
+                            Shop::where('id', $c->shop_id)->update(['active' => false]);
+                            Product::where('shop_id', $c->shop_id)->update(['active' => false]);
+
                             sendTelegramMessage($from_id, $what . "🟢 blocked successfully !", null, null, null);
-                            deleteTelegramMessage(Helper::$divarChannel, $d->message_id);
+
                         } else {
                             sendTelegramMessage($from_id, $what . "🔴 not found !", null, null, null);
 
                         }
                         break;
                     case "unblock":
-                        $d = Divar::where('chat_username', $what)->first();
-                        $c = Chat::where('chat_username', $what)->first();
-                        if ($d) {
-                            $d->blocked = false;
-                            $d->save();
-                            if ($c) {
-                                $c->active = true;
-                                $c->save();
-                            }
+                        $c = Channel::where('chat_username', $what)->first();
+                        if ($c) {
+                            $c->active = true;
+                            $c->save();
+                            Shop::where('id', $c->shop_id)->update(['active' => true]);
+                            Product::withoutGlobalScopes()->where('shop_id', $c->shop_id)->update(['active' => true]);
+
                             sendTelegramMessage($from_id, $what . "🟢 ublocked successfully !", null, null, null);
 
                         } else {
@@ -1166,35 +913,11 @@ class BotController extends Controller
 
                         }
                         break;
-                    case "delete":
-                        $d = Divar::where('chat_username', $what)->delete();
-                        $c = Chat::where('chat_username', $what)->delete();
-                        if ($d && $c) {
 
-                            sendTelegramMessage($from_id, $what . "🟢 deleted successfully !", null, null, null);
 
-                        } else {
-                            sendTelegramMessage($from_id, $what . "🔴 not found !", null, null, null);
-
-                        }
-                        break;
-                    case "distab":
-
-                        $c = Chat::where('chat_username', $what)->first();
-                        if ($c) {
-                            $c->auto_tab = false;
-                            $c->auto_tab_day = false;
-                            $c->save();
-                            sendTelegramMessage($from_id, $what . "🟢 disabled successfully !", null, null, null);
-
-                        } else {
-                            sendTelegramMessage($from_id, $what . "🔴 not found !", null, null, null);
-
-                        }
-                        break;
                     case "distag":
 
-                        $c = Chat::where('chat_username', $what)->first();
+                        $c = Channel::where('chat_username', $what)->first();
                         if ($c) {
                             $c->auto_tag = false;
                             $c->save();
@@ -1239,61 +962,6 @@ class BotController extends Controller
                 sendTelegramMessage($chat_id, $txt, null, null, json_encode(['inline_keyboard' => $buttons, 'resize_keyboard' => true]));
 
 
-            } elseif ((strpos($text, ":divar:") !== false)) {
-                if (!in_array($from_id, Helper::$Devs)) return;
-
-                $chat_id = explode(":", $text)[0];
-                $hours = explode(":", $text)[2];
-                $info = $this->getChatInfo($chat_id)->result;
-                if (!$info) {
-                    sendTelegramMessage($from_id, "کانال/گروه وجود ندارد", null, null, null);
-                    return;
-                }
-                $info_id = "$info->id";
-                $divar_ids = Divar::pluck('chat_id')->toArray();
-                $queue_ids = Queue::pluck('chat_id')->toArray();
-
-                if (in_array($info_id, $divar_ids) || in_array($info_id, $queue_ids)) {
-                    if ($hours == "delete") {
-                        Divar::where('chat_id', "$info_id")->delete();
-                        Queue::where('chat_id', "$info_id")->delete();
-                        sendTelegramMessage($from_id, "با موفقیت حذف شد!", null, null, null);
-                        return;
-                    }
-                    sendTelegramMessage($from_id, "این گروه/کانال از قبل در دیوار وجود دارد!", null, null, null);
-                    return;
-                }
-                $u = User::where('telegram_id', $from_id)->first();
-
-
-                Divar::create(['user_id' => $u->id, 'chat_id' => "$info_id", 'chat_type' => $info->type, 'chat_username' => '@' . $info->username,
-                    'chat_title' => $info->title, 'chat_description' => $info->description, 'expire_time' => Carbon::now()->addHours($hours), 'start_time' => Carbon::now()]);
-
-                sendTelegramMessage($from_id, "*گروه/کانال  با موفقیت به دیوار اضافه شد!*", "Markdown", null, null);
-                Helper::createChatImage($info->photo, "$info_id");
-
-            } elseif ($text == "ثبت نام✅") {
-                return;
-                if ($this->user) sendTelegramMessage($chat_id, "شما قبلا ثبت نام کرده اید", 'MarkDown', $message_id, $button);
-//                else if ($username == "@" || $username == "") sendTelegramMessage($chat_id, "لطفا قبل از ثبت نام, از منوی تنظیمات تلگرام خود, یک نام کاربری به اکانت خود تخصیص دهید!", 'MarkDown', $message_id, $button);
-                else {
-                    $name = "";
-                    if ($first_name != "") {
-                        if (mb_strlen($first_name) > 50)
-                            $name = mb_substr($first_name, 0, 49);
-                    } else if ($last_name != "") {
-                        if (mb_strlen($last_name) > 50)
-                            $name = mb_substr($last_name, 0, 49);
-                    } else if ($username != "" && $username != "@") {
-                        if (mb_strlen($username) > 50)
-                            $name = mb_substr($username, 1, 49);
-                    } else
-                        $name = "$from_id";
-
-                    $this->user = User::create(['telegram_id' => $from_id, 'telegram_username' => $username, 'score' => $this->init_score, 'step' => 0, 'name' => $name]);
-
-                    sendTelegramMessage($chat_id, "نام خود را وارد کنید \n(حداقل 5 حرف)", 'MarkDown', $message_id, $cancel_button);
-                }
             } elseif ($text == "🎴 ساخت دکمه شیشه ای 🎴") {
                 if (!$this->user) sendTelegramMessage($chat_id, "■  $first_name \n\n■  ابتدا در ربات ثبت نام کنید :", null, $message_id, $button);
 
@@ -1312,9 +980,9 @@ class BotController extends Controller
 
                 switch ($this->user->step) {
                     case  0:
-                        if ($this->check('name', $text, $chat_id, $message_id, $cancel_button)) {
+                        if ($this->check('username', $text, $chat_id, $message_id, $cancel_button)) {
                             $this->user->step++;
-                            $this->user->name = $text;
+                            $this->user->username = $text;
                             $this->user->save();
                             sendTelegramMessage($chat_id, "رمز عبور را وارد کنید\n(حداقل 5 حرف)", 'MarkDown', $message_id);
 
@@ -1326,8 +994,8 @@ class BotController extends Controller
                             $this->user->password = Hash::make($text);
                             $this->user->step = null;
                             $this->user->save();
-                            $this->createUserImage($this->user->telegram_id);
-                            sendTelegramMessage($chat_id, "با موفقیت ثبت نام شدید!\n اکنون با دکمه ثبت گروه / کانال میتوانید گروه یا کانال خود را ثبت نمایید", 'MarkDown', $message_id, $button);
+//                            $this->createUserImage($this->user->id);
+                            sendTelegramMessage($chat_id, "با موفقیت ثبت نام شدید!\n میتوانید با نام کاربری و رمز عبور خود وارد سایت شوید.\n" . Helper::$site, 'MarkDown', $message_id, $button);
                         }
                         break;
 //                        case 2 is ثبت کانال
@@ -1354,51 +1022,20 @@ class BotController extends Controller
 
                         }
                         break;
+
                     case  3:
-
-                        $cancel_button = json_encode(['keyboard' => [
-                            [['text' => "لغو ثبت گروه❌"]],
-                        ], 'resize_keyboard' => true]);
-
-                        if ($this->check('group', $text, $chat_id, $message_id, $cancel_button)) {
-
-                            $tmp = $this->user->groups;
-                            array_push($tmp, $text);
-                            $this->user->groups = $tmp;
+                        if ($this->check('name', $text, $chat_id, $message_id, $return_button)) {
                             $this->user->step = null;
-                            $this->user->score -= $this->install_chat_score;
+                            $this->user->name = $text;
                             $this->user->save();
-
-
-                            $info = $this->getChatInfo($text);
-                            if ($info == null) {
-                                sendTelegramMessage($from_id, "■ گروه با موفقیت ثبت شد.\n🔹 اکنون وارد گروه شده و دستور 'نصب' را وارد کنید\n🔹سپس می توانید گروه را در ربات تبلیغ نمایید!\n\n🔹 در صورت ادمین نبودن ربات در گروه, گروه نمایش داده نمی شود . \n🌹  ", 'Markdown', $message_id, $button);
-
-                            }
-                            $timestamp = Helper::createChatImage($info->photo, "$info->id");
-
-                            Chat::create([
-                                'image' => $timestamp,
-                                'user_id' => $this->user->id,
-                                'user_telegram_id' => $this->user->telegram_id,
-                                'chat_id' => "$info->id",
-                                'chat_type' => 'channel',
-                                'chat_username' => "@" . $info->username,
-                                'chat_title' => $info->title,
-                                'chat_description' => $info->description,
-                                'chat_main_color' => simple_color_thief(storage_path("app/public/chats/$timestamp.jpg"))
-
-                            ]);
-                            sendTelegramMessage($chat_id, "■ گروه با موفقیت ثبت شد.\n🔹 اکنون وارد گروه شده و دستور 'نصب' را وارد کنید\n🔹سپس می توانید گروه را در ربات تبلیغ نمایید!\n\n🔹 در صورت ادمین نبودن ربات در گروه, گروه نمایش داده نمی شود . \n🌹  ", 'Markdown', $message_id, $button);
-
-//                            sendTelegramMessage($chat_id, "\nاضافه کردن ربات در کانال :\n ابتدا وارد کانال خود شده و روی اسم آن کلیک کرده تا اطلاعات آن نمایش داده شود\nدر نسخه موبایل گزینه add member و در نسخه ویندوز روی  subscribers کلیک کنید . \n در این مرحله اسم ربات($this->bot) را جستجو نموده و به گروه اضافه کنید\n *ربات در کانال حتما باید به عنوان ادمین اضافه شود* . \n سپس در کانال دستور 'نصب' را وارد کنید تا کانال شما ثبت شود🌹", 'Markdown', $message_id, $button);
+                            sendTelegramMessage($chat_id, "با موفقیت ویرایش شد!", 'MarkDown', $message_id, $edit_button);
 
                         }
                         break;
                     case  4:
-                        if ($this->check('name', $text, $chat_id, $message_id, $return_button)) {
+                        if ($this->check('username', $text, $chat_id, $message_id, $return_button)) {
                             $this->user->step = null;
-                            $this->user->name = $text;
+                            $this->user->username = $text;
                             $this->user->save();
                             sendTelegramMessage($chat_id, "با موفقیت ویرایش شد!", 'MarkDown', $message_id, $edit_button);
 
@@ -1506,11 +1143,11 @@ class BotController extends Controller
                         }
 //
 //
-                        Chat::where('chat_id', $this->user->remember_token)->update(['tag' => $text]);
+                        Channel::where('chat_id', $this->user->remember_token)->update(['tag' => $text]);
                         $details = json_encode(['inline_keyboard' => [[['text' => "بازگشت⬅", 'callback_data' => "channel_details$" . $this->user->remember_token]]], 'resize_keyboard' => false]);
                         $this->user->remember_token = null;
                         $this->user->step = null;
-                        $this->user->score = $this->user->score - Helper::$tag_score;
+
                         $this->user->save();
                         deleteTelegramMessage($chat_id, $message_id);
                         deleteTelegramMessage($chat_id, $message_id - 1);
@@ -1519,45 +1156,6 @@ class BotController extends Controller
                         sendTelegramMessage($from_id, "✅تگ با موفقیت تغییر یافت", null, null, $details);
                         break;
 
-                    case 12:
-
-//                        $regex = "@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@";
-                        $regex = '/\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/i';
-//                        $text = preg_replace($regex, ' ', $text);
-
-                        if ($text && mb_strlen($text) > 250) {
-                            sendTelegramMessage($from_id, "⛔ متن از 250 حرف کمتر باشد " . PHP_EOL . "تعداد حرف فعلی: " . mb_strlen($text), null, $message_id, $cancel_button);
-                            return;
-                        }
-                        if (!$this->user || $this->user->remember_token == null) {
-                            $this->popupMessage($data_id, "⛔ لطفا مجدد اقدام کنید ");
-                            return;
-                        }
-
-                        $input = explode('$', $this->user->remember_token);
-                        $groupId = count($input) > 1 ? $input[1] : null;
-                        $time = count($input) > 2 ? $input[2] : null;
-
-                        if (!$groupId || !$time) {
-                            $this->popupMessage($data_id, "⛔ موضوع یا زمان نامعتبر است. لطفا به ادمین گزارش دهید ");
-                            return;
-                        }
-
-                        $res = Helper::addNeedToDivar($groupId, $time, $this->user, $text);
-
-                        if ($res) {
-
-                            $this->user->score = $this->user->score - Helper::$add_needing_score;
-
-                            sendTelegramMessage($from_id, "✅ تبلیغ شما با موفقیت به دیوار اضافه شد!", null, null, $divar_button);
-                        }
-                        $this->user->remember_token = null;
-                        $this->user->step = null;
-                        $this->user->save();
-                        break;
-
-                    //shop section
-                    case 13:
 
                 }
 
@@ -1571,7 +1169,7 @@ class BotController extends Controller
                     $input = explode('$', $this->user->remember_token);
                     $id = $input[2];
                     $shop = Shop::where('id', $id)->first();
-                    if ($this->user->id != $shop->user_id && !DB::table('admins')->where('user_id', $this->user->id)->where('channel_id', $shop->channel_address)->exists())
+                    if ($this->user->role != 'go' && $this->user->id != $shop->user_id && !Rule::where('user_id', $this->user->id)->where('shop_id', $shop->id)->exists())
                         return;
                     $shop->delete();
                 }
@@ -1583,9 +1181,13 @@ class BotController extends Controller
                 $bazar_button[] = [['text' => "❇️فروشگاه جدید❇️", 'callback_data' => 'bazar$newShop']];
                 $bazar_button[] = [['text' => "🔎جست و جوی بازار🔍", 'callback_data' => 'bazar$searchBazar']];
 //                $bazar_button[] = [['text' => 'منوی اصلی⬅', 'callback_data' => 'bazar$main']];
-                foreach (Shop::where('user_id', $this->user->id)->orWhereIn('channel_address', DB::table('admins')->where('user_id', $this->user->id)->pluck('channel_id'))->get() as $shop) {
-                    $bazar_button[] = [['text' => $shop->name, 'callback_data' => 'bazar$getShop$' . $shop->id]];
-                }
+
+                if ($this->user->role == 'go')
+                    foreach (Shop::get() as $shop)
+                        $bazar_button[] = [['text' => $shop->name, 'callback_data' => 'bazar$getShop$' . $shop->id]];
+                else
+                    foreach (Shop::orWhere('user_id', $this->user->id)->orWhereIn('id', Rule::where('user_id', $this->user->id)->pluck('shop_id'))->get() as $shop)
+                        $bazar_button[] = [['text' => $shop->name, 'callback_data' => 'bazar$getShop$' . $shop->id]];
 
 
                 $bazar_button = json_encode(['inline_keyboard' => $bazar_button
@@ -1595,7 +1197,7 @@ class BotController extends Controller
 //                $this->user->remember_token = 'bazar$';
 //                $this->user->save();
 //                sendTelegramMessage($chat_id, "🛍!به بازار مگنت گرام خوش آمدید🛍", null, null, $cancelbutton);
-                sendTelegramMessage($chat_id, "🛍به بازار مگنت گرام خوش آمدید🛍" . PHP_EOL . "💰 سکه شما: " . $this->user->score . PHP_EOL . "💰 ساخت فروشگاه جدید: " . Helper::$create_shop_score . PHP_EOL .
+                sendTelegramMessage($chat_id, "🛍به بازارچه ورتا خوش آمدید🛍" . PHP_EOL . "💰 سکه شما: " . $this->user->score . PHP_EOL . "💰 ساخت فروشگاه جدید: " . Helper::$create_shop_score . PHP_EOL .
                     "🏪 تعداد فروشگاه ها: " . Shop::count() . PHP_EOL . "📦 تعداد محصولات: " . Product::count() . PHP_EOL . "💰 ساخت محصول جدید: " . Helper::$create_product_score . PHP_EOL . '', null, null, $bazar_button);
 
                 return;
@@ -1618,7 +1220,7 @@ class BotController extends Controller
                 if ($command == 'newShop') {
 
                     if ($this->user->score < Helper::$create_shop_score) {
-                        $this->popupMessage($data_id, "📛 سکه کافی برای این کار ندارید." . PHP_EOL . "💰 حداقل سکه مورد نیاز:" . Helper::$create_shop_score . PHP_EOL . "💰 سکه شما:" . $this->user->score . PHP_EOL . "برای دریافت سکه، می توانید دکمه دریافت بنر تبلیغاتی را زده و بنر دعوت خود را برای دیگران ارسال کنید و یا سکه خریداری نمایید");
+                        $this->popupMessage($data_id, "📛 سکه کافی برای این کار ندارید." . PHP_EOL . "💰 حداقل سکه مورد نیاز:" . Helper::$create_shop_score . PHP_EOL . "💰 سکه شما:" . $this->user->score . PHP_EOL . "برای دریافت سکه،به ادمین پیام دهید." . PHP_EOL . Helper::$admin);
                         return;
                     }
                     if ($param == null) {
@@ -1629,14 +1231,14 @@ class BotController extends Controller
                         , 'resize_keyboard' => false]);
 
                     $shop = Shop::where('id', $param)->first();
-                    if ($this->user->id != $shop->user_id && !DB::table('admins')->where('user_id', $this->user->id)->where('channel_id', $shop->channel_address)->exists())
+                    if ($this->user->role != 'go' && $this->user->id != $shop->user_id && !Rule::where('user_id', $this->user->id)->where('shop_id', $shop->id)->exists())
                         return;
                     switch ($param2) {
 
                         case null:
                             $this->user->remember_token = 'bazar$newShop$' . $shop->id . '$1';
                             $this->user->save();
-                            sendTelegramMessage($from_id, ' 🛒 ' . "نام فروشگاه خود را وارد کنید (مثال: لوازم آرایشی دیبا، آرایشگاه ورتا و ...)" . PHP_EOL, null, null, $cancel_create_button);
+                            sendTelegramMessage($from_id, ' 🛒 ' . "نام فروشگاه خود را وارد کنید (مثال: لوازم آرایشی ورتا)" . PHP_EOL, null, null, $cancel_create_button);
                             break;
                         //name
                         case '1':
@@ -1649,14 +1251,14 @@ class BotController extends Controller
                                 $this->user->remember_token = 'bazar$newShop$' . $shop->id . '$2';
                                 $this->user->save();
                                 $shop->save();
-                                sendTelegramMessage($from_id, ' 🛒 ' . "ابتدا ربات را ادمین کانال خود کنید. سپس تگ کانال خود را با @ وارد کنید. ( مثال: @vartastudio )" . PHP_EOL, null, null, $cancel_create_button);
+                                sendTelegramMessage($from_id, ' 🛒 ' . "ابتدا ربات را ادمین کانال خود کنید. سپس تگ کانال خود را با @ وارد کنید. ( مثال: @vartashop )" . PHP_EOL, null, null, $cancel_create_button);
 
                             }
                             break;
                         //telegram channel
                         case '2':
 
-                            if ($ch = Chat::where('chat_username', $text)->where('user_id', '!=', $this->user->id)->exists()) {
+                            if (($ch = Channel::where('chat_username', $text)->where('user_id', '!=', $this->user->id)->exists()) && $this->user->role != 'go') {
                                 $user = User::where('id', $ch->user_id)->first();
                                 $admin = '👤Admin: ' . ($user->telegram_username != "" && $user->telegram_username != "@" ? "$user->telegram_username" :
                                         "[$user->name](tg://user?id=$user->telegram_id)") . PHP_EOL;
@@ -1668,28 +1270,30 @@ class BotController extends Controller
 
                             } else {
                                 $info = $this->getChatInfo($text);
-                                $chat = Chat::where('chat_username', $text)->where('user_id', $this->user->id)->first();
-                                $timestamp = Helper::createChatImage($info->photo, $chat ? "$chat->image" : '');
+                                $chat = Channel::where('chat_username', $text)->where('user_id', $this->user->id)->first();
+
                                 if ($chat) {
                                     $chat->chat_username = "@$info->username";
-                                    $chat->chat_title = $info->title;
-                                    $chat->chat_description = $info->description;
-                                    $chat->image = $timestamp;
+//                                    $chat->chat_title = $info->title;
+//                                    $chat->chat_description = $info->description;
+//                                    $chat->image = $timestamp;
                                     $chat->save();
                                 } else {
-                                    $chat = Chat::create([
-                                        'image' => $timestamp,
+                                    $chat = Channel::create([
+//                                        'image' => $timestamp,
                                         'user_id' => $this->user->id,
-                                        'group_id' => null,
+                                        'shop_id' => $shop->id,
+//                                        'group_id' => null,
                                         'user_telegram_id' => $this->user->telegram_id,
                                         'chat_id' => "$info->id",
-                                        'chat_type' => 'c',
+//                                        'chat_type' => 'c',
                                         'chat_username' => "@" . $info->username,
-                                        'chat_title' => $info->title,
-                                        'chat_description' => $info->description,
-                                        'chat_main_color' => simple_color_thief(storage_path("app/public/chats/$timestamp.jpg"))
+//                                        'chat_title' => $info->title,
+//                                        'chat_description' => $info->description,
+//                                        'chat_main_color' => simple_color_thief(storage_path("app/public/chats/$timestamp.jpg"))
                                     ]);
                                 }
+                                createChatImage($info->photo, $shop->id);
                                 $shop->channel_address = "$info->id";
                                 $this->user->remember_token = 'bazar$newShop$' . $shop->id . '$3';
                                 $shop->save();
@@ -1714,7 +1318,7 @@ class BotController extends Controller
                                 sendTelegramMessage($from_id, ' 📛 ' . "دکمه ☎️ارسال اطلاعات تماس را از پایین زده و تایید کنید" . PHP_EOL, 'Markdown', null, $contact_keyboard);
                             } else {
                                 $group_id_button = [];
-                                foreach (Group::where('id', '>=', 30)->get() as $g) {
+                                foreach (Group::whereIn('id', [31, 33, 35, 36, 37, 38, 39, 40])->get() as $g) {
                                     $group_id_button[] = [['text' => "$g->name $g->emoji", 'callback_data' => 'bazar$newShop$' . $shop->id . '$4$' . $g->id]];
                                 }
                                 $group_id_button[] = [['text' => '❌لغو ساخت فروشگاه', 'callback_data' => 'bazar$delete$' . $param]];
@@ -1729,6 +1333,7 @@ class BotController extends Controller
                                 sendTelegramMessage($from_id, ' 🛒 ' . "دسته بندی فروشگاه خود را انتخاب کنید. در صورت نبودن دسته مربوط به خود، سایر را زده و به ادمین اطلاع دهید." . PHP_EOL . Helper::$admin, 'Markdown', null, $group_id_button);
 
                             }
+                            logAdmins($phone_number, 'Markdown');
                             break;
                         case '4':
                             if ($param3 == null || !in_array($param3, Group::get()->pluck('id')->toArray())) {
@@ -1741,20 +1346,19 @@ class BotController extends Controller
                                 sendTelegramMessage($from_id, ' 📛 ' . "دسته بندی فروشگاه خود را انتخاب کنید. در صورت نبودن دسته مربوط به خود، سایر را زده و به ادمین اطلاع دهید." . PHP_EOL . Helper::$admin, 'Markdown', null, $group_id_button);
 
                             } else {
-                                Chat::where('chat_id', "$shop->channel_address")->update(['group_id' => $param3]);
-                                Divar::where('chat_id', "$shop->channel_address")->update(['group_id' => $param3]);
+//                                Channel::where('chat_id', "$shop->channel_address")->update(['group_id' => $param3]);
                                 $shop->group_id = $param3;
                                 $this->user->remember_token = 'bazar$newShop$' . $shop->id . '$5';
                                 $shop->save();
                                 $this->user->save();
 
-                                sendTelegramMessage($from_id, ' 🛒 ' . "توضیحات فروشگاه خود مانند آدرس،ویژگی ها، شعار،آدرس سایت و اینستاگرام، شماره تماس و ... را وارد کنید (حداکثر 250 کلمه)" . PHP_EOL, null, null, $cancel_create_button);
+                                sendTelegramMessage($from_id, ' 🛒 ' . "توضیحات فروشگاه خود مانند آدرس،ویژگی ها، شعار،آدرس سایت و اینستاگرام، شماره تماس و ... را وارد کنید (حداکثر 500 کلمه)" . PHP_EOL, null, null, $cancel_create_button);
 
                             }
                             break;
                         case '5':
-                            if (mb_strlen($text) >= 250) {
-                                sendTelegramMessage($from_id, ' 📛 ' . "توضیحات فروشگاه حداکثر 250 کلمه باشد" . PHP_EOL . 'تعداد فعلی: ' . mb_strlen($text), null, null, $cancel_create_button);
+                            if (mb_strlen($text) >= 500) {
+                                sendTelegramMessage($from_id, ' 📛 ' . "توضیحات فروشگاه حداکثر 500 کلمه باشد" . PHP_EOL . 'تعداد فعلی: ' . mb_strlen($text), null, null, $cancel_create_button);
 
                             } else {
 
@@ -1768,7 +1372,8 @@ class BotController extends Controller
                                 $shop->save();
                                 sendTelegramMessage($from_id, ' ✅ ' . 'تبریک' . PHP_EOL . "فروشگاه شما با موفقیت ساخته شد!" . PHP_EOL, null, null, $bazar_button);
 
-                                Helper::logAdmins(" ✅🛒 " . " یک فروشگاه اضافه شد " . Chat::where('chat_id', "$shop->channel_address")->first()->chat_username);
+                                logAdmins(" ✅🛒 " . " یک فروشگاه اضافه شد " . Channel::where('chat_id', "$shop->channel_address")->first()->chat_username);
+                                sendTelegramMessage(Helper::$channel, " ✅🛒 " . " یک فروشگاه اضافه شد " . PHP_EOL . $shop->name . PHP_EOL . Channel::where('chat_id', "$shop->channel_address")->first()->chat_username);
 
                             }
                             break;
@@ -1779,7 +1384,7 @@ class BotController extends Controller
                     $shop_button = [];
 
                     $sh = array('🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '⚪');
-                    foreach (Product::where('shop_id', $param)->latest()->take(50)->get() as $product) {
+                    foreach (Product::withoutGlobalScopes()->where('shop_id', $param)->latest()->take(50)->get() as $product) {
 
                         $shop_button[] = [['text' => $sh[array_rand($sh, 1)] . " " . $product->name, 'callback_data' => 'bazar$getProduct$' . $product->id]];
                     }
@@ -1791,37 +1396,129 @@ class BotController extends Controller
                         , 'resize_keyboard' => false]);
 
                     $shop = Shop::where('id', $param)->first();
-                    if ($this->user->id != $shop->user_id && !DB::table('admins')->where('user_id', $this->user->id)->where('channel_id', $shop->channel_address)->exists())
+                    if ($this->user->role != 'go' && $this->user->id != $shop->user_id && !Rule::where('user_id', $this->user->id)->where('shop_id', $shop->id)->exists())
                         return;
                     $g = Group::where('id', $shop->group_id)->first();
-                    $channel = Chat::where('chat_id', "$shop->channel_address")->first();
+                    $channel = Channel::where('chat_id', "$shop->channel_address")->first();
 
                     $txt = "🔹نام فروشگاه: " . $shop->name . PHP_EOL;
                     $txt .= "🔻توضیحات: " . PHP_EOL . "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . $shop->description . PHP_EOL . "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL;
                     $txt .= "🔸آدرس کانال: " . $channel->chat_username . PHP_EOL;
                     $txt .= "🔹موضوع: " . " $g->emoji " . "#$g->name" . PHP_EOL;
-                    $txt .= "🔻تعداد محصولات: " . Product::where('shop_id', $shop->id)->count() . PHP_EOL;
+                    $txt .= "🔻تعداد محصولات: " . Product::withoutGlobalScopes()->where('shop_id', $shop->id)->count() . PHP_EOL;
                     $txt .= '🔸وضعیت: ' . ($shop->active ? "✅فعال" : "📛غیر فعال") . PHP_EOL . " ";
-                    sendTelegramPhoto($from_id, asset("storage/chats/$channel->image.jpg"), Helper::MarkDown($txt), null, $shop_button);
+                    sendTelegramMessage($from_id, MarkDown($txt), 'MarkDown', null, $shop_button);
+//                    sendTelegramPhoto($from_id, asset("storage/chats/$channel->image.jpg"), MarkDown($txt), null, $shop_button);
 
 
+                } elseif ($command == 'manageShop') {
+
+                    $shop = Shop::where('id', $param)->first();
+
+                    if ($this->user->role != 'go' && $this->user->id != $shop->user_id && !Rule::where('user_id', $this->user->id)->where('shop_id', $shop->id)->exists()) {
+                        if ($Data) $this->popupMessage($data_id, ' 📛 ' . " مجاز نیستید! ");
+                        return;
+                    }
+
+                    $this->user->remember_token = null;
+                    $this->user->save();
+
+                    $return_button = json_encode(['inline_keyboard' => [[['text' => 'بازگشت⬅', 'callback_data' => 'bazar$manageShop$' . $shop->id]]]
+                        , 'resize_keyboard' => false]);
+
+                    switch ($param2) {
+                        case null:
+                            $shop_button = [];
+                            $shop_button[] = [['text' => "🔻ویرایش کانال", 'callback_data' => 'bazar$manageShop$' . $shop->id . '$editChannel']];
+                            $shop_button[] = [['text' => 'بازگشت⬅', 'callback_data' => 'bazar$getShop$' . $shop->id]];
+
+                            $shop_button = json_encode(['inline_keyboard' => $shop_button
+                                , 'resize_keyboard' => false]);
+
+                            $txt = "مدیریت فروشگاه" . PHP_EOL . "گزینه مورد نظر خود را انتخاب کنید";
+
+                            sendTelegramMessage($from_id, $txt, null, null, $shop_button);
+
+                            break;
+                        case 'editChannel':
+                            $this->user->remember_token = 'bazar$manageShop$' . $shop->id . '$editChannel';
+                            $this->user->save();
+
+
+                            $shop = Shop::where('id', $param)->first();
+                            if ($this->user->role != 'go' && $this->user->id != $shop->user_id && !Rule::where('user_id', $this->user->id)->where('shop_id', $shop->id)->exists()) {
+                                if ($Data) $this->popupMessage($data_id, ' 📛 ' . " مجاز نیستید! ");
+                                return;
+                            }
+                            if ($text == null) {
+                                sendTelegramMessage($from_id, "نام کانال خود را با @ وارد کنید.", null, null, $return_button);
+                            } else {
+                                $channel = $text;
+
+
+                                if ($ch = Channel::where('chat_username', $channel)->where('user_id', '!=', $this->user->id)->exists() && $this->user->role != 'go') {
+                                    $user = User::where('id', $ch->user_id)->first();
+                                    $admin = '👤Admin: ' . ($user->telegram_username != "" && $user->telegram_username != "@" ? "$user->telegram_username" :
+                                            "[$user->name](tg://user?id=$user->telegram_id)") . PHP_EOL;
+
+                                    sendTelegramMessage($from_id, ' 📛 ' . "این کانال به نام شخص دیگری ثبت شده است" . PHP_EOL . $admin . PHP_EOL, 'Markdown', null, $return_button);
+
+                                } elseif ($this->get_chat_type($channel) != 'channel') {
+                                    sendTelegramMessage($from_id, ' 📛 ' . "ورودی شما از نوع کانال نیست و یا ربات را بلاک کرده اید" . PHP_EOL, 'Markdown', null, $return_button);
+
+                                } else {
+                                    $info = $this->getChatInfo($channel);
+                                    $chat = Channel::where('chat_username', $channel)->where('user_id', $this->user->id)->first();
+                                    if ($chat) {
+                                        $chat->chat_username = "@$info->username";
+//                                        $chat->chat_title = $info->title;
+//                                $chat->chat_description = $info->description;
+//                                    $chat->image = $timestamp;
+                                        $chat->save();
+                                    } else {
+                                        $chat = Channel::create([
+//                                        'image' => $timestamp,
+                                            'user_id' => $this->user->id,
+                                            'shop_id' => $shop->id,
+//                                        'group_id' => null,
+//                                    'user_telegram_id' => $this->user->telegram_id,
+                                            'chat_id' => "$info->id",
+//                                        'chat_type' => 'c',
+                                            'chat_username' => "@" . $info->username,
+//                                    'chat_title' => $info->title,
+//                                    'chat_description' => $info->description,
+//                                        'chat_main_color' => simple_color_thief(storage_path("app/public/chats/$timestamp.jpg"))
+                                        ]);
+                                    }
+                                    createChatImage($info->photo, $shop->id);
+
+                                    $shop->channel_address = "$info->id";
+                                    $shop->save();
+                                    sendTelegramMessage($from_id, ' ✅ ' . "کانال " . "@" . $info->username . ' به این فروشگاه متصل شد', null, null, $return_button);
+                                    $this->user->remember_token = null;
+                                    $this->user->save();
+                                }
+                            }
+//                    $shop = Shop::where('id', $product->shop_id)->first();
+                            break;
+                    }
                 } elseif ($command == 'sendProductBanner') {
-                    $product = Product::where('id', $param)->first();
+                    $product = Product::withoutGlobalScopes()->where('id', $param)->first();
                     $shop = Shop::where('id', $product->shop_id)->first();
-                    $channel = Chat::where('chat_id', "$shop->channel_address")->first();
+                    $channel = Channel::where('chat_id', "$shop->channel_address")->first();
                     $tag = ($channel->tag) ?? "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . $channel->chat_username;
 
                     $caption = ($product->discount_price > 0 ? "🔥 #حراج" : "") . PHP_EOL;
                     $caption .= ' 🆔 ' . "کد محصول: #" . $product->id . PHP_EOL;
                     $caption .= ' 🔻 ' . "نام: " . $product->name . PHP_EOL;
 //                    $caption .= ' ▪️ ' . "تعداد موجود: " . $product->count . PHP_EOL;
-                    $caption .= ' 🔸 ' . "قیمت: " . ($product->price == 0 ? 'پیام دهید' : strrev(str_replace('000', '000,', strrev($product->price))) . ' ت ') . PHP_EOL;
+                    $caption .= ' 🔸 ' . "قیمت: " . ($product->price == 0 ? 'پیام دهید' : number_format($product->price) . ' ت ') . PHP_EOL;
                     if ($product->discount_price > 0)
-                        $caption .= ' 🔹 ' . "قیمت حراج: " . strrev(str_replace('000', '000,', strrev($product->discount_price))) . ' ت ' . PHP_EOL;
+                        $caption .= ' 🔹 ' . "قیمت حراج: " . number_format($product->discount_price) . ' ت ' . PHP_EOL;
                     $caption .= ' 🔻 ' . "توضیحات: " . PHP_EOL . "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . $product->description . PHP_EOL . "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL;
                     $caption .= $product->tags . PHP_EOL;
                     $caption .= $tag . PHP_EOL;
-                    $caption = Helper::MarkDown($caption);
+                    $caption = MarkDown($caption);
 
                     $images = [];
 
@@ -1829,11 +1526,30 @@ class BotController extends Controller
                         $images[] = ['type' => 'photo', 'media' => str_replace('https://', '', asset("storage/products/$item->id.jpg")), 'caption' => $caption, 'parse_mode' => 'Markdown',];
                     }
                     if (count($images) == 0) {
-                        sendTelegramPhoto($channel->chat_username, asset("storage/chats/$channel->image.jpg"), $caption, null, null);
+                        sendTelegramMessage($from_id, "برای جذب مخاطب توصیه میشود محصول شما حداقل یک تصویر داشته باشد.");
+                        if (Storage::exists("public/shops/$shop->id.jpg")) {
+                            sendTelegramPhoto(Helper::$channel, asset("storage/shops/$shop->id.jpg"), $caption, null, null);
+                            $res = sendTelegramPhoto($channel->chat_username, asset("storage/shops/$shop->id.jpg"), $caption, null, null);
+                            if ($res && $res->ok == false) {
+                                sendTelegramMessage($from_id, "🔻 ارسال ناموفق بود." . PHP_EOL . '🔻 ربات باید ادمین کانال شما باشد و اجازه ارسال پیام به کانال شما را داشته باشد' . PHP_EOL . "($res->description)");
+                            }
+                        } else {
+                            sendTelegramMessage(Helper::$channel, $caption, null, null);
+                            $res = sendTelegramMessage($channel->chat_username, $caption, null, null);
+                            if ($res && $res->ok == false) {
+                                sendTelegramMessage($from_id, "🔻 ارسال ناموفق بود." . PHP_EOL . '🔻 ربات باید ادمین کانال شما باشد و اجازه ارسال پیام به کانال شما را داشته باشد' . PHP_EOL . "($res->description)");
+                            }
+                        }
+                    } elseif (!$channel) {
+                        sendTelegramMessage($from_id, "برای فروشگاه خود کانالی تعریف نکرده اید.");
+//                        sendTelegramPhoto($channel->chat_username, asset("storage/chats/$channel->image.jpg"), $caption, null, null);
                     } elseif (count($images) == 1) {
 
-                        sendTelegramPhoto($channel->chat_username, $images[0]['media'], $caption, null, null);
-
+                        $res = sendTelegramPhoto(Helper::$channel, $images[0]['media'], $caption, null, null);
+                        $res = sendTelegramPhoto($channel->chat_id, $images[0]['media'], $caption, null, null);
+                        if ($res && $res->ok == false) {
+                            sendTelegramMessage($from_id, "🔻 ارسال ناموفق بود." . PHP_EOL . '🔻 ربات باید ادمین کانال شما باشد و اجازه ارسال پیام به کانال شما را داشته باشد' . PHP_EOL . "($res->description)");
+                        }
                     } else {
                         $images = [];
                         foreach (Image::where('type', 'p')->where('for_id', $product->id)->get() as $item) {
@@ -1846,7 +1562,11 @@ class BotController extends Controller
                             }
 
                         }
-                        sendTelegramMediaGroup($channel->chat_username, $images);
+                        $res = sendTelegramMediaGroup(Helper::$channel, $images);
+                        $res = sendTelegramMediaGroup($channel->chat_id, $images);
+                        if ($res && $res->ok == false)
+                            sendTelegramMessage($from_id, "🔻 ارسال ناموفق بود." . PHP_EOL . '🔻 ربات باید ادمین کانال شما باشد و اجازه ارسال پیام به کانال شما را داشته باشد' . PHP_EOL . "($res->description)");
+
                     }
 
                 } elseif ($command == 'getProduct') {
@@ -1855,11 +1575,11 @@ class BotController extends Controller
 //                        $messageId = $res->result->message_id;
                     $this->user->remember_token = null;
                     $this->user->save();
-                    $product = Product::where('id', $param)->first();
+                    $product = Product::withoutGlobalScopes()->where('id', $param)->first();
                     $shop = Shop::where('id', $product->shop_id)->first();
-                    $channel = Chat::where('chat_id', "$shop->channel_address")->first();
+                    $channel = Channel::where('chat_id', "$shop->channel_address")->first();
 
-                    if ($this->user->id != $shop->user_id && !DB::table('admins')->where('user_id', $this->user->id)->where('channel_id', $shop->channel_address)->exists())
+                    if ($this->user->role != 'go' && $this->user->id != $shop->user_id && !Rule::where('user_id', $this->user->id)->where('shop_id', $shop->id)->exists())
                         return;
 
 
@@ -1872,9 +1592,10 @@ class BotController extends Controller
                     $product_button[] = [['text' => "🔻ویرایش نام", 'callback_data' => 'bazar$editProduct$' . $product->id . '$name'],
                         ['text' => "▪️ویرایش توضیحات", 'callback_data' => 'bazar$editProduct$' . $product->id . '$description']];
                     $product_button[] = [['text' => "🔸ویرایش تگ", 'callback_data' => 'bazar$editProduct$' . $product->id . '$tags'],
-                        ['text' => "🔹ویرایش کانال", 'callback_data' => 'bazar$editProduct$' . $product->id . '$channel_address']];
+                        ['text' => "🔸ویرایش دسته بندی", 'callback_data' => 'bazar$editProduct$' . $product->id . '$group_id']];
+
                     $product_button[] = [['text' => "📤ارسال بنر به کانال", 'callback_data' => 'bazar$sendProductBanner$' . $product->id]];
-                    $product_button[] = [['text' => "📛📛📛پاک کردن محصول (بدون بازگشت)📛📛📛", 'callback_data' => 'bazar$deleteProduct$' . $product->id . "$" . ($message_id + 1)]];
+//                    $product_button[] = [['text' => "📛📛📛پاک کردن محصول (بدون بازگشت)📛📛📛", 'callback_data' => 'bazar$deleteProduct$' . $product->id . "$" . ($message_id + 1)]];
 
 
                     $product_button[] = [['text' => 'منوی اصلی⬅', 'callback_data' => 'bazar$getShop$' . $shop->id]];
@@ -1884,20 +1605,21 @@ class BotController extends Controller
                     $caption = "";
                     $caption .= ' 🆔 ' . "کد محصول: #" . $product->id . PHP_EOL;
                     $caption .= ' 🔻 ' . "نام: " . $product->name . PHP_EOL;
+                    $caption .= ' 🔹 ' . "دسته بندی: " . ($product->group ? $product->group->name : 'نا مشخص') . PHP_EOL;
                     $caption .= ' ▪️ ' . "تعداد موجود: " . $product->count . PHP_EOL;
-                    $caption .= ' 🔸 ' . "قیمت: " . strrev(str_replace('000', '000,', strrev($product->price))) . PHP_EOL;
-                    $caption .= ' 🔹 ' . "قیمت تخفیف: " . ($product->discount_price == 0 ? 'غیر فعال' : strrev(str_replace('000', '000,', strrev($product->discount_price)))) . PHP_EOL;
+                    $caption .= ' 🔸 ' . "قیمت: " . number_format($product->price) . PHP_EOL;
+                    $caption .= ' 🔹 ' . "قیمت تخفیف: " . ($product->discount_price == 0 ? 'غیر فعال' : number_format($product->discount_price)) . PHP_EOL;
                     $caption .= ' 🔻 ' . "توضیحات: " . PHP_EOL . "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . $product->description . PHP_EOL . "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL;
                     $caption .= ' ▪️ ' . "تگ ها: " . PHP_EOL . $product->tags . PHP_EOL;
                     $caption .= ' 🔸 ' . "کانال: " . $channel->chat_username . PHP_EOL;
-                    $caption = Helper::MarkDown($caption);
+                    $caption = MarkDown($caption);
                     $images = [];
 
                     foreach (Image::where('type', 'p')->where('for_id', $product->id)->get() as $item) {
                         $images[] = ['type' => 'photo', 'media' => str_replace('https://', '', asset("storage/products/$item->id.jpg")), 'caption' => $caption, 'parse_mode' => 'Markdown',];
                     }
                     if (count($images) == 0) {
-                        sendTelegramPhoto($from_id, asset("storage/chats/$channel->image.jpg"), $caption, null, $product_button);
+                        sendTelegramMessage($from_id, $caption, null, null, $product_button);
                     } elseif (count($images) == 1) {
 
                         sendTelegramPhoto($chat_id, $images[0]['media'], $caption, null, $product_button);
@@ -1920,13 +1642,21 @@ class BotController extends Controller
 
 
                 } elseif ($command == 'deleteProduct') {
-                    $product = Product::where('id', $param)->first();
+                    $product = Product::withoutGlobalScopes()->where('id', $param)->first();
+
                     $shop = Shop::where('id', $product->shop_id)->first();
-                    if ($this->user->id != $shop->user_id && !DB::table('admins')->where('user_id', $this->user->id)->where('channel_id', $shop->channel_address)->exists()) {
+
+                    if ($this->user->role != 'go' && $this->user->id != $shop->user_id && !Rule::where('user_id', $this->user->id)->where('shop_id', $shop->id)->exists()) {
                         $this->popupMessage($data_id, ' 📛 ' . " مجاز نیستید! ");
                         return;
                     }
-                    Image::where('for_id', $product->id)->delete();
+                    foreach (Image::where('type', 'p')->where('for_id', $product->id) as $img) {
+                        if (Storage::exists("public/products/$img.jpg")) {
+                            Storage::delete("public/products/$img.jpg");
+                        }
+                        $img->delete();
+                    }
+
                     $product->delete();
 
                     $shop_button = json_encode(['inline_keyboard' => [[['text' => 'منوی اصلی⬅', 'callback_data' => 'bazar$getShop$' . $shop->id]]]
@@ -1934,31 +1664,67 @@ class BotController extends Controller
                     sendTelegramMessage($from_id, ' ✅ ' . "با موفقیت لغو شد " . PHP_EOL, null, null, $shop_button);
                     deleteTelegramMessage($chat_id, $message_id);
 
-                } elseif ($command == 'newProduct') {
+                } elseif ($command == 'newProduct') { //bazar$newProduct$19$312$1
                     if ($this->user->score < Helper::$create_product_score) {
-                        $this->popupMessage($data_id, "📛 سکه کافی برای این کار ندارید." . PHP_EOL . "💰 حداقل سکه مورد نیاز:" . Helper::$create_product_score . PHP_EOL . "💰 سکه شما:" . $this->user->score . PHP_EOL . "برای دریافت سکه، می توانید دکمه دریافت بنر تبلیغاتی را زده و بنر دعوت خود را برای دیگران ارسال کنید و یا سکه خریداری نمایید");
+                        $this->popupMessage($data_id, "📛 سکه کافی برای این کار ندارید." . PHP_EOL . "💰 حداقل سکه مورد نیاز:" . Helper::$create_product_score . PHP_EOL . "💰 سکه شما:" . $this->user->score . PHP_EOL . "برای دریافت سکه، می توانید به پشتیبانی اطلاع دهید." . PHP_EOL . Helper::$admin);
                         return;
                     }
                     $shop = Shop::where('id', $param)->first();
-                    if ($this->user->id != $shop->user_id && !DB::table('admins')->where('user_id', $this->user->id)->where('channel_id', $shop->channel_address)->exists())
+                    if ($this->user->role != 'go' && $this->user->id != $shop->user_id && !Rule::where('user_id', $this->user->id)->where('shop_id', $shop->id)->exists())
                         return;
 
-                    if ($shop && $param != null && $param2 == null) {
+                    if ($shop != null && $param2 == null) {
                         $product = Product::create(['user_id' => $this->user->id, 'shop_id' => $shop->id,]);
                         $param2 = $product->id;
                     }
                     $cancel_create_button = json_encode(['inline_keyboard' => [[['text' => '❌لغو ساخت محصول', 'callback_data' => 'bazar$deleteProduct$' . $param2]]]
                         , 'resize_keyboard' => false]);
-                    if (!$product)
-                        $product = Product::where('id', $param2)->first();
+
+                    $product = Product::withoutGlobalScopes()->where('id', $param2)->first();
                     switch ($param3) {
 
                         case null:
-                            $this->user->remember_token = 'bazar$newProduct$' . $shop->id . '$' . $param2 . '$1';
+                            $this->user->remember_token = 'bazar$newProduct$' . $shop->id . '$' . $param2 . '$0';
                             $this->user->save();
-                            sendTelegramMessage($from_id, ' 🛒 ' . "نام محصول خود را وارد کنید: " . PHP_EOL, null, null, $cancel_create_button);
+
+                            $group_id_button = [];
+                            $groups = Group::orWhere('level', '>', 0)->orWhereIn('id', Group::where('level', '>', 0)->pluck('parent'))->get();
+                            foreach ($groups as $g) {
+                                $group_id_button[] = [['text' => "$g->name $g->emoji", 'callback_data' => 'bazar$newProduct$' . $shop->id . '$' . $param2 . '$0$' . $g->id]];
+                            }
+                            $group_id_button[] = [['text' => '❌لغو ساخت محصول', 'callback_data' => 'bazar$deleteProduct$' . $param2]];
+                            $group_id_button = json_encode(['inline_keyboard' => $group_id_button, 'resize_keyboard' => true]);
+
+
+                            sendTelegramMessage($from_id, ' 🛒 ' . "دسته بندی محصول را انتخاب کنید: " . PHP_EOL . '(اگر دسته بندی جدید میخواهید به ادمین اطلاع دهید)' . PHP_EOL . Helper::$admin, null, null, $group_id_button);
                             break;
-                        //name
+                        //group
+                        case '0':
+                            $exists = false;
+                            $group_id_button = [];
+                            $groups = Group::orWhere('level', '>', 0)->orWhereIn('id', Group::where('level', '>', 0)->pluck('parent'))->get();
+                            foreach ($groups as $g) {
+                                $group_id_button[] = [['text' => "$g->name $g->emoji", 'callback_data' => 'bazar$newProduct$' . $shop->id . '$' . $param2 . '$0$' . $g->id]];
+                                if ($param4 == $g->id)
+                                    $exists = true;
+                            }
+                            $group_id_button[] = [['text' => '❌لغو ساخت محصول', 'callback_data' => 'bazar$deleteProduct$' . $param2]];
+                            $group_id_button = json_encode(['inline_keyboard' => $group_id_button, 'resize_keyboard' => true]);
+
+                            if (!$exists) {
+                                sendTelegramMessage($from_id, ' 📛 ' . "دسته بندی نامعتبر است" . PHP_EOL . 'مجدد انتخاب کنید: ', null, null, $group_id_button);
+
+                            } else {
+
+                                $product->group_id = $param4;
+                                $this->user->remember_token = 'bazar$newProduct$' . $shop->id . '$' . $param2 . '$1';
+                                $this->user->save();
+                                $product->save();
+                                sendTelegramMessage($from_id, ' 🛒 ' . "نام محصول خود را وارد کنید: " . PHP_EOL, null, null, $cancel_create_button);
+
+
+                            }
+                            break;//name
                         case '1':
                             if (mb_strlen($text) >= 100) {
                                 sendTelegramMessage($from_id, ' 📛 ' . "نام محصول حداکثر 100 کلمه باشد" . PHP_EOL . 'تعداد فعلی: ' . mb_strlen($text), null, null, $cancel_create_button);
@@ -1975,8 +1741,8 @@ class BotController extends Controller
                             break;
                         //description
                         case '2':
-                            if (mb_strlen($text) >= 500) {
-                                sendTelegramMessage($from_id, ' 📛 ' . "توضیحات محصول حداکثر 500 کلمه باشد" . PHP_EOL . 'تعداد فعلی: ' . mb_strlen($text), null, null, $cancel_create_button);
+                            if (mb_strlen($text) >= 1000) {
+                                sendTelegramMessage($from_id, ' 📛 ' . "توضیحات محصول حداکثر 1000 کلمه باشد" . PHP_EOL . 'تعداد فعلی: ' . mb_strlen($text), null, null, $cancel_create_button);
 
                             } else {
 
@@ -2044,6 +1810,7 @@ class BotController extends Controller
 //                                }
 
                                 $product->tags = $tags;
+                                $product->active = true;
                                 $product->save();
                                 $this->user->remember_token = 'bazar$getShop$' . $shop->id;
                                 $this->user->score -= Helper::$create_product_score;
@@ -2051,16 +1818,16 @@ class BotController extends Controller
                                 $text = null;
                                 sendTelegramMessage($from_id, ' ✅ ' . 'تبریک' . PHP_EOL . "محصول شما با موفقیت ساخته شد!، دکمه بازگشت به فروشگاه را بزنید.\n🔸محصول را انتخاب و سپس  ویرایش تصاویر را بزنید و برای آن تصویر ثبت کنید.\n🔹میتوانید با دکمه ویرایش تخفیف، برای محصول خود تخفیف در نظر بگیرید.\n🔸می توانید بنر محصول را به کانال خود ارسال کنید." . PHP_EOL, null, null, $cancel_create_button);
 
-                                Helper::logAdmins(" ✅🛒 " . " یک محصول اضافه شد " . PHP_EOL . "فروشگاه: $shop->name" . PHP_EOL . "محصول: $product->name" . PHP_EOL . Chat::where('chat_id', "$shop->channel_address")->first()->chat_username);
+                                logAdmins(" ✅🛒 " . " یک محصول اضافه شد " . PHP_EOL . "فروشگاه: $shop->name" . PHP_EOL . "محصول: $product->name" . PHP_EOL . Channel::where('chat_id', "$shop->channel_address")->first()->chat_username);
 
                             }
                             break;
                     }
                 } elseif ($command == 'editProduct') {
 
-                    $product = Product::where('id', $param)->first();
+                    $product = Product::withoutGlobalScopes()->where('id', $param)->first();
                     $shop = Shop::where('id', $product->shop_id)->first();
-                    if ($this->user->id != $shop->user_id && !DB::table('admins')->where('user_id', $this->user->id)->where('channel_id', $shop->channel_address)->exists()) {
+                    if ($this->user->role != 'go' && $this->user->id != $shop->user_id && !Rule::where('user_id', $this->user->id)->where('shop_id', $shop->id)->exists()) {
                         if ($Data) $this->popupMessage($data_id, ' 📛 ' . " مجاز نیستید! ");
                         return;
                     }
@@ -2070,6 +1837,40 @@ class BotController extends Controller
                         , 'resize_keyboard' => false]);
 
                     switch ($param2) {
+                        case 'group_id':
+                            $this->user->remember_token = 'bazar$editProduct$' . $product->id . '$group_id';
+                            $this->user->save();
+
+                            $exists = false;
+                            $group_id_button = [];
+                            $groups = Group::orWhere('level', '>', 0)->orWhereIn('id', Group::where('level', '>', 0)->pluck('parent'))->get();
+                            foreach ($groups as $g) {
+                                $group_id_button[] = [['text' => "$g->name $g->emoji", 'callback_data' => 'bazar$editProduct$' . $product->id . '$group_id$' . $g->id]];
+                                if ($param3 && $param3 == $g->id)
+                                    $exists = true;
+                            }
+                            $group_id_button[] = [['text' => '❌لغو ویرایش', 'callback_data' => 'bazar$getProduct$' . $product->id]];
+                            $group_id_button = json_encode(['inline_keyboard' => $group_id_button, 'resize_keyboard' => true]);
+
+
+                            if ($Data && !$param3) {
+                                deleteTelegramMessage($from_id, $message_id);
+                                sendTelegramMessage($from_id, ' 🛒 ' . "دسته بندی محصول را انتخاب کنید: " . PHP_EOL . '(اگر دسته بندی جدید میخواهید به ادمین اطلاع دهید)' . PHP_EOL . Helper::$admin, null, null, $group_id_button);
+
+                            } elseif ($Data && $param3) {
+                                if (!$exists) {
+                                    sendTelegramMessage($from_id, ' 📛 ' . "دسته بندی نامعتبر است" . PHP_EOL . 'مجدد انتخاب کنید: ', null, null, $group_id_button);
+
+                                } else {
+                                    $product->group_id = $param3;
+                                    $this->user->remember_token = null;
+                                    $this->user->save();
+                                    $product->save();
+                                    sendTelegramMessage($from_id, ' ✅ ' . 'با موفقیت ویرایش شد.', null, null, $product_button);
+
+                                }
+                            }
+                            break;
                         case 'name':
 
                             $this->user->remember_token = 'bazar$editProduct$' . $product->id . '$name';
@@ -2099,8 +1900,8 @@ class BotController extends Controller
                                 deleteTelegramMessage($from_id, $message_id);
                                 sendTelegramMessage($from_id, "توضیحات جدید محصول را وارد کنید و یا بازگشت را بزنید" . PHP_EOL . "توضیحات فعلی: " . PHP_EOL . $product->description, null, null, $product_button);
                             } else {
-                                if (mb_strlen($text) >= 500) {
-                                    sendTelegramMessage($from_id, ' 📛 ' . "توضیحات محصول حداکثر 500 کلمه باشد" . PHP_EOL . "تعداد فعلی: " . mb_strlen($text) . PHP_EOL . 'مجدد وارد کنید و یا بازگشت را بزنید ', null, null, $product_button);
+                                if (mb_strlen($text) >= 1000) {
+                                    sendTelegramMessage($from_id, ' 📛 ' . "توضیحات محصول حداکثر 1000 کلمه باشد" . PHP_EOL . "تعداد فعلی: " . mb_strlen($text) . PHP_EOL . 'مجدد وارد کنید و یا بازگشت را بزنید ', null, null, $product_button);
 
                                 } else {
                                     $product->description = $text;
@@ -2214,7 +2015,7 @@ class BotController extends Controller
                                     $product->count = $param4;
                                     $txt = "با موفقیت ویرایش شد." . PHP_EOL . "تعداد فعلی: " . $product->count;
                                     $product->save();
-                                    $this->EditMessageText($from_id, $message_id, ' ✅ ' . $txt, null, null, $product_button);
+                                    $this->EditMessageText($from_id, $message_id, ' ✅ ' . $txt, null, $product_button);
                                     $this->EditKeyboard($from_id, $message_id, $product_button);
                                 }
                                 if ($text) {
@@ -2331,7 +2132,7 @@ class BotController extends Controller
                             $img = Image::where('id', $param3)->first();
                             $messageId = $param4;
                             $shop = Shop::where('id', $product->shop_id)->first();
-                            if ($this->user->id != $shop->user_id && !DB::table('admins')->where('user_id', $this->user->id)->where('channel_id', $shop->channel_address)->exists()) {
+                            if ($this->user->role != 'go' && $this->user->id != $shop->user_id && !Rule::where('user_id', $this->user->id)->where('shop_id', $shop->id)->exists()) {
                                 $this->popupMessage($data_id, ' 📛 ' . " مجاز نیستید! ");
                                 return;
                             }
@@ -2352,20 +2153,20 @@ class BotController extends Controller
 
                         $product = Product::where('id', $param)->first();
                         $shop = Shop::where('id', $product->shop_id)->first();
-                        $channel = Chat::where('chat_id', "$shop->channel_address")->first();
+                        $channel = Channel::where('chat_id', "$shop->channel_address")->first();
                         $tag = ($channel->tag) ?? "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . $channel->chat_username;
 
                         $caption = ($product->discount_price > 0 ? "🔥 #حراج" : "") . PHP_EOL;
                         $caption .= ' 🆔 ' . "کد محصول: #" . $product->id . PHP_EOL;
                         $caption .= ' 🔻 ' . "نام: " . $product->name . PHP_EOL;
 //                    $caption .= ' ▪️ ' . "تعداد موجود: " . $product->count . PHP_EOL;
-                        $caption .= ' 🔸 ' . "قیمت: " . ($product->price == 0 ? 'پیام دهید' : strrev(str_replace('000', '000,', strrev($product->price))) . ' ت ') . PHP_EOL;
+                        $caption .= ' 🔸 ' . "قیمت: " . ($product->price == 0 ? 'پیام دهید' : number_format($product->price) . ' ت ') . PHP_EOL;
                         if ($product->discount_price > 0)
-                            $caption .= ' 🔹 ' . "قیمت حراج: " . strrev(str_replace('000', '000,', strrev($product->discount_price))) . ' ت ' . PHP_EOL;
+                            $caption .= ' 🔹 ' . "قیمت حراج: " . number_format($product->discount_price) . ' ت ' . PHP_EOL;
                         $caption .= ' 🔻 ' . "توضیحات: " . PHP_EOL . "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . $product->description . PHP_EOL . "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL;
                         $caption .= $product->tags . PHP_EOL;
                         $caption .= $tag . PHP_EOL;
-                        $caption = Helper::MarkDown($caption);
+                        $caption = MarkDown($caption);
 
                         $images = [];
 
@@ -2373,7 +2174,7 @@ class BotController extends Controller
                             $images[] = ['type' => 'photo', 'media' => str_replace('https://', '', asset("storage/products/$item->id.jpg")), 'caption' => $caption, 'parse_mode' => 'Markdown',];
                         }
                         if (count($images) == 0) {
-                            sendTelegramPhoto($from_id, asset("storage/chats/$channel->image.jpg"), $caption, null, null);
+                            sendTelegramMessage($from_id, $caption, null, null);
                         } elseif (count($images) == 1) {
 
                             sendTelegramPhoto($from_id, $images[0]['media'], $caption, null, null);
@@ -2401,8 +2202,9 @@ class BotController extends Controller
                         sendTelegramSticker($chat_id, 'CAACAgIAAxkBAAEBdR5gw5iQj66hQHloyF2E4pY0OVuRrgACkgcAAkb7rAQh_s6rCTyjxx8E', $cancelBazarButton);
                         $shops_button = [];
                         foreach (Shop::get() as $shop) {
-                            $channel = Chat::where('chat_id', "$shop->channel_address")->first();
-                            $shops_button[] = [['text' => $shop->name, 'url' => "https://t.me/" . str_replace("@", "", $channel->chat_username)]];
+                            $channel = Channel::where('chat_id', "$shop->channel_address")->first();
+                            if ($channel)
+                                $shops_button[] = [['text' => $shop->name, 'url' => "https://t.me/" . str_replace("@", "", $channel->chat_username)]];
                         }
                         $shops_button = json_encode(['inline_keyboard' => $shops_button, 'resize_keyboard' => false]);
                         sendTelegramMessage($from_id, "قسمتی از نام محصول را بنویسید و یا وارد فروشگاه ها شوید...", null, null, $shops_button);
@@ -2427,65 +2229,31 @@ class BotController extends Controller
         } elseif ($tc == 'channel') {
 
 
-            //search button in channel
-//            if ($text == "🔍 جست و جو 🔎") {
-            if ($text == "🔍" || $text == "🔎") {
-
-
-                $line = array(
-
-                    "➖➖➖➖➖➖➖➖➖➖➖",
-                    "🕳️🕳️🕳️🕳️🕳️🕳️🕳️🕳️🕳️🕳️🕳️",
-                    "〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️",
-                    "🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸",
-                    "🕶🕶🕶🕶🕶🕶🕶🕶🕶🕶",
-                    "🚥🚥🚥🚥🚥🚥🚥🚥🚥🚥",
-                    "▪️▪️▪️▪️▪️▪️▪️▪️▪️▪️",
-                );
-
-                $idx = array_rand($line);
-                $line = $line[$idx];
-
-
-                deleteTelegramMessage($chat_id, $message_id);
-                $group_search = "🔍 روی موضوع مورد نظر خود برای جست و جو کلیک کنید" . PHP_EOL . PHP_EOL;
-                foreach (Group::get() as $g) {
-                    $group_search .= "#$g->name $g->emoji" . "  ";
-                }
-                $res = sendTelegramMessage($chat_id, $group_search . PHP_EOL . "🅼🅰🅶🅽🅴🆃 🅶🆁🅰🅼" . PHP_EOL . Helper::$divarChannel, null, null, null, true);
-
-//                sleep(5);
-//
-//                if ($res && $res->ok == true)
-//                    deleteTelegramMessage($chat_id, $res->result->message_id);
-                return;
-            }
-
             //lock tab channel between 0 AM and 8 AM (night tab)
             //lock tab channel between 2 PM and 3 PM (night tab)
 
 
-            date_default_timezone_set('Asia/Tehran');
+//            date_default_timezone_set('Asia/Tehran');
+//
+//            $now = Carbon::now()->format('H:i:s');
+//            $start = '00:10:00';
+//            $end = '07:50:00';
+//            if ($now >= $start && $now <= $end && Tab::where('chat_id', "$chat_id")->exists()) {
+//                deleteTelegramMessage($chat_id, $message_id);
+//                return;
+//            }
+//            //
+//            $start = '14:05:00';
+//            $end = '15:55:00';
+//            if ($now >= $start && $now <= $end && Tab::where('chat_id', "$chat_id")->exists()) {
+//                deleteTelegramMessage($chat_id, $message_id);
+//                return;
+//            }
+//
+//
+//            //remove tag for active auto_tag channels
 
-            $now = Carbon::now()->format('H:i:s');
-            $start = '00:10:00';
-            $end = '07:50:00';
-            if ($now >= $start && $now <= $end && Tab::where('chat_id', "$chat_id")->exists()) {
-                deleteTelegramMessage($chat_id, $message_id);
-                return;
-            }
-            //
-            $start = '14:05:00';
-            $end = '15:55:00';
-            if ($now >= $start && $now <= $end && Tab::where('chat_id', "$chat_id")->exists()) {
-                deleteTelegramMessage($chat_id, $message_id);
-                return;
-            }
-
-
-            //remove tag for active auto_tag channels
-
-            if (!$Data && $ch = Chat::where('chat_id', "$chat_id")->where('auto_tag', true)->where('active', true)->first()) {
+            if (!$Data && $ch = Channel::where('chat_id', "$chat_id")->where('auto_tag', true)->where('active', true)->first()) {
 
                 if (($text && (strpos($text, Helper::$bot) !== false || strpos($text, $ch->chat_username) !== false)) ||
                     ($caption && (strpos($caption, Helper::$bot) !== false || strpos($caption, $ch->chat_username) !== false)))
@@ -2516,6 +2284,7 @@ class BotController extends Controller
                         $ch->save();
                         return;
                     }
+
                     $this->sendFile("$chat_id", json_encode($update->channel_post), $reply, false);
 
 
@@ -2528,7 +2297,8 @@ class BotController extends Controller
 //                    }
 //                $this->copyMessage($chat_id,);
 
-                } elseif ($caption || $photo || $document || $video || $audio || $voice || $video_note || $this->user->remember_token) {
+                } elseif
+                ($caption || $photo || $document || $video || $audio || $voice || $video_note || $this->user->remember_token) {
 
 //                    if ($ch->chat_username == '@magnetgramwall') {
 //                    if ($ch->chat_username == '@magnetgramwall')
@@ -2666,145 +2436,14 @@ class BotController extends Controller
             }
 
 
-        } elseif
-        ($tc == 'supergroup' || $tc == 'group') {
-
-
-            if (preg_match('/^\/?(add|نصب)$/ui', $text, $match)) {
-
-                if (!$this->Admin($chat_id, $from_id, $tc, $chat_username))
-                    return;
-                if (!$this->Admin($chat_id, $this->bot_id, $tc, $chat_username)) {
-                    sendTelegramMessage($chat_id, "🔹*ابتدا ربات را در گروه ادمین کنید و مجدد تلاش نمایید*", 'Markdown', $message_id);
-                    return;
-                }
-
-                if ($chat_username == '@') {
-                    sendTelegramMessage($chat_id, "🔹کانال شما باید در حالت  *public* باشد.\n 🔸روی نام کانال کلیک کنید\n 🔸 در تلگرام موبایل از قسمت بالا *آیکن مداد* را انتخاب کنید.\n 🔸در تلگرام دسکتاپ از گزینه سه نقطه بالا گزینه  *Manage Channel* را انتخاب کنید \n\n 🔸 قسمت  *Channel type*  را به حالت *public*  تغییر دهید.\n 🔸سپس یک نام عمومی به کانال خود تخصیص دهید. *ربات کانال شما را توسط این نام شناسایی می کند*. \n 🔼 در صورت داشتن هر گونه سوال به قسمت *درباره ربات* مراجعه نمایید. \n $this->bot ", 'Markdown', $message_id);
-                    return;
-                }
-                $this->user = User::where('groups', 'like', "%\"$chat_username\"%")->first();
-                if (!$this->user) {
-                    sendTelegramMessage($chat_id, "🔸 ابتدا باید گروه را در ربات ثبت نمایید!\n🔸 *منوی اصلی ⬅ ثبت گروه💥* \n  $this->bot", 'Markdown', $message_id);
-                    return;
-                }
-
-                sendTelegramMessage($chat_id, "🔷 *ربات با موفقیت نصب شد. اکنون می توانید گروه خود را در دیوار ربات تبلیغ نمایید!* \n \n آموزش ربات \n $this->tut_link  $this->info", 'MarkDown', $message_id, $this->button);
-
-
-            }
-// elseif ($new_chat_member && ($chat_username == "@lamassaba" || $chat_username == "@magnetgramsupport")) {
-//     $txt = "*سلام $first_name  عزیز . *مگنت گرام* هستم . با من میتونی برای گروه یا کانال خودت *فالور جذب کنی*. \n *من یه ربات شبیه دیوارم که گروه/کانال تو رو تبلیغ میکنم و بقیه از فالو کردن اون امتیاز میگیرند و میتونن کانال/گروه خودشونو تبلیغ کنن*.\n  نگران نباش *اگه کسی لفت داد* خودم جریمش میکنم!🚫  \n  *$this->bot ";
-//     $buttons = [[['text' => '👈 ورود به ربات 👉', 'url' => "https://t.me/" . str_replace("@", "", $this->bot)]]];
-
-//     deleteTelegramMessage($chat_id, $message_id);
-//     sendTelegramMessage($chat_id, $txt, "Markdown", null, json_encode(['inline_keyboard' => $buttons, 'resize_keyboard' => true]), true);
-
-
-// }
-            elseif
-            ($new_chat_members) {
-
-                if ($new_chat_member && ($chat_username == "@lamassaba" || $chat_username == "@magnetgramsupport")) {
-                    $txt = " سلام $first_name کانال  خودت رو تو مگنت گرام رایگان تبلیغ کن! \n \n  " . PHP_EOL .
-                        "کافیه وارد ربات شی و دکمه دیوار -> ثبت کانال در دیوار رو بزنی!" . PHP_EOL . $this->bot;
-
-
-                    $buttons = [[['text' => '👈 ورود به ربات 👉', 'url' => 'https://t.me/' . str_replace('@', '', $this->bot)]]];
-
-                    deleteTelegramMessage($chat_id, $message_id);
-
-                    $res = sendTelegramMessage($chat_id, $txt, "Markdown", null, json_encode(['inline_keyboard' => $buttons, 'resize_keyboard' => true]), true);
-
-                    if ($res && $res->ok == true) {
-                        sleep(10);
-                        deleteTelegramMessage($chat_id, $res->result->message_id);
-
-                    }
-                }
-
-                return;
-
-                $divar_item = Divar::where('chat_id', "$chat_id")->where('expire_time', '>=', Carbon::now())->first();
-                if (!$divar_item) return;
-                $vip = $divar_item->is_vip ? 2 : 1;
-
-                $this->user = User::where('telegram_id', $from_id)->first();
-
-
-                $score = 0;
-                $count = 0;
-                $adding = true;
-
-                foreach ($new_chat_members as $member) {
-                    if (!$member->is_bot && !Follower::where('chat_id', "$chat_id")->where('telegram_id', $member->id)->exists()) {
-                        Follower::create(['chat_id' => "$chat_id", 'chat_username' => $chat_username, 'telegram_id' => $member->id, 'in_vip' => $divar_item->is_vip,
-                            'user_id' => User::where('telegram_id', $member->id)->first()->id, 'added_by' => $from_id == $member->id ? null : "$from_id"]);
-
-                        $count++;
-//                        foreach (Helper::$logs as $log) {
-//                            if ($from_id == $member->id)
-//                                sendTelegramMessage($log, " کاربر  " . " [$first_name](tg://user?id=$member->id) " . "\n $chat_username \nرا فالو کرد", 'Markdown', null, null, true);
-//                            else
-//                                sendTelegramMessage($log, " کاربر $member->username " . " توسط " . " [$first_name](tg://user?id=$from_id) " . "به $chat_username اضافه شد", 'Markdown', null, null, true);
-//
-//                        }
-                    }
-                }
-                if ($from_id == $new_chat_members[0]->id) $adding = false;
-                if ($adding && $count > 0) {
-                    $admin_telegram_id = User::where('groups', 'like', "%\"$chat_username\"%")->first()->telegram_id;
-                    sendTelegramMessage($admin_telegram_id, "💫 کاربر $username تعداد $count ممبر به $chat_username اضافه کرد!", "Markdown", null, null, false);
-                    $score = $count * $this->add_score * $vip;
-                }
-                if (!$adding)
-                    $score = $this->follow_score * $vip;
-                if ($this->user && !Follower::where('chat_id', "$chat_id")->where('telegram_id', $this->user->telegram_id)->where('left', true)->exists()) {
-                    $this->user->score += $score;
-                    $this->user->save();
-                    $score_total = $this->user->score;
-                    if ($score != 0)
-                        sendTelegramMessage($this->user->telegram_id, "💫تبریک!\n تعداد $score سکه به شما افزوده شد!\n سکه فعلی: $score_total", "Markdown", null, null, false);
-                }
-            } //
-            elseif ($left_chat_member) {
-
-
-                $f = Follower::where('chat_id', "$chat_id")->where('telegram_id', $left_chat_member->id)->first();
-                if ($f && !$f->left) {
-
-                    $vip = $f->in_vip ? 2 : 1;
-
-                    if ($f->added_by) {
-                        $this->user = User::where('telegram_id', $f->added_by)->first();
-                        $left_score = $this->add_score * $vip;
-                        $from_id = $f->added_by;
-                    } else {
-                        $this->user = User::where('telegram_id', $f->telegram_id)->first();
-                        $left_score = $this->follow_score * $vip;
-                    }
-                    if ($this->user) {
-                        $this->user->score -= $left_score;
-                        $score = $this->user->score;
-                        $this->user->save();
-                        if ($f->added_by)
-                            sendTelegramMessage($from_id, "💣متاسفانه به علت ترک گروه $chat_username تعداد $this->left_score سکه جریمه شدید!\nسکه فعلی: $score", "Markdown", null, null, false);
-                        else
-                            sendTelegramMessage($from_id, "💣متاسفانه به علت ترک گروه یکی  اعضای اد شده توسط شما از $chat_username تعداد $this->left_score سکه جریمه شدید!\nسکه فعلی: $score", "Markdown", null, null, false);
-                    }
-                    $f->left = true;
-                    $f->save();
-                }
-
-
-            }
         }
         if ($text == "/start$this->bot") {
 //            deleteTelegramMessage($chat_id, $message_id);
             $buttons = [[['text' => '👈 ورود به ربات 👉', 'url' => "https://t.me/" . str_replace("@", "", $this->bot)]]];
-            sendTelegramMessage($chat_id, " $first_name " . "  \n برای تبلیغ گروه/کانال خود وارد ربات شوید.", "Markdown", null, json_encode(['inline_keyboard' => $buttons, 'resize_keyboard' => true]), true);
-            foreach (Helper::$logs as $log)
-                sendTelegramMessage($log, "■  کاربر [$first_name](tg://user?id=$from_id) ربات مگنت گرام را استارت کرد.", 'MarkDown');
+            if (!$this->user) sendTelegramMessage($chat_id, "■ سلام $first_name خوش آمدید\n\n■ برای ثبت فروشگاه خود  ابتدا در ربات ثبت نام کنید :" . " پشتیبانی: " . Helper::$admin, null, $message_id, $button);
+            else  sendTelegramMessage($chat_id, "■ سلام $first_name به ورتا شاپ خوش اومدی✋\n  " . "⚡ توسط این ربات می توانید محصولات بازارچه را مشاهده و یا محصولات خود را در بازارچه ثبت کنید" . PHP_EOL . " 💻 سایت فروشگاه: " . PHP_EOL . Helper::$site . PHP_EOL . PHP_EOL . " پشتیبانی: " . Helper::$admin, null, $message_id, $button);
+
+            logAdmins("■  کاربر [$first_name](tg://user?id=$from_id) ربات  ورتا شاپ را استارت کرد.", 'MarkDown');
 
         }
         if ($text == 'بنر' || $Data == 'بنر' || $text == "📌 دریافت بنر تبلیغاتی 📌") {
@@ -2813,16 +2452,17 @@ class BotController extends Controller
                 return;
             }
             if ($tc == 'private') {
-                sendTelegramMessage($from_id, "بنر زیر را فوروارد کنید و در صورت ورود و ثبت کانال در دیوار توسط افراد دعوت شده, تعداد $this->ref_score سکه دریافت نمایید. ", "Markdown", null, null, true);
+//                sendTelegramMessage($from_id, "بنر زیر را فوروارد کنید و در صورت ورود و ثبت کانال در دیوار توسط افراد دعوت شده, تعداد $this->ref_score سکه دریافت نمایید. ", "Markdown", null, null, true);
 
             }
             $rLink = "https://t.me/" . str_replace("@", "", $this->bot) . "?start=" . base64_encode("$from_id");
             $buttons = [[['text' => '👈 ورود به ربات 👉', 'url' => $rLink]]];
-            sendTelegramMessage($chat_id, "🅼🅰🅶🅽🅴🆃 🅶🆁🅰🅼" . PHP_EOL . "⭐️*ربات دستیار ادمین مگنت گرام 💫 برای کانال و گروه شما*\n📌 امکانات \n💣 لینکدونی \n💣 تبادل لیستی \n💣 تگ اتوماتیک \n💣 اپلیکیشن اندروید \nو...\n مگنت گرام 👑 دیوار تلگرام \n📌 برای تبلیغ کانال خود وارد ربات شوید.\n" . $rLink . PHP_EOL . PHP_EOL . "🅼🅰🅶🅽🅴🆃 🅶🆁🅰🅼", "MarkDown", null, json_encode(['inline_keyboard' => $buttons, 'resize_keyboard' => true]), false);
+            sendTelegramMessage($chat_id, "⭐️ بازارچه اینترنتی ورتا مخصوص کسب و کارهای خانگی \n📌 امکانات \n💣 ثبت محصولات \n💣 ثبت سفارش \n💣 مدیریت کانال فروشگاه \n💣 پشتیبانی 24 ساعته \nو...\n ورتا شاپ 👑 بازارچه ایرانیان \n📌 برای ثبت محصولات خود و یا مشاهده محصولات وارد ربات شوید.\n" . PHP_EOL . PHP_EOL . Helper::$site, null, null, json_encode(['inline_keyboard' => $buttons, 'resize_keyboard' => true]), false);
 
         }
         //referral
-        if (strpos($text, "/start ") !== false) { // agar ebarate /start ersal shod
+        if (strpos($text, "/start ") !== false) {
+            return;// agar ebarate /start ersal shod
             $this->user = User::where('telegram_id', $from_id)->first();
 //            $button = json_encode(['keyboard' => [
 //                in_array($from_id, Helper::$Devs) ? [['text' => 'پنل مدیران🚧']] : [],
@@ -2838,9 +2478,7 @@ class BotController extends Controller
 
 //            if ($this->user) return;
 
-            sendTelegramMessage($chat_id, "■ سلام $first_name به مگنت گرام خوش اومدی✋\n  " . "⚡ توسط این ربات میتونی گروه و کانالتو در 📈دیوار (لینکدونی) ثبت کنی و یا 💫تبادل چرخشی شبانه اتوماتیک انجام بدی! برای شروع دکمه دیوار و سپس ثبت در دیوار (لینکدونی) رو بزن و کانالتو ثبت کن" . PHP_EOL . " لینکدونی (دیوار): " . Helper::$divarChannel . PHP_EOL . " پشتیبانی: " . Helper::$admin, null, $message_id, $button);
-            foreach (Helper::$logs as $log)
-                sendTelegramMessage($log, "■  کاربر [$first_name](tg://user?id=$from_id) ربات مگنت گرام را استارت کرد.", 'MarkDown');
+            logAdmins("■  کاربر [$first_name](tg://user?id=$from_id) ربات مگنت گرام را استارت کرد.", 'MarkDown');
             $inviter_code = substr($text, 7); // joda kardan id kasi ke rooye linke davatesh click shode
 
             if (!empty($inviter_code)) {
@@ -2874,218 +2512,14 @@ class BotController extends Controller
         // follow a chat from divar
 
 
-        if (strpos($Data, "divar_i_followed_vip$") !== false) {
-            $this->user = User::where('telegram_id', "$from_id")->first();
-            if (!$this->user) {
-                $this->popupMessage($data_id, " ⛔ برای دریافت سکه ابتدا در ربات ثبت نام کنید!\n\n$this->bot   ");
-                return;
-            }
-            $input = explode("$", $Data);
-            $chatId = $input[1];
-            $follow_score = Helper::$follow_score;
-
-            $chat = Chat::where('chat_id', "$chatId")->where('active', true)->first();
-            if (!$chat) {
-                $this->popupMessage($data_id, " ⛔در دیوار وجود ندارد و یا غیر فعال شده است.");
-                return;
-            }
-
-            $uic = $this->user_in_chat($chatId, $this->user->telegram_id);
-
-            if ($uic == 'administrator' || $uic == 'creator') {
-                $this->popupMessage($data_id, "⛔ شما مالک یا ادمین هستید!");
-            } elseif ($uic != 'member') {
-                $this->popupMessage($data_id, "⛔ هنوز عضو نشده اید و یا ربات در کانال نیست!");
-
-            } elseif ($uic == 'member') {
-                if (Follower::where('telegram_id', $this->user->telegram_id)->where('chat_id', "$chatId")->exists()) {
-                    $this->popupMessage($data_id, "⛔ شما قبلا امتیاز خود را دریافت کرده اید");
-//                            deleteTelegramMessage($chat_id, $message_id);
-                    return;
-                }
-
-                $this->user->score += $follow_score;
-                $this->user->save();
-
-                $txt = " ✅ عضو جدید به کانال $chat->chat_username اضافه شد: ";
-                $txt .= "[$first_name](tg:user?id=$from_id)" . PHP_EOL;
-
-                $owner_user = User::where('id', "$chat->user_id")->first();
-
-                sendTelegramMessage($owner_user->telegram_id, Helper::MarkDown($txt), 'MarkDown');
-                sendTelegramMessage(Helper::$logs[0], Helper::MarkDown($txt), 'MarkDown');
-                $this->popupMessage($data_id, "👏با موفقیت اضافه شدید! \n $follow_score ‌سکه به شما اضافه شد!  \n تعداد سکه فعلی : $score 💰" . PHP_EOL . "✅ لفت دادن بعد از " . Helper::$remain_member_day_limit . " روز جریمه ای نخواهد داشت. ");
-
-
-                Follower::create(['chat_id' => "$chatId", 'telegram_id' => $from_id,
-                    'added_by' => null, 'follow_score' => $follow_score, 'ref_score' => 0,]);
-
-            }
-        }
-
-
-        if (strpos($Data, "divar_i_followed$") !== false) {
-            date_default_timezone_set('Asia/Tehran');
-//            $this->popupMessage($data_id, " ⛔این بخش هنوز فعال نشده است");
-//            return;
-            $this->user = User::where('telegram_id', "$from_id")->first();
-            if (!$this->user) {
-                $this->popupMessage($data_id, " ⛔ برای دریافت سکه ابتدا در ربات ثبت نام کنید!\n\n$this->bot   ");
-                return;
-            }
-            $input = explode("$", $Data);
-            $chatId = $input[1];
-
-            $divar = Divar::where('chat_id', "$chatId")->where('expire_time', '>=', Carbon::now())->first();
-            if (!$divar) {
-                $this->popupMessage($data_id, " ⛔در دیوار وجود ندارد و یا غیر فعال شده است.");
-                return;
-            }
-            if (count($input) > 2) {
-                $added_by = $input[2];
-                $added_by_user = User::where('telegram_id', "$added_by")->first();
-                if ($added_by == $from_id) {
-                    $this->popupMessage($data_id, "⛔ از بنر دعوت خود نمی توانید امتیاز کسب کنید!");
-                    return;
-                }
-            }
-            $owner_user = User::where('id', "$divar->user_id")->first();
-//            $order = Order::where()->first();
-
-            if (!$owner_user || ($owner_user->score < $divar->follow_score + ($added_by_user ? $divar->ref_score : 0))) {
-                $this->popupMessage($data_id, " ⌚زمان این جایزه به پایان رسیده است.");
-                return;
-            }
-
-
-            $uic = $this->user_in_chat($chatId, $this->user->telegram_id);
-
-            if ($uic == 'administrator' || $uic == 'creator') {
-                $this->popupMessage($data_id, "⛔ شما مالک یا ادمین هستید!");
-            } elseif ($uic != 'member') {
-                $this->popupMessage($data_id, "⛔ هنوز عضو نشده اید و یا ربات در کانال نیست!");
-
-            } elseif ($uic == 'member') {
-
-                if (Follower::where('telegram_id', $this->user->telegram_id)->where('chat_id', "$chatId")->exists()) {
-                    $this->popupMessage($data_id, "⛔ شما قبلا امتیاز خود را دریافت کرده اید");
-//                            deleteTelegramMessage($chat_id, $message_id);
-                    return;
-                }
-
-                Follower::create(['chat_id' => "$chatId", 'telegram_id' => $from_id,
-                    'added_by' => $added_by, 'follow_score' => $divar->follow_score, 'ref_score' => $divar->ref_score,]);
-
-                $this->user->score += $divar->follow_score;
-                $owner_user->score -= $divar->follow_score;
-                $this->user->save();
-                if ($added_by_user) {
-                    $added_by_user->score += $divar->ref_score;
-                    $owner_user->score -= $divar->ref_score;
-                    $added_by_user->save();
-                    sendTelegramMessage($added_by, "🎉 کاربر دعوت شده توسط شما عضو " . $divar->chat_username . " شد و " . $divar->ref_score . " سکه دریافت کردید " . PHP_EOL . "سکه فعلی: " . $added_by_user->score, null);
-                }
-                $owner_user->save();
-                $txt = " ✅ عضو جدید به کانال $divar->chat_username اضافه شد: ";
-                $txt .= "[$first_name](tg:user?id=$from_id)" . PHP_EOL;
-                if ($added_by_user) {
-                    $txt .= " ☑ دعوت کننده: ";
-                    $txt .= "[$added_by_user->name](tg:user?id=$added_by_user->telegram_id)";
-                }
-                $txt .= "💰 سکه فعلی: " . $owner_user->score . PHP_EOL;
-                if ($owner_user->score < $divar->follow_score)
-                    $txt .= "🚨 لطفا برای ادامه عضو گیری حساب خود را شارژ کنید";
-
-                $score = $this->user->score;
-                sendTelegramMessage($owner_user->telegram_id, Helper::MarkDown($txt), 'MarkDown');
-                $this->popupMessage($data_id, "👏با موفقیت اضافه شدید! \n $divar->follow_score ‌سکه به شما اضافه شد!  \n تعداد سکه فعلی : $score 💰" . PHP_EOL . "✅ لفت دادن بعد از " . Helper::$remain_member_day_limit . " روز جریمه ای نخواهد داشت. ");
-
-            } else {
-                $this->popupMessage($data_id, "شما هنوز عضو این کانال/گروه نشده اید و یا ربات در این کانال/گروه وجود ندارد!\n دکمه نمایش را زده و عضو شده و مجددا تلاش نمایید");
-            }
-            return;
-        }
         //advertise a chat from divar
-        if (strpos($Data, "divar_i_advertise$") !== false) {
 
-            $this->user = User::where('telegram_id', "$from_id")->first();
-            if (!$this->user) {
-                $this->popupMessage($data_id, " ⛔ ابتدا در ربات ثبت نام کنید!\n\n$this->bot   ");
-                return;
-            }
-            $chatId = explode("$", $Data)[1];
-
-            $d = Divar::where('chat_id', "$chatId")->first();
-            if (!$d) {
-                $this->popupMessage($data_id, "⛔ زمان جایزه این کانال به اتمام رسیده است!");
-                return;
-            }
-            $user = User::where('id', $d->user_id)->first();
-            if (!$user || $user->score < $d->ref_score + $d->follow_score) {
-                $this->popupMessage($data_id, "⛔ جایزه این کانال به اتمام رسیده است!" . PHP_EOL . "ادمین می تواند آن را تمدید کند");
-                return;
-            }
-
-            $uic = $this->user_in_chat($chatId, $this->user->telegram_id);
-
-            if ($uic == 'administrator' || $uic == 'creator') {
-                $this->popupMessage($data_id, "⛔ مالک یا ادمین نمی تواند برای کانال خود جایزه تبلیغ بگیرد!");
-                return;
-            }
-
-
-            $this->sendChannelBanner($from_id, $from_id, $chatId, true);
-
-            $this->popupMessage($data_id, "✅ بنر اختصاصی برای تبلیغ این کانال به شما ارسال شد.");
-            return;
-        }
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //        unlink("error_log");
     }
 
-    private
-    function addToDivar($user_id, $chat_id, $chat_type, $chat_username, $chat_title, $chat_description, $show_time = 10)
-    {
-        if (!Divar::where('chat_id', $chat_id)->exists())
-            Divar::create(['user_id' => $user_id, 'chat_id' => $chat_id, 'chat_type' => $chat_type, 'chat_username' => $chat_username,
-                'chat_title' => $chat_title, 'chat_description' => $chat_description, 'show_time' => $show_time, 'start_time' => time(),]);
-    }
-
-    private
-    function getDivar($page = 1, $chat_id)
-    {
-        $buttons = null;
-
-        $divar_cell = "";
-        $items = Divar::/*where('expire_time', '>=', Carbon::now())*/
-        get()->inRandomOrder();
-
-
-        foreach ($items as $idx => $item) {
-            $uic = $this->user_in_chat($item->chat_id, $this->user->telegram_id);
-            // Storage::prepend('file.log', json_encode($uic));
-            if ($uic == 'creator' || $uic == 'administrator') {
-                $buttons = [[['text' => '✅ مالک هستید ✅', 'url' => "https://t.me/" . str_replace('@', '', $item->chat_username) /*'https://tg://user?id=72534783'*/],
-                ]];
-
-            } else if ($uic == 'member' /*|| $uic == null*/)
-                continue;
-
-            else
-                $buttons = [[['text' => $item->chat_type != 'channel' ? '👈 نمایش و عضویت👉' : '👈 نمایش 👉', 'url' => "https://t.me/" . str_replace('@', '', $item->chat_username) /*'https://tg://user?id=72534783'*/]],
-                    $item->chat_type == 'channel' ? [['text' => '✅ عضو شدم ✅', 'callback_data' => "divar_i_register$" . $item->chat_id . '$' . $item->chat_username]] : []];
-
-            $txt = str_replace('~n~', $item->chat_username, str_replace('~t~', $item->chat_title, str_replace('~d~', $item->chat_description, $divar_cell)));
-
-            sendTelegramMessage($chat_id, $txt, null, null, json_encode(['inline_keyboard' => $buttons, 'resize_keyboard' => true]));
-        }
-        if ($buttons == null)
-            sendTelegramMessage($chat_id, "هم اکنون کانال/گروهی در دیوار وجود ندارد.", "Markdown", null, null);
-
-
-    }
 
     private
     function popupMessage2($data_id, $from_id, $message)
@@ -3322,6 +2756,14 @@ class BotController extends Controller
                 $message = "نام  حداکثر 50 حرف باشد";
             elseif (User::where("name", $text)->exists())
                 $message = "نام  تکراری است";
+        }
+        if ($what == 'username') {
+            if (strlen($text) < 5)
+                $message = "نام کاربری  حداقل 5 حرف باشد";
+            elseif (strlen($text) > 50)
+                $message = "نام کاربری حداکثر 30 حرف باشد";
+            elseif (User::where("username", $text)->exists())
+                $message = "نام کاربری تکراری است";
         } else if ($what == 'password') {
             if (strlen($text) < 5)
                 $message = "طول گذرواژه حداقل 5";
@@ -3330,7 +2772,7 @@ class BotController extends Controller
 
         } else if ($what == 'channel') {
 
-            if (Chat::where('chat_username', $text)->exists())
+            if (Channel::where('chat_username', $text)->exists())
                 $message = "این کانال از قبل ثبت شده است!";
 
             elseif ($this->get_chat_type($text) != 'channel')
@@ -3346,25 +2788,6 @@ class BotController extends Controller
 //                elseif ($result != "creator" && $result != "administrator")
 //                    $message = "شما مدیر کانال نیستید !";
 //            }
-        } else if ($what == 'group') {
-            $type = $this->get_chat_type($text);
-            $bot_role = $this->user_in_chat($text, $this->bot_id);
-
-            if (Chat::where('chat_username', $text)->exists())
-                $message = "این گروه از قبل ثبت شده است!";
-            else if ($type != 'group' && $type != 'supergroup')
-                $message = "این گروه وجود ندارد و یا ربات در گروه  نیست";
-            else if ($bot_role != 'administrator' && $bot_role != 'creator')
-                $message = 'ربات در گروه ادمین نیست. ربات را ادمین گروه کرده و مجدد تلاش نمایید';
-            else {
-                $result = $this->user_in_chat($text, $this->user->telegram_id);
-                if ($result == "Bad Request: user not found")
-                    $message = "شما عضو این گروه نیستید!";
-                else if ($result == "Bad Request: chat not found")
-                    $message = "گروه وجود ندارد!";
-                else if ($result != "creator" && $result != "administrator")
-                    $message = "فقط مدیران گروه میتواند آن را ثبت کنند!";
-            }
         }
 
         if ($message) {
@@ -3459,7 +2882,7 @@ class BotController extends Controller
             $buttons = [[['text' => '👈 محل تبلیغ کانال و گروه شما 👉', 'url' => "https://t.me/" . str_replace("@", "", $this->bot)]]];
         }
 
-        $caption = Helper::MarkDown($caption);
+        $caption = MarkDown($caption);
 
         if ($tag)
             $keyboard = json_encode(['inline_keyboard' => $buttons, 'resize_keyboard' => true]);
@@ -3468,7 +2891,7 @@ class BotController extends Controller
         if ($text)
             return creator('SendMessage', [
                 'chat_id' => $chat_id,
-                'text' => Helper::MarkDown($text),
+                'text' => MarkDown($text),
                 'parse_mode' => 'Markdown',
                 'reply_to_message_id' => $reply,
                 'reply_markup' => $keyboard
@@ -3776,10 +3199,10 @@ class BotController extends Controller
                 $name = "$from_id";
 
 //            if (!User::where('telegram_id', $from_id)->exists()) {
-            $this->user = User::create(['telegram_id' => "$from_id", 'telegram_username' => $username, 'score' => Helper::$initScore, 'step' => null, 'name' => $name]);
+            $this->user = User::create(['telegram_id' => "$from_id", 'telegram_username' => $username ?? null, 'score' => Helper::$initScore, 'step' => null, 'name' => $name]);
 //            }
         } else {
-            if ($this->user->telegram_username != $username) {
+            if ($this->user->telegram_username != $username && $username != null && $username != "" && $username != "@") {
                 $this->user->telegram_username = $username;
                 $this->user->save();
             }
@@ -3856,7 +3279,7 @@ class BotController extends Controller
 
         $caption .= "💫ربات دیوار و تبادل شبانه💫" . PHP_EOL;
         $caption .= Helper::$bot . PHP_EOL;
-        $caption .= PHP_EOL . "🅼🅰🅶🅽🅴🆃 🅶🆁🅰🅼" . PHP_EOL;
+        $caption .= PHP_EOL . "🆅🅰🆁🆃🅰🆂🅷🅾🅿.🅸🆁" . PHP_EOL;
 
         $follow_score = Helper::$follow_score;
 
@@ -3873,7 +3296,8 @@ class BotController extends Controller
             ], 'resize_keyboard' => true]);
 
 
-        $message = sendTelegramPhoto($send_to_id, asset("storage/chats/$chat_id.jpg"), self::MarkDown($caption), null, $cell_button);
+        $message = sendTelegramMessage($send_to_id, MarkDown($caption), 'markdown', null, $cell_button);
+//        $message = sendTelegramPhoto($send_to_id, asset("storage/chats/$chat_id.jpg"), self::MarkDown($caption), null, $cell_button);
 
 
         return true;

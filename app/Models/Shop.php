@@ -13,7 +13,7 @@ class Shop extends Model
     public $timestamps = false;
     protected $table = 'shops';
     protected $fillable = [
-        'id', 'user_id', 'channel_address', 'county_id', 'address', 'postal_code', 'page_address', 'site_address', 'name', 'description', 'group_id', 'timestamp', 'active', 'auto_tag', 'auto_channel_post', 'subscribe', 'created_at'
+        'id', 'user_id', 'channel_address', 'county_id', 'province_id', 'address', 'postal_code', 'page_address', 'site_address', 'name', 'description', 'group_id', 'timestamp', 'active', 'subscribe', 'created_at'
     ];
     protected $casts = [
         // 'chat_id' => 'string',

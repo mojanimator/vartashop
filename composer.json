@@ -20,7 +20,8 @@
     "laravel/tinker": "^2.5",
     "laravel/ui": "^3.3",
     "morilog/jalali": "^3.2",
-    "pusher/pusher-php-server": "^7.0"
+    "pusher/pusher-php-server": "^7.0",
+    "spatie/laravel-sitemap": "^6.0"
   },
   "require-dev": {
     "facade/ignition": "^2.5",

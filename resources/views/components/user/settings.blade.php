@@ -2,7 +2,7 @@
 
 
     <div class="col-md-12">
-        <div class="card">
+        <div class="card move-on-hover">
             <div class="card-header text-center text-lg text-primary font-weight-bold">حساب کاربری</div>
 
             <div class="card-body text-right">

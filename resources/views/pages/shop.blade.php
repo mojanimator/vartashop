@@ -101,8 +101,8 @@
                 <div class="container py-5">
                     <h3 class="mt-3">دسته بندی محصولات</h3>
                     <div id="groups-carousel" class="owl-carousel owl-theme text-center  ">
-                        @foreach(\App\Models\Group::whereIn('id',\App\Models\Product::where('shop_id',$shop->id)->distinct('group_id')->pluck('group_id'))->select('id','name')->get() as $g)
-                            <a href="{{ route('products.view',['group_ids'=>[$g->id],'shop_id'=>$shop->id]) }}"
+                        @foreach(\App\Models\Group::whereIn('id',\App\Models\Product::where('shop_id',$shop->id)->distinct('group_id')->pluck('group_id'))->get() as $g)
+                            <a href="{{ route('products.view',['group_ids'=>[($g->level=='2'?$g->parent:$g->id)],'shop_id'=>$shop->id]) }}"
                                class="">
                                 <div class="position-relative rounded-3 move-on-hover  "
                                      style="width: 15rem;height: 15rem">

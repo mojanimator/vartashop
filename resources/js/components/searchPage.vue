@@ -7,7 +7,7 @@
 
                     <div class="input-group   align-items-baseline     "
                          dir="ltr">
-                        <span id="button-search" @click="data.splice(0, data.length);page=1;getData()"
+                        <span id="button-search" @click="data.splice(0, data.length);params.page=1;getData()"
                               class="btn bg-gradient-primary   px-3 rounded-pill-left w-25 ">
                             <svg aria-hidden="true" class="svg-inline--fa fa-search fa-w-16" focusable="false"
                                  data-prefix="fa" data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg"
@@ -18,7 +18,7 @@
                             <!-- <i aria-hidden="true" class="fa fa-search"></i> Font Awesome fontawesome.com -->
                         </span>
                         <input id="search-input" type="text" placeholder="نام، برند، ویژگی" dir="rtl"
-                               v-on:keyup.enter="data.splice(0, data.length);page=1;getData()"
+                               v-on:keyup.enter="data.splice(0, data.length);params.page=1;getData()"
                                aria-label="جست و جوی محصول"
                                aria-describedby="button-addon1" name="search" v-model="params.search"
                                class="form-control   px-5 py-2 rounded-pill-right" required>
@@ -49,7 +49,7 @@
                                 <ul class="list-group text-right p-0 w-100">
                                     <li class="list-group-item " v-for="gg,idx in g.childs">
                                         <div class="form-check form-switch ps-0 ">
-                                            <input @change="data.splice(0, data.length);page=1;getData()"
+                                            <input @change="data.splice(0, data.length);params.page=1;getData()"
                                                    class="form-check-input ms-auto mt-1 " type="checkbox"
                                                    dir="ltr" v-model="gg.selected"
                                                    :id="'check-group-'+gg.id">
@@ -116,7 +116,9 @@
                                 <div class=" position-relative">
                                     <a :href="imgLink+'/'+d.img" data-lity class="  ">
                                         <div class="    img-overlay">⌕</div>
-                                        <img class="card-img  " :src="imgLink+'/'+d.img" alt="">
+                                        <img class="card-img  "
+                                             @error="imgError"
+                                             :src="imgLink+'/'+d.img" alt="">
                                     </a>
                                 </div>
 
@@ -182,7 +184,7 @@
 
                                     </form>
                                     <a class="link-white rounded-left py-2   bg-gradient-info text-white small d-inline-block px-1 w-50 move-on-hover hoverable"
-                                       :href="'/product/'+d.slug+'/'+d.id">
+                                       :href="'/product/'+d.name+'/'+d.id">
 
                                         جزییات</a>
                                 </div>
@@ -192,11 +194,11 @@
 
 
                     </div>
-                    <h4 v-show=" noData" class="text-center mt-3 text-primary">
+                    <h4 v-if=" noData" class="text-center mt-3 text-primary">
                         متاسفانه محصولی یافت نشد
 
                     </h4>
-                    <div v-show=" noData" class="text-center text-primary"> اگر محصول خاصی میخواهید با ما تماس بگیرید
+                    <div v-if=" noData" class="text-center text-primary"> اگر محصول خاصی میخواهید با ما تماس بگیرید
                     </div>
                 </div>
 
@@ -207,8 +209,8 @@
 </template>
 
 <script>
+    let scrolled = false;
     export default {
-
         props: ['dataLink', 'groupLink', 'imgLink', 'assetLink', 'rootLink', 'cartLink', 'params'],
 
 //        components: {paginator, refEditor},
@@ -257,6 +259,11 @@
             log(str) {
                 console.log(str);
             },
+            imgError(event) {
+
+                event.target.src = '/img/vartashop_logo.png';
+                event.target.parentElement.href = '/img/noimage.png';
+            },
             setEvents(el) {
                 $(window).scroll(function () {
 
@@ -267,6 +274,7 @@
 
                     if ((bottom_of_screen + 300 > top_of_element) && (top_of_screen < bottom_of_element + 200) && !self.loading && self.total > self.data.length) {
                         self.getData();
+                        scrolled = true;
                         // the element is visible, do something
                     } else {
                         // the element is not visible, do something else
@@ -297,18 +305,28 @@
 //                this.loading.removeClass('hide');
                 this.loading = true;
                 this.noData = false;
-                this.params = {
 
+
+                this.params = {
                     search: this.params.search ? this.params.search : this.search,
-                    page: this.params.page ? this.params.page : this.page,
+                    page: this.params.page !== 'undefined' ? this.params.page : this.page,
                     paginate: this.params.paginate ? this.params.paginate : this.paginate,
                     order_by: this.params.order_by ? this.params.order_by : this.order_by,
                     dir: this.params.dir ? this.params.dir : this.dir,
-                    group_ids: this.groups.length > 0 ? this.groups.reduce((prev, next) =>
-                        prev.childs.concat(next.childs)
-                    ).filter((el) => el.selected).map((el) => el.id) : [],
+                    group_ids: this.groups.length > 0 ? this.groups.reduce((prev, next) => {
+
+                        return typeof prev.childs !== 'undefined' ?
+                            prev.childs.concat(next.childs) :
+                            prev.concat(next.childs)
+                    }).filter((el) => el.selected).map((el) => el.id) : [],
 
                 };
+                if (scrolled) {
+
+                    this.params.page++;
+                    scrolled = false;
+                }
+
                 history.replaceState(null, null, axios.getUri({url: this.url, params: this.params}));
 //                this.log(this.params);
 //                this.log(axios.getUri({url: this.url, params: this.params}));
@@ -323,16 +341,20 @@
                             if (response.status === 200) {
 
 
-
 //                            console.log(response.data);
                                 this.data = this.data.concat(response.data.data);
+
                                 this.total = response.data.total;
-                                this.page = response.data.current_page + 1;
+//                                this.page = response.data.current_page + 1;
 
                                 this.loading = false;
                                 if (this.data.length === 0)
                                     this.noData = true;
-
+                                if (this.params.page > 1 && this.data.length === 0) {
+                                    this.noData = false;
+                                    this.params.page = 1;
+                                    this.getData();
+                                }
                             }
                         }
                     ).catch((error) => {
@@ -360,11 +382,11 @@
 //                            console.log(response.data);
                             this.groups = response.data;
 
-//                            console.log(this.params);
+
                             this.params = {
 
                                 search: this.params.search ? this.params.search : this.search,
-                                page: this.params.page ? this.params.page : this.page,
+                                page: this.params.page !== 'undefined' ? this.params.page : this.page,
                                 paginate: this.params.paginate ? this.params.paginate : this.paginate,
                                 order_by: this.params.order_by ? this.params.order_by : this.order_by,
                                 dir: this.params.dir ? this.params.dir : this.dir,

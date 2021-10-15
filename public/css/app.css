@@ -62436,7 +62436,7 @@ html h2, html h3, html h4, html h5, html p, html a, body h2, body h3, body h4, b
 
 .loading {
   transition: 0.3s all ease;
-  content: url(/images/loading.gif?dd1f883047419160a9b16e294a7c93fb);
+  content: url(/images/loading.gif?5e01ee7931d3de11d2efc141fc18a9f5);
   width: 5rem;
   height: auto;
   overflow: hidden;

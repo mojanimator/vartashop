@@ -11,9 +11,21 @@ class UserPolicy
 
     public function before(User $user, $ability)
     {
+
         if ($user->role == 'Go') {
             return true;
         }
+    }
+
+
+    public function ownShop(User $user, $shop_id, $abort)
+    {
+
+        if (\App\Models\Shop::where('user_id', $user->id)->exists() || \App\Models\Rule::where('user_id', $user->id)->where('shop_id', $shop_id)->exists())
+            return true;
+        if ($abort)
+            return abort(403, 'این فروشگاه متعلق به شما نیست!');
+        else return false;
     }
 
     /**
@@ -24,7 +36,7 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**

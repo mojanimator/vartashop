@@ -25,7 +25,7 @@ class ProductController extends Controller
         $ids = $request->ids;
 
         if (!$ids)
-            $ids = [40, 31];
+            $ids = Group::where('level', 1)->distinct('parent')->pluck('parent');
 
         $query = Group::query();
 
@@ -119,8 +119,12 @@ class ProductController extends Controller
 
             });
 
-        if ($groupIds)
-            $query = $query->whereIn('group_id', $groupIds);
+        if ($groupIds) {
+            $g = Group::whereIn('parent', $groupIds)->orWhereIn('id', $groupIds)->pluck('id');
+
+            $query = $query->whereIn('group_id', $g);
+
+        }
 
         if ($shopId)
             $query = $query->where('shop_id', $shopId);
