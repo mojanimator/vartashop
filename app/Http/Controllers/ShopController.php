@@ -55,16 +55,15 @@ class ShopController extends Controller
     {
 
 
-//        dd($request->address);
         $request->channel_username = $request->channel_username ? ('@' . str_replace('@', '', $request->channel_username)) : null;
 
         $request->validate([
 
-            'img' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'img' => 'required|base64_image|base64_size:2048',
             'name' => 'required|string|min:5|max:50',
-            'group_id' => 'required|in:' . Group::pluck('id'),
+            'group_id' => 'required|' . Rule::in(Group::pluck('id')),
             'description' => 'required|string|max:500',
-            'county_id' => 'required|in:' . County::pluck('id'),
+            'county_id' => 'required|' . Rule::in(County::pluck('id')),
             'province_id' => 'required|in:' . County::where('id', $request->county_id)->firstOrNew()->province_id,
             'postal_code' => 'nullable|numeric|digitsbetween:0,20',
             'address' => 'required|string|min:0|max:500',
@@ -77,9 +76,8 @@ class ShopController extends Controller
                 'name.max' => 'نام  حداکثر 50 حرف باشد',
 
                 'img.required' => 'تصویر ضروری است',
-                'img.image' => 'فایل از نوع تصویر باشد',
-                'img.mimes' => 'فرمت تصویر از نوع  jpg باشد',
-                'img.max' => 'حداکثر حجم فایل 2 مگابایت باشد',
+                'img.base64_image' => 'فایل از نوع تصویر باشد',
+                'img.base64_size' => 'حداکثر حجم فایل 2 مگابایت باشد',
 
                 'group_id.required' => 'دسته بندی ضروری است',
                 'group_id.in' => 'دسته بندی نامعتبر است',
@@ -118,8 +116,7 @@ class ShopController extends Controller
             $postalCode = $request->postal_code;
             $address = $request->address;
             $channelUsername = $request->channel_username;
-
-            $img = $request->file('img');
+            $img = $request->img;
 
             if ($user->score < Helper::$create_shop_score)
                 throw ValidationException::withMessages(['name' => "برای ساخت فروشگاه " . Helper::$create_shop_score . " سکه نیاز دارید "]);
@@ -133,6 +130,7 @@ class ShopController extends Controller
                 'province_id' => $province_id,
                 'postal_code' => $postalCode,
                 'address' => $address,
+                'phone' => $user->phone,
             ]);
 
             if ($channelUsername) {
@@ -158,16 +156,25 @@ class ShopController extends Controller
                     'shop_id' => $shop->id,
                     'chat_id' => "$info->id",
                     'chat_username' => "@" . $info->username,
+
                 ]);
 
                 $shop->channel_address = "$info->id";
                 $shop->save();
 
             }
-            if ($img) {
 
-                $img->storeAs("public/shops", "$shop->id.jpg");
-            }
+            $image_parts = explode(";base64,", $img);
+            $image_type_aux = explode("image/", $image_parts[0]);
+            $image_type = $image_type_aux[1];
+            $image_base64 = base64_decode($image_parts[1]);
+
+
+            file_put_contents(storage_path("app/public/shops/$shop->id.jpg"), $image_base64);
+
+
+//            $img->storeAs("public/shops", "$shop->id.jpg");
+
             $user->score = $user->score - Helper::$create_shop_score;
             $user->save();
 
@@ -192,9 +199,9 @@ class ShopController extends Controller
 
             'img' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
             'name' => 'sometimes|string|min:5|max:50',
-            'group_id' => 'sometimes|in:' . Group::pluck('id'),
+            'group_id' => 'sometimes|' . Rule::in(Group::pluck('id')),
             'description' => 'sometimes|string|max:500',
-            'county_id' => 'sometimes|in:' . County::pluck('id'),
+            'county_id' => 'sometimes|' . Rule::in(County::pluck('id')),
             'province_id' => 'sometimes|in:' . County::where('id', $request->county_id)->firstOrNew()->province_id,
             'postal_code' => 'sometimes|numeric|digitsbetween:0,20',
             'address' => 'sometimes|string|min:0|max:500',
@@ -243,7 +250,7 @@ class ShopController extends Controller
             $channelUsername = $request->channel_username;
 
             $img = $request->file('img');
-            $shopId = $request->shop_id;
+            $shopId = $request->id;
 
             if ($cmnd == 'del-image') {
                 Storage::delete("public/shops/$shopId.jpg");
@@ -253,28 +260,28 @@ class ShopController extends Controller
                 $img->storeAs("public/shops", $name);
                 return redirect()->back()->with('success-alert', 'تصویر با موفقیت ویرایش شد!');
             } elseif ($name) {
-                Shop::where('id', $shopId)->update(['name' => $name]);
+                Shop::withoutGlobalScopes()->where('id', $shopId)->update(['name' => $name]);
                 return redirect()->back()->with('success-alert', 'با موفقیت ویرایش شد!');
             } elseif ($groupId) {
-                Shop::where('id', $shopId)->update(['group_id' => $groupId]);
+                Shop::withoutGlobalScopes()->where('id', $shopId)->update(['group_id' => $groupId]);
                 return redirect()->back()->with('success-alert', 'با موفقیت ویرایش شد!');
             } elseif ($description) {
-                Shop::where('id', $shopId)->update(['description' => $description]);
+                Shop::withoutGlobalScopes()->where('id', $shopId)->update(['description' => $description]);
                 return redirect()->back()->with('success-alert', 'با موفقیت ویرایش شد!');
             } elseif ($county_id) {
-                Shop::where('id', $shopId)->update(['county_id' => $county_id, 'province_id' => $province_id,]);
+                Shop::withoutGlobalScopes()->where('id', $shopId)->update(['county_id' => $county_id, 'province_id' => $province_id,]);
                 return redirect()->back()->with('success-alert', 'با موفقیت ویرایش شد!');
             } elseif ($postalCode) {
-                Shop::where('id', $shopId)->update(['postal_code' => $postalCode,]);
+                Shop::withoutGlobalScopes()->where('id', $shopId)->update(['postal_code' => $postalCode,]);
                 return redirect()->back()->with('success-alert', 'با موفقیت ویرایش شد!');
             } elseif ($postalCode) {
-                Shop::where('id', $shopId)->update(['postal_code' => $postalCode,]);
+                Shop::withoutGlobalScopes()->where('id', $shopId)->update(['postal_code' => $postalCode,]);
                 return redirect()->back()->with('success-alert', 'با موفقیت ویرایش شد!');
             } elseif ($address) {
-                Shop::where('id', $shopId)->update(['address' => $address,]);
+                Shop::withoutGlobalScopes()->where('id', $shopId)->update(['address' => $address,]);
                 return redirect()->back()->with('success-alert', 'با موفقیت ویرایش شد!');
             } elseif ($channelUsername || $cmnd == 'channel') {
-                $shop = Shop::find($shopId);
+                $shop = Shop::withoutGlobalScopes()->find($shopId);
 
                 if ($channelUsername == null) {
                     $chat = Channel::where('shop_id', $shopId)->delete();

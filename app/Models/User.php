@@ -98,6 +98,22 @@ class User extends Authenticatable implements /*Auditable,*/
 
     public function hasShop()
     {
-        return Shop::where('user_id', $this->id)->first();
+
+        if ($this->role == 'go')
+            return true;
+        return Shop::orWhere('user_id', $this->id)->orWhereIn('id', Rule::where('user_id', $this->id)->pluck('shop_id'))->exists();
+    }
+
+    public function shopIds()
+    {
+
+        if ($this->role == 'go')
+            return Shop::pluck('id')->toArray();
+        return Shop::orWhere('user_id', $this->id)->orWhereIn('id', Rule::where('user_id', $this->id)->pluck('shop_id'))->pluck('id')->toArray();
+    }
+
+    public function shops()
+    {
+        return $this->belongsToMany(Shop::class);
     }
 }

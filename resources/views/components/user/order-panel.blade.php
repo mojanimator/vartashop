@@ -59,8 +59,8 @@
         <li class="nav-item  my-0">
             <div class="navbar-nav p-0  ">
 
-                <a class=" nav-link hoverable-info py-2 {{str_contains( url()->full(),'my-orders/search?status=1')?' active  text-primary':''}} "
-                   href="{{url('panel/my-orders/search?status=1')}}">
+                <a class=" nav-link hoverable-info py-2 {{str_contains( url()->full(),'my-orders/search-orders?status=1')?' active  text-primary':''}} "
+                   href="{{url('panel/my-orders/search-orders?status=1')}}">
                     <i class="fa fa-hourglass-start text-warning mx-1" aria-hidden="true"></i>
                     در انتظار پرداخت
 
@@ -75,8 +75,8 @@
         <li class="nav-item  my-0">
             <div class="navbar-nav p-0  ">
 
-                <a class=" nav-link hoverable-info py-2 {{str_contains( url()->full(),'my-orders/search?status=2')?' active  text-primary':''}} "
-                   href="{{url('panel/my-orders/search?status=2')}}">
+                <a class=" nav-link hoverable-info py-2 {{str_contains( url()->full(),'my-orders/search-orders?status=2')?' active  text-primary':''}} "
+                   href="{{url('panel/my-orders/search-orders?status=2')}}">
                     <i class="fa fa-hourglass-half text-info mx-1" aria-hidden="true"></i>
                     در حال پردازش
 
@@ -91,8 +91,8 @@
         <li class="nav-item  my-0">
             <div class="navbar-nav p-0  ">
 
-                <a class=" nav-link hoverable-info py-2 {{str_contains( url()->full(),'my-orders/search?status=3')?' active  text-primary':''}} "
-                   href="{{url('panel/my-orders/search?status=3')}}">
+                <a class=" nav-link hoverable-info py-2 {{str_contains( url()->full(),'my-orders/search-orders?status=3')?' active  text-primary':''}} "
+                   href="{{url('panel/my-orders/search-orders?status=3')}}">
                     <i class="fa fa-hourglass-end text-success mx-1" aria-hidden="true"></i>
                     اماده ارسال
 
@@ -107,8 +107,8 @@
         <li class="nav-item  my-0">
             <div class="navbar-nav p-0  ">
 
-                <a class=" nav-link hoverable-info py-2 {{str_contains( url()->full(),'my-orders/search?status=4')?' active  text-primary':''}} "
-                   href="{{url('panel/my-orders/search?status=4')}}">
+                <a class=" nav-link hoverable-info py-2 {{str_contains( url()->full(),'my-orders/search-orders?status=4')?' active  text-primary':''}} "
+                   href="{{url('panel/my-orders/search-orders?status=4')}}">
                     <i class="fa fa-truck text-dark mx-1" aria-hidden="true"></i>
                     ارسال شده
 
@@ -124,6 +124,7 @@
 @endif
 
 @if($section=='content')
+
     <div class="row col-12">
         <div class="row">
             <div class="col-md-6  mx-md-auto p-1    ">
@@ -160,9 +161,9 @@
         <div class="row">
 
 
-            {{--status 1--}}
+            {{--status 2 waiting for pay--}}
             <div class="col-md-6 p-1  ">
-                <a href="{{url('panel/my-orders/search?status=1')}}" class="   ">
+                <a href="{{url('panel/my-orders/search-orders?status=2')}}" class="   ">
                     <div class="card move-on-hover">
                         <div class="card-body p-3">
                             <div class="row">
@@ -176,7 +177,7 @@
                                         <h5 class=" text-sm text-black-50 font-weight-bolder mb-0">
                                             تعداد&nbsp
 
-                                            <span class="text-danger text-sm font-weight-bolder"> {{$s1}}</span>
+                                            <span class="text-danger text-sm font-weight-bolder"> {{$s2}}</span>
                                         </h5>
                                     </div>
                                 </div>
@@ -191,9 +192,9 @@
                     </div>
                 </a>
             </div>
-            {{--status 2--}}
+            {{--status 1 in process--}}
             <div class="col-md-6 p-1  ">
-                <a href="{{url('panel/my-orders/search?status=2')}}" class="  ">
+                <a href="{{url('panel/my-orders/search-orders?status=1')}}" class="  ">
                     <div class="card move-on-hover">
                         <div class="card-body p-3">
                             <div class="row">
@@ -206,7 +207,7 @@
                                         <h5 class=" text-sm text-black-50 font-weight-bolder mb-0">
                                             تعداد&nbsp
 
-                                            <span class="text-info text-sm font-weight-bolder"> {{$s2}}</span>
+                                            <span class="text-info text-sm font-weight-bolder"> {{$s1}}</span>
                                         </h5>
                                     </div>
                                 </div>
@@ -221,9 +222,9 @@
                     </div>
                 </a>
             </div>
-            {{--status 3--}}
+            {{--status 3 ready for send --}}
             <div class="col-md-6 p-1  ">
-                <a href="{{url('panel/my-orders/search?status=3')}}" class=" ">
+                <a href="{{url('panel/my-orders/search-orders?status=3')}}" class=" ">
                     <div class="card move-on-hover">
                         <div class="card-body p-3">
                             <div class="row">
@@ -251,9 +252,9 @@
                     </div>
                 </a>
             </div>
-            {{--status 4--}}
+            {{--status 4  sent--}}
             <div class="col-md-6 p-1  ">
-                <a href="{{url('panel/my-orders/search?status=4')}}" class="  ">
+                <a href="{{url('panel/my-orders/search-orders?status=4')}}" class="  ">
                     <div class="card move-on-hover">
                         <div class="card-body p-3">
                             <div class="row">
@@ -283,4 +284,5 @@
             </div>
         </div>
     </div>
+
 @endif

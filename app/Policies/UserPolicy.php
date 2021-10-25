@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -20,11 +21,26 @@ class UserPolicy
 
     public function ownShop(User $user, $shop_id, $abort)
     {
-
+        if ($user->role == 'go')
+            return true;
         if (\App\Models\Shop::where('user_id', $user->id)->exists() || \App\Models\Rule::where('user_id', $user->id)->where('shop_id', $shop_id)->exists())
             return true;
         if ($abort)
             return abort(403, 'این فروشگاه متعلق به شما نیست!');
+        else return false;
+    }
+
+    public function ownProduct(User $user, $product_id, $abort)
+    {
+        if ($user->role == 'go')
+            return true;
+
+        $shop_id = Product::findOrNew($product_id)->shop_id;
+
+        if (\App\Models\Shop::where('user_id', $user->id)->exists() || \App\Models\Rule::where('user_id', $user->id)->where('shop_id', $shop_id)->exists())
+            return true;
+        if ($abort)
+            return abort(403, 'این محصول متعلق به شما نیست!');
         else return false;
     }
 

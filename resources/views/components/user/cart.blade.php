@@ -37,7 +37,7 @@
                         <div class=" p-2  ">
                             <div class="d-flex flex-row bg-gradient-white rounded justify-content-start align-items-center">
 
-                                <img src="{{$product->image()}}" alt=""
+                                <img src="{{$product->image}}" alt=""
                                      class="max-width-100 max-height-100 rounded-lg  ">
                                 <div class="px-4 d-flex flex-column align-items-start">
                                     <a href="{{route('product.view',[$product->name,$product->id])}}" target="_blank"

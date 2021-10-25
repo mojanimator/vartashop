@@ -114,11 +114,11 @@
                                 </div>
                                 <img class="back-header-img" :src="assetLink+'/card-header.png'" alt="">
                                 <div class=" position-relative">
-                                    <a :href="imgLink+'/'+d.img" data-lity class="  ">
+                                    <a :href="d.image" data-lity class="  ">
                                         <div class="    img-overlay">⌕</div>
                                         <img class="card-img  "
                                              @error="imgError"
-                                             :src="imgLink+'/'+d.img" alt="">
+                                             :src="d.image" alt="">
                                     </a>
                                 </div>
 
@@ -229,7 +229,7 @@
                 groups: [],
                 groups_show_tree: true,
                 noData: false,
-
+                page: 1,
             }
         },
         created() {
@@ -309,7 +309,7 @@
 
                 this.params = {
                     search: this.params.search ? this.params.search : this.search,
-                    page: this.params.page !== 'undefined' ? this.params.page : this.page,
+                    page: !isNaN(this.params.page) ? this.params.page : this.page,
                     paginate: this.params.paginate ? this.params.paginate : this.paginate,
                     order_by: this.params.order_by ? this.params.order_by : this.order_by,
                     dir: this.params.dir ? this.params.dir : this.dir,

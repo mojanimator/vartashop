@@ -35,22 +35,26 @@ window.showDialog = (type, message, onclick = null) => {
             cancelButtonColor: '#d33',
             confirmButtonText: 'تایید',
         }).then((result) => {
-            if (result.value && onclick !== null) {
+            if (result.value) {
                 onclick();
             }
         });
-    else if (type === 1) {
+    else if (type === 'success') {
         swal.fire({
             title: "<h3 class='text-success'>" + message + "</h3>",
-            text: ' با موفقیت حذف شد!',
+            text: '',
             confirmButtonColor: '#60aa2f',
             icon: 'success',
             confirmButtonText: ' باشه',
-        }).then((result) => {
-            if (result.value) {
-//                            location.reload();
-                this.$root.$emit('search');
-            }
+        });
+
+    } else if (type === 'success-flash') {
+        swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: message,
+            showConfirmButton: false,
+            timer: 1500
         });
 
     } else {

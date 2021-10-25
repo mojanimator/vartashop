@@ -151,7 +151,8 @@
                                                             <div class="d-flex row">
                                                                 <div class=" col-3">
                                                                     {{--<i class="ni ni-single-copy-04 text-gradient text-primary"></i>--}}
-                                                                    <img src="{{$shop->image}}"
+                                                                    <img onError="this.onerror=null;this.src='/img/vartashop_logo.png';this.parentElement.href='/img/noimage.png'"
+                                                                         src="{{$shop->image}}"
                                                                          class="rounded-circle w-100 "
                                                                          alt="">
                                                                 </div>
@@ -228,18 +229,18 @@
 
                                                 <li class="d-none d-lg-block   w-100  text-right">
                                                     <ul class="dropdown p-0 ">
-                                                        <li class="dropdown-item        py-2 ">
-                                                            <a class="" href="{{ route('panel.view') }}">
+                                                        <li class="dropdown-item       ">
+                                                            <a class=" d-block py-2" href="{{ route('panel.view') }}">
 
                                                                 پنل کاربری
                                                             </a>
 
                                                         </li>
-                                                        <li class=" dropdown-item     py-2 " onclick="event.preventDefault();
+                                                        <li class=" dropdown-item      " onclick="event.preventDefault();
     document.getElementById('logout-form').submit();">
 
 
-                                                            <a class=" " href="{{ route('logout') }}"
+                                                            <a class="d-block py-2 " href="{{ route('logout') }}"
                                                             >
                                                                 خروج
                                                             </a>
@@ -258,7 +259,8 @@
                                                     <div class="col-md-12">
                                                         <ul class="dropdown p-0 m-0 text-right">
                                                             <li class="dropdown-item  ">
-                                                                <a class="" href="{{ route('panel.view') }}">
+                                                                <a class="d-block py-2"
+                                                                   href="{{ route('panel.view') }}">
 
                                                                     پنل کاربری
                                                                 </a>
@@ -267,7 +269,7 @@
                                                             <li class=" dropdown-item  ">
 
 
-                                                                <a class=" " href="{{ route('logout') }}"
+                                                                <a class="d-block py-2 " href="{{ route('logout') }}"
                                                                    onclick="event.preventDefault();
     document.getElementById('logout-form').submit();">
                                                                     خروج
@@ -432,27 +434,27 @@
                         <li class="nav-item ">
                             <a class="nav-link pe-1" href="https://www.instagram.com/varta.shop/" target="_blank"
                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="اینستاگرام">
-                                <i class="fab fa-instagram text-lg opacity-8 "></i>
+                                <i class="fab fa-instagram text-lg opacity-8 text-primary"></i>
                             </a>
                         </li>
                         @php( $adminPhone = str_replace('09', '9', \Helper::$admin_phone))
                         <li class="nav-item">
                             <a class="nav-link pe-1 " href="https://wa.me/98{{$adminPhone}}" target="_blank"
                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="واتساپ">
-                                <i class="fab fa-whatsapp text-lg opacity-8"></i>
+                                <i class="fab fa-whatsapp text-lg opacity-8 text-success"></i>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link pe-1" href="https://t.me/develowper" target="_blank"
                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="تلگرام">
-                                <i class="fab fa-telegram text-lg opacity-8"></i>
+                                <i class="fab fa-telegram text-lg opacity-8 text-info"></i>
                             </a>
                         </li>
 
                         <li class="nav-item">
                             <a class="nav-link pe-1" href="https://www.youtube.com/channel/UCzwQ6GnoNQG1PwpqZhkIogA"
                                target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom" title="یوتیوب">
-                                <i class="fab fa-youtube text-lg opacity-8"></i>
+                                <i class="fab fa-youtube text-lg opacity-8 text-danger"></i>
                             </a>
                         </li>
                     </ul>

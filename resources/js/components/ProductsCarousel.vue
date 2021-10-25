@@ -232,9 +232,9 @@
                         </div>
                         <img class="back-header-img" src="${this.assetLink + '/card-header.png'}" alt="">
                         <div class=" position-relative">
-                            <a href="${this.imgLink + '/' + d.img}" data-lity class="  ">
+                            <a href="${d.image}" data-lity class="  ">
                                 <div class="    img-overlay">⌕</div>
-                                <img id="p-img-${d.id}" class="card-img  " onError="this.onerror=null;this.src='/img/vartashop_logo.png';this.parentElement.href='/img/noimage.png'"   src="${this.imgLink + '/' + d.img}"   alt="">
+                                <img id="p-img-${d.id}" class="card-img  " onError="this.onerror=null;this.src='/img/vartashop_logo.png';this.parentElement.href='/img/noimage.png'"   src="${d.image}"   alt="">
                             </a>
                         </div>
 

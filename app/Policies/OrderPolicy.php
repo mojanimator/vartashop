@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Order;
+use App\Models\Rule;
 use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -101,12 +102,43 @@ class OrderPolicy
      * @param  \App\Models\Order $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete($user, $order_user_id, $order_shop_id)
+    public function delete($user, $order_user_id, $order_shop_id, $order_status)
     {
+        //status <3
+        //user is go
+        //user is shop owner
+        //user is shop owner
+        //user is order owner
 
-        if ($order_user_id == $user->id || $user->role == 'go' || Shop::where('id', $order_shop_id)->where('user_id', $user->id)->exists())
-            return true;
-        return abort(403, 'مجاز به حذف این سفارش نیستید!');
+        if ($order_status > 2 && $user->role != 'go')
+            return abort(403, 'مجاز به حذف سفارش های آماده ارسال و ارسال شده نیستید!');
+        if ($order_user_id != $user->id
+            && $user->role != 'go'
+            && !Shop::where('id', $order_shop_id)->where('user_id', $user->id)->exists()
+            && !Rule::where('user_id', $user->id)->where('shop_id', $order_shop_id)->exists())
+
+
+            return abort(403, 'مجاز به حذف این سفارش نیستید!');
+        return true;
+    }
+
+    public function edit($user, $order_user_id, $order_shop_id, $order_status)
+    {
+        //status <3
+        //user is go
+        //user is shop owner
+        //user is order owner
+
+        if ($order_status > 3 && $user->role != 'go')
+            return abort(403, 'مجاز به ویرایش سفارش های  ارسال شده نیستید!');
+        if ($order_user_id != $user->id
+            && $user->role != 'go'
+            && !Shop::where('id', $order_shop_id)->where('user_id', $user->id)->exists()
+            && !Rule::where('user_id', $user->id)->where('shop_id', $order_shop_id)->exists())
+
+
+            return abort(403, 'مجاز به ویرایش این سفارش نیستید!');
+        return true;
     }
 
 

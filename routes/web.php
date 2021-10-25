@@ -74,6 +74,10 @@ Route::get('/products', function () {
 })->name('products.view');
 
 Route::get('/product/search', [App\Http\Controllers\ProductController::class, 'search'])->name('product.search');
+Route::post('/product/edit', [App\Http\Controllers\ProductController::class, 'edit'])->name('product.edit');
+Route::post('/product/create', [App\Http\Controllers\ProductController::class, 'create'])->name('product.create');
+Route::get('/product/images', [App\Http\Controllers\ProductController::class, 'images'])->name('product.images');
+
 Route::get('/group/search', [App\Http\Controllers\ProductController::class, 'groups'])->name('group.search');
 
 Route::get('/product/{slug}/{id}', function ($slug, $id) {
@@ -131,6 +135,7 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('/'
 
 Route::post('/order/create', [App\Http\Controllers\OrderController::class, 'create'])->name('order.create');
 Route::post('/order/delete', [App\Http\Controllers\OrderController::class, 'delete'])->name('order.delete');
+Route::post('/order/edit', [App\Http\Controllers\OrderController::class, 'edit'])->name('order.edit');
 
 
 Route::post('/shop/edit', [App\Http\Controllers\ShopController::class, 'edit'])->name('shop.edit');
@@ -143,9 +148,7 @@ Route::middleware(['auth'])->prefix('panel')->group(function () {
         return view('pages.panel');
     })->name('panel.view');
 
-//    Route::get('my-orders/checkout', function () {
-//        return view('pages.panel');
-//    })->middleware('verify');
+    Route::get('my-products/search', [App\Http\Controllers\ProductController::class, 'search']);
 
 
 //    Route::get('my-orders', [App\Http\Controllers\OrderController::class, 'groups'])->name('panel.my-orders');

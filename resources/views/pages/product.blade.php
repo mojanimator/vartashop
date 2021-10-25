@@ -9,7 +9,8 @@
                      class="gallery-width   bg-gradient-faded-light rounded-lg p-3  col-md-6 mb-2">
                     @foreach(\App\Models\Image::where('for_id',$product->id)->get() as $img)
 
-                        <img src="{{asset("storage/products/$img->id.jpg")}}" class="   "
+                        <img onError="this.onerror=null;this.src='/img/vartashop_logo.png';"
+                             src="{{asset("storage/products/$img->id.jpg")}}" class="   "
                              alt="{{$img->name}}"
                              style="max-height: 25rem;object-fit:cover ;object-position: 0 0;">
 

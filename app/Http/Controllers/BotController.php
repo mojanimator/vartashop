@@ -861,10 +861,11 @@ class BotController extends Controller
                             foreach (Shop::where('user_id', $u->id)->get() as $shop) {
 
                                 foreach (Product::withoutGlobalScopes()->where('shop_id', $shop->id)->get() as $p) {
-                                    foreach (Image::where('type', 'p')->where('for_id', $p->id) as $img) {
-                                        if (Storage::exists("public/products/$img.jpg")) {
-                                            Storage::delete("public/products/$img.jpg");
+                                    foreach (Image::where('type', 'p')->where('for_id', $p->id)->get() as $img) {
+                                        if (Storage::exists("public/products/$img->id.jpg")) {
+                                            Storage::delete("public/products/$img->id.jpg");
                                         }
+                                        $img->delete();
                                     }
                                     $p->delete();
                                 }
@@ -2137,6 +2138,7 @@ class BotController extends Controller
                                 return;
                             }
                             $img->delete();
+                            Storage::delete("public/products/$img->id.jpg");
                             $this->popupMessage($data_id, ' ✅ ' . " با موفقیت حذف شد! ");
                             deleteTelegramMessage($chat_id, $messageId);
                             $this->user->remember_token = 'bazar$editProduct$' . $product->id . '$imageUpload';
@@ -3198,6 +3200,7 @@ class BotController extends Controller
             } else
                 $name = "$from_id";
 
+            $username = $username === '' ? null : $username;
 //            if (!User::where('telegram_id', $from_id)->exists()) {
             $this->user = User::create(['telegram_id' => "$from_id", 'telegram_username' => $username ?? null, 'score' => Helper::$initScore, 'step' => null, 'name' => $name]);
 //            }

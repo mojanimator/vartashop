@@ -33,13 +33,10 @@
 
 
                 @if(str_contains( url()->current(),'panel'))
-                    <x-user.product-panel :section="'header'"></x-user.product-panel>
-                @endif
-                @if(str_contains( url()->current(),'panel'))
-                    <x-user.shop-panel :section="'header'"></x-user.shop-panel>
-                @endif
-                @if(str_contains( url()->current(),'panel'))
-                    <x-user.order-panel :section="'header'"></x-user.order-panel>
+
+                    <x-panel :section="'header'"></x-panel>
+
+
                 @endif
 
 
@@ -279,102 +276,8 @@
         <!-- End Navbar -->
         <div class="container-fluid py-4 min-vh-100">
 
-            @if(str_contains( url()->current(),'my-orders/cart'))
-                {{--@php($title='سبد خرید')--}}
-                <x-user.cart></x-user.cart>
-            @elseif(str_contains( url()->current(),'my-orders/checkout'))
+            <x-panel :section="'content'"></x-panel>
 
-                <x-user.checkout></x-user.checkout>
-
-            @elseif(str_contains( url()->full(),'my-shops/shop?'))
-                <x-user.shop-edit :section="'content'"
-                                  params="{!! json_encode(['id'=>request( )->id]) !!}">
-
-                </x-user.shop-edit>
-            @elseif(str_contains( url()->full(),'my-shops/create'))
-                <x-user.shop-create :section="'content'"></x-user.shop-create>
-            @elseif(str_contains( url()->full(),'my-shops'))
-                <x-user.shop-panel :section="'content'"></x-user.shop-panel>
-            @elseif(str_contains( url()->full(),'my-orders/details?'))
-                <x-user.order :section="'content'" params="{!! json_encode(['id'=>request( )->id]) !!}"></x-user.order>
-            @elseif(str_contains( url()->full(),'my-orders/search?'))
-                <x-user.orders
-                        params="{!! json_encode(['status'=>request( )->status]) !!}  "></x-user.orders>
-            @elseif(str_contains( url()->current(),'my-orders'))
-
-                <x-user.order-panel :section="'content'"></x-user.order-panel>
-
-
-
-            @elseif(str_contains( url()->current(),'settings'))
-                <x-user.settings
-                        params="{!! json_encode(['status'=>request( )->status]) !!}  "></x-user.settings>
-            @elseif(str_contains( url()->current(),'panel'))
-                <div class="row">
-                    <div class="col-md-6  mx-md-auto p-1   ">
-                        <a href="{{url('panel/my-orders')}}" class="   ">
-                            <div class="card">
-                                <div class="card-body p-3">
-                                    <div class="row">
-                                        <div class="col-8">
-                                            <div class="numbers">
-                                                <h5 class="  mb-0 text-capitalize font-weight-bold">
-                                                    سفارشات
-                                                </h5>
-                                                <div class="row col-12">
-                                                <span class="col-6 text-sm text-black-50 font-weight-bolder mb-0">سبد خرید&nbsp
-
-                                                    <span class="text-primary text-sm font-weight-bolder"> {{ \App\Models\Cart::count()}}</span>
-                                                </span>
-                                                    <span class="col-6 text-sm text-black-50 font-weight-bolder mb-0">ثبت شده&nbsp
-                                                    <span class="text-primary text-sm font-weight-bolder"> {{\App\Models\Order::where('user_id',auth()->user()->id)->count()  }}</span>
-                                                </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-4 text-end">
-                                            <div class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center">
-                                                <i class="fa fa-2x fa-shopping-cart text-white m-1"
-                                                   aria-hidden="true"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-
-                    <div class="col-md-6 p-1">
-                        <a href="{{url('panel/user-settings')}}" class="   ">
-                            <div class="card">
-                                <div class="card-body p-3">
-                                    <div class="row">
-                                        <div class="col-8">
-                                            <div class="numbers">
-                                                <h5 class="  mb-0 text-capitalize font-weight-bold">
-                                                    حساب کاربری
-                                                </h5>
-                                                <h5 class=" text-sm text-black-50 font-weight-bolder mb-0">
-                                                    &nbsp
-
-                                                    <span class="text-danger text-sm font-weight-bolder">  </span>
-                                                </h5>
-                                            </div>
-                                        </div>
-                                        <div class="col-4 text-end">
-                                            <div class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center  ">
-                                                <i class="fa fa-2x fa-cog text-white m-1"
-                                                   aria-hidden="true"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-            @endif
         </div>
     </main>
 </div>

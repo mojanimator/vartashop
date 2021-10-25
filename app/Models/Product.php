@@ -8,7 +8,7 @@ use Symfony\Component\VarDumper\Caster\ImgStub;
 
 class Product extends Model
 {
-    protected $appends = ['salePercent'];
+    protected $appends = ['salePercent', 'image'];
     public $timestamps = false;
     protected $table = 'products';
     protected $fillable = [
@@ -38,15 +38,6 @@ class Product extends Model
         return $this->belongsTo(Group::class);
     }
 
-    public function image()
-    {
-        $img = Image::where('for_id', $this->id)->get('id')->first();
-        if ($img)
-            return asset("storage/products/" . $img->id . '.jpg');
-        else {
-            return asset("img/noimage.png");
-        }
-    }
 
     public function images()
     {
@@ -54,6 +45,16 @@ class Product extends Model
             return asset("storage/products/" . $data . '.jpg');
 
         });
+    }
+
+    public function getImageAttribute()
+    {
+        $img = Image::where('for_id', $this->id)->get('id')->first();
+        if ($img)
+            return asset("storage/products/" . $img->id . '.jpg');
+        else {
+            return asset("img/noimage.png");
+        }
     }
 
     public function getSalePercentAttribute()

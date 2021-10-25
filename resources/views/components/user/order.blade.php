@@ -1,151 +1,31 @@
-<div class="  " data-toggle="modal">
+@php
+    use Illuminate\Support\Facades\URL;$params=json_decode($params);
+        $order=\App\Models\Order::where('id',$params->order_id)->where('user_id',auth()->user()->id)->with('shop:id,name,channel_address')->with('province:id,name')->with('county:id,name')->with('products')->first();
 
-    @php
-        use Illuminate\Support\Facades\URL;$params=json_decode($params);
-            $order=\App\Models\Order::where('id',$params->order_id)->with('shop:id,name,channel_address')->with('province:id,name')->with('county:id,name')->first();
 if (!$order){
 
-     header("Location: " . URL::to('/panel/my-orders'), true, 302);
-        exit();
-        }
-    @endphp
-    {{--{{$params}}--}}
+ header("Location: " . URL::to('/panel/my-orders'), true, 302);
+    exit();
+    }
+$order->createdat=\Morilog\Jalali\Jalalian::fromDateTime($order->created_at)->format('%A, %d %B %Y ⏰ H:i');
+$order->statustext=orderNameFromId($order->status,false);
+@endphp
 
-    <div class="col-10 mx-auto  text-primary text-center  my-1  font-weight-bold ">جزییات سفارش</div>
+<img id="loading" src="{{asset('img/loading.gif')}}"
+     class="d-none position-fixed z-index-3  left-0 right-0  mx-auto d-hi "
+     width="200"
+     alt="">
 
+<order-user order="{{    $order    }}" delete-order-link="{{route('order.delete')}}"
+            shop-link="{{route('shop',['id'=>$order->shop->id??'','name'=>$order->shop->name??'']) }}"
+            product-link="{{url('product')}}"
+            provinces="{{\App\Models\Province::all()}}"
+            counties="{{\App\Models\County::all()}}"
+            search-link="{{route('product.search')}}"
+            edit-link="{{route('order.edit')}}"
+            editable="{{$order->status<3  }}"
+></order-user>
 
-    <div class="col-10 card text-right border-info border-2 my-3 py-2    ">
-        <div class="card-header py-2 ">
-
-            <div class="input-group   position-absolute " style="top:-.7rem;">
-                            <span class="rounded-right    bg-primary text-white small d-inline-block px-1 "
-                            > شماره سفارش
-
-                            </span>
-                <span class="rounded-left    bg-dark text-white small d-inline-block px-1 ">
-                        {{$order->id}}
-
-                            </span>
-
-            </div>
-
-            <div class="input-group position-absolute justify-content-end left-1" style="top:-.7rem;">
-
-                <div class="    rounded-pill  bg-danger text-white small   p-2 move-on-hover cursor-pointer"
-                     onclick=" showDialog('confirm','سفارش شما لغو و حذف خواهد شد',()=>{
-                             document.getElementById('delete-order').submit();
-                         })">
-                    لغو سفارش
-
-                </div>
-
-            </div>
-            <form id="delete-order" method="POST"
-                  action="{{route('order.delete',['order_id'=>$order->id,'order_user_id'=>$order->user_id,'shop_id'=>$order->shop_id])}}">
-                @csrf
-                {{--<input type="hidden" name="order_id" value="{{$order->id}}">--}}
-                {{--<input type="hidden" name="shop_id" value="{{$order->shop_id}}">--}}
-            </form>
-
-
-            <div class="input-group ">
-                <span class="rounded-right    bg-info text-white small d-inline-block px-1">تاریخ ثبت  </span>
-                <span class="rounded-left    bg-dark text-white small d-inline-block px-1">{{\Morilog\Jalali\Jalalian::fromDateTime($order->created_at)->format('%A, %d %B %Y ⏰ H:i')}}</span>
-            </div>
-            <div class="border-bottom  border-info border-2  py-1 "></div>
-            <div class="row  ">
-                <div class="col-sm-6">
-                    <span class="text-primary">گیرنده: </span>
-                    <span class="text-dark">{{$order->name }}</span>
-                </div>
-                <div class="col-sm-6">
-                    <span class="text-primary">شماره تماس: </span>
-                    <span class="text-dark">{{$order->phone }}</span>
-                </div>
-            </div>
-
-            <div class="row  ">
-                <div class="col-sm-6">
-                    <span class="text-primary">استان: </span>
-                    <span class="text-dark">{{$order->province?$order->province->name:''}}</span>
-                </div>
-                <div class="col-sm-6">
-                    <span class="text-primary">شهر: </span>
-                    <span class="text-dark">{{$order->county?$order->county->name:''}}</span>
-                </div>
-            </div>
-            <div>
-                <span class="text-primary">کد پستی: </span>
-                <span class="text-dark">{{$order->postal_code??'نامشخص'}}</span>
-            </div>
-            <div>
-                <span class="text-primary">آدرس: </span>
-                <span class="text-dark">{{$order->address}}</span>
-            </div>
-            <div>
-                <span class="text-primary">توضیحات مشتری: </span>
-                <span class="text-dark">{{$order->description}}</span>
-            </div>
-            <div class="border-bottom  border-info border-2  py-1 "></div>
-            @if($order->shop)
-                @php($shop=$order->shop)
-                <div class="col-md-6 my-1  ">
-                    <div class="row align-items-baseline">
-                        <div class="col-3">
-                            <a href="{{route('shop',['id'=>$shop->id,'name'=>$shop->name])}}">
-                                <img
-                                        src="{{$shop->image}}"
-                                        alt=""
-                                        class="rounded-circle " style="max-width: 3rem">
-                            </a>
-
-                        </div>
-                        <div class="col-9   align-items-center justify-content-between">
-                            <a href="{{route('shop',['id'=>$shop->id,'name'=>$shop->name])}}">
-                                <div class="hoverable-text-blue my-1">{{$shop->name}}</div>
-                            </a>
-
-                        </div>
-
-                    </div>
-                </div>
-            @endif
-            <div class="d-flex flex-row">
-                @foreach ($order->products as $product)
-                    <div class="d-flex flex-column   align-items-center">
-                        <a href="{{route('product.view',[$product->name,$product->id])}}"
-                           title="{{$product->name}}" data-toggle="tooltip"
-                           class=" m-1 ">
-                            <img src="{{$product->image()}}" alt=""
-                                 class="max-width-100 max-height-100 rounded-lg  ">
-                        </a>
-                        <div class="text-primary">
-                            <span class="text-dark">تعداد:&nbsp</span>
-
-                            {{ $product->pivot->qty }}</div>
-                        <div class="text-primary">
-                            <span class="text-dark">قیمت واحد:&nbsp</span>
-                            {{number_format( $product->pivot->unit_price).' ت ' }}</div>
-                    </div>
-                @endforeach
-            </div>
-            <div class="border-bottom  border-info border-2  py-1 "></div>
-
-            <div class="col-12 row justify-content-between">
-                <div class="col-sm-6">
-                    <span class="text-primary">قیمت کالاها: </span>
-                    <span class="text-dark">{{number_format($order->total_price).' ت ' }}</span>
-                </div>
-                <div class="col-sm-6">
-                    <span class="text-primary">هزینه پست: </span>
-                    <span class="text-dark">{{$order->post_price===null?'مشخص نشده':($order->post_price==0?'رایگان':number_format($order->post_price). ' ت ')}}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-</div>
 
 @section('script')
 

@@ -19,7 +19,7 @@
 
 
     {{--{{Route::currentRouteName()=='panel.order'?'hi':'no'}}--}}
-    @includeWhen(auth()->user()->role=='go','pages.panel.god-panel')
+    @includeWhen(auth()->user()->role=='go','pages.panel.user-panel')
     {{--@includeWhen(auth()->user()->role=='ad','pages.panel.admin-panel')--}}
     @includeWhen(auth()->user()->role=='us','pages.panel.user-panel')
 

@@ -17,8 +17,9 @@ class CreateOrdersTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
             $table->integer('shop_id')->unsigned();
-            $table->tinyInteger('status'); //1:unready 2:in process 3:ready for send 4:sent
+            $table->tinyInteger('status'); // 1:in process 2:wait for pay  3:ready for send 4:sent
             $table->string('name', 50);
+            $table->string('pay_id', 100)->nullable();
             $table->string('address', 500);
             $table->string('postal_code', 20)->nullable();
             $table->string('phone', 20);

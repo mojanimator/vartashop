@@ -3,7 +3,7 @@
     @php
         $params=json_decode($params);
             $query=\App\Models\Order::query();
-     $query->where('status',$params->status);
+     $query->where('status',$params->status)->where('user_id',auth()->user()->id);
      $query=$query->paginate(12);
     $query=$query->appends(['status'=>$params->status])
     @endphp
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="input-group position-absolute justify-content-end left-1" style="top:-.7rem;">
-                    <a href="{{url('panel/my-orders/details?order_id='.$order->id)}}"
+                    <a href="{{url('panel/my-orders/order-details?order_id='.$order->id)}}"
                        class="   rounded-pill-right   bg-info text-white small   p-2 move-on-hover cursor-pointer">
                         مشاهده جزییات
 
@@ -72,21 +72,22 @@
                     <span class="text-dark">{{$order->address}}</span>
                 </div>
                 <div class="border-bottom  border-info border-2  py-1 "></div>
-                <div class="d-flex flex-row">
+                <div class="row">
                     @foreach ($order->products as $product)
-                        <div class="d-flex flex-column   align-items-center">
+                        <div class="d-flex flex-column  align-items-center col-sm-4 col-md-3">
                             <a href="{{route('product.view',[$product->name,$product->id])}}"
                                title="{{$product->name}}" data-toggle="tooltip"
                                class=" m-1 ">
-                                <img src="{{$product->image()}}" alt=""
+                                <img onError="this.onerror=null;this.src='/img/vartashop_logo.png';this.parentElement.href='/img/noimage.png'"
+                                     src="{{$product->image}}" alt=""
                                      class="max-width-100 max-height-100 rounded-lg  ">
                             </a>
                             <div class="text-primary">
                                 <span class="text-dark">تعداد:&nbsp</span>
 
                                 {{ $product->pivot->qty }}</div>
+                            <span class="text-dark">قیمت واحد:&nbsp</span>
                             <div class="text-primary">
-                                <span class="text-dark">قیمت واحد:&nbsp</span>
                                 {{number_format( $product->pivot->unit_price).' ت ' }}</div>
                         </div>
                     @endforeach

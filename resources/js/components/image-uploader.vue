@@ -2,7 +2,6 @@
 
     <div class="   ">
 
-
         <div class="     my-1 row col-12">
             <label :for="id"
                    class="col-12 col-form-label text-right">{{label}} </label>
@@ -13,31 +12,37 @@
                     @dragover.prevent="uploader.addClass('hover');" @dragleave.prevent="uploader.removeClass('hover');"
                     @mouseleave=" uploader.removeClass('hover');"
                     @drop.prevent="uploader.removeClass('hover');filePreview($event  ) "
-                    @click="openFileChooser($event,id)">
+                    @click="openFileChooser($event,id+'-file')">
 
                 <small class=" p-2   ">
                     عکس را اینجا بکشید یا کلیک کنید
                 </small>
-                <input v-show="false" :id="id" class="col-12 hide " accept=".png, .jpg, .jpeg" type="file"
-                       name="img"
+                <input v-show="false" :id="id+'-file'" class="col-12    " accept=".png, .jpg, .jpeg" type="file"
+                       :name="id+'-file'" @input="filePreview($event )"/>
+                <input :id="id" class="col-12" :name="id" type="hidden"/>
 
-                       @input="filePreview($event )"/>
+
             </div>
             <div v-show="doc" class="    rounded-lg    col-sm-6">
                 <img v-show="doc" :id="'img-'+id" class=" mw-100    " @error="doc=null" @load="initCropper()"
                      :src="doc" :style="'width:'+height/*+';height:'+height*/"
                      alt=""/>
-                <div v-if="mode=='edit'" class="btn-group my-1 w-100  " role="group" dir="ltr">
-                    <button class="btn p-2 bg-danger text-white m-0"
-                            title="حذف تصویر" data-bs-toggle="tooltip" data-bs-placement="top"
-                            @click="removeImage()">
+                <div class="btn-group my-1 w-100  " role="group" dir="ltr">
+                    <div v-if="mode=='edit'" class="btn p-2 bg-danger text-white m-0"
+                         title="حذف تصویر" data-bs-toggle="tooltip" data-bs-placement="top"
+                         @click="removeImage()">
                         <i class="fa fa-window-close text-white" aria-hidden="true"></i>
-                    </button>
-                    <button class="btn p-2 bg-success text-white m-0"
-                            title="آپلود تصویر" data-bs-toggle="tooltip" data-bs-placement="top"
-                            @click="uploadImage()">
+                    </div>
+                    <div v-if="mode=='edit'" class="btn p-2 bg-success text-white m-0"
+                         title="آپلود تصویر" data-bs-toggle="tooltip" data-bs-placement="top"
+                         @click="uploadImage()">
                         <i class="fa fa-upload text-white" aria-hidden="true"></i>
-                    </button>
+                    </div>
+                    <div v-else="" class="btn btn-block p-2 bg-success text-white m-0"
+                         title="برش تصویر" data-bs-toggle="tooltip" data-bs-placement="top"
+                         @click="cropImage()">
+                        <i class="fa fa-2x fa-crop-alt text-white" aria-hidden="true"></i>
+                    </div>
                 </div>
             </div>
 
@@ -79,7 +84,7 @@
     export default {
 
 
-        props: ['link', 'id', 'height', 'preload', 'label', 'mode', 'forId'],
+        props: ['link', 'id', 'height', 'preload', 'label', 'mode', 'forId', 'callback', 'images', 'limit'],
         components: {},
         data() {
             return {
@@ -113,6 +118,9 @@
                     $('#loading').addClass('d-none');
             },
         },
+        beforeDestroy() {
+//            console.log("beforeDestroy")
+        },
         computed: {
 //            get_noe_faza: () => {
 //                return Vue.noe_faza;
@@ -124,7 +132,7 @@
 //            console.log(image);
 //            $(".point-sw")
 
-            this.uploader = $('#' + this.id);
+            this.uploader = $('#' + this.id + '-file');
 
 
         }
@@ -145,6 +153,39 @@
         }
         ,
         methods: {
+            cropImage() {
+                this.loading = true;
+
+                this.cropper.crop();
+                this.loading = false;
+                let img = this.cropper.getCroppedCanvas().toDataURL();
+                if (this.mode === 'multi') {
+                    if (this.images.length >= this.limit) {
+                        window.showDialog('danger', 'تعداد تصاویر بیش از حد مجاز است', onclick = null);
+                        return;
+                    }
+                    this.images.push({id: this.images.length, src: img});
+                    this.doc = null;
+
+                    this.initCropper();
+                } else {
+                    $('#' + self.id).val(img);
+                    window.showDialog('success', 'تصویر آماده ارسال است', onclick = null);
+                }
+//                this.cropper.getCroppedCanvas().toBlob((blob) => {
+//                    this.loading = false;
+//                    if (blob) {
+//
+//
+//                        $('#' + self.id).val(blob);
+//
+//                        window.showDialog('success', 'تصویر آماده ارسال است', onclick = null);
+//                    }
+//
+//
+//                });
+
+            },
             removeImage() {
 
                 axios.post(this.link, {
@@ -181,13 +222,18 @@
                 this.cropper.getCroppedCanvas().toBlob((blob) => {
                     let fd = new FormData();
                     fd.append('img', blob, forId + ".jpg");
-                    fd.append('shop_id', this.forId);
+                    fd.append('id', this.forId);
 
                     axios.post(this.link, fd,)
                         .then((response) => {
 //                            console.log(response);
                             this.loading = false;
-                            window.location.reload();
+                            if (!this.callback)
+                                window.location.reload();
+                            else {
+                                this.doc = null;
+                                this.callback();
+                            }
 //                            this.data = response.data;
 //                            console.log(this.data);
 //                        this.filteredData = this.data;
@@ -225,6 +271,10 @@
 //                        console.log('croped');
                     },
                     ready(e) {
+                        if (self.mode !== 'edit') {
+                            self.cropper.crop();
+                            $('#' + self.id).val(self.cropper.getCroppedCanvas().toDataURL());
+                        }
 //                        console.log(e.type);
 
                         // this.cropper[method](argument1, , argument2, ..., argumentN);
