@@ -210,7 +210,7 @@
             </div>
             {{--status 4--}}
             <div class="col-md-6 p-1  ">
-                <a href="{{url('panel/my-orders/search-orders-orders?status=4')}}" class="  ">
+                <a href="{{url('panel/my-orders/search-orders?status=4')}}" class="  ">
                     <div class="card move-on-hover">
                         <div class="card-body p-3">
                             <div class="row">

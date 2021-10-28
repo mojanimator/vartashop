@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderMail;
 use App\Models\Cart;
 use App\Models\County;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Shop;
+use App\Models\User;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf;
+use Carbon\Carbon;
+use Helper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -18,6 +26,31 @@ class OrderController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function pdf(Request $request)
+    {
+        if ($request->id != 'new') {
+            logAdmins('یک فاکتور ساخته شد' . (Order::where('id', $request->id)->with('shop')->firstOrNew()->shop->name ?? 'نامشخص'));
+
+            $pdf = PDF::loadView('components.admin.order-factor', ['id' => $request->id])/*->setPaper('a4', 'landscape')*/
+            ;
+
+            return $pdf->stream('سفارش ' . $request->id . '.pdf');
+//        return $pdf->download('سفارش ' . $request->id . '.pdf');}
+        } elseif ($request->id == 'new') {
+
+            $order = json_decode(utf8_decode(json_encode($request->all(), JSON_UNESCAPED_UNICODE)), false, 512, JSON_UNESCAPED_UNICODE);
+
+
+            $txt = $this->getOrderText($order);
+            logAdmins('💵 یک فاکتور ساخته شد' . PHP_EOL . $txt);
+
+            $pdf = PDF::loadView('components.admin.order-factor', ['order' => $order])/*->setPaper('a4', 'landscape')*/
+            ;
+
+            return $pdf->stream('سفارش ' . utf8_decode($request->name) . '.pdf');
+        }
     }
 
     public function delete(Request $request)
@@ -57,6 +90,7 @@ class OrderController extends Controller
                 $order->description = $request->description;
                 $order->status = $request->status;
                 $order->save();
+                $this->reportOrder($order, 2);
                 return redirect()->back()->with('success-alert', 'سفارش به وضعیت در انتظار پرداخت تغییر یافت');
 
             } elseif ($request->status == 4) { //send
@@ -65,12 +99,21 @@ class OrderController extends Controller
                     $validator->errors()->add('common', 'شما مالک فروشگاه نیستید!');
                     throw new ValidationException($validator);
                 }
+                $request->validate([
+                    'post_trace' => 'nullable|digitsbetween:1,50',
+
+                ], [
+                    'post_trace.digitsbetween' => 'کد رهگیری پستی حداکثر 50 است',
+                ]);
                 $order->status = $request->status;
+                $order->send_at = Carbon::now();
+                $order->post_trace = $request->post_trace;
                 foreach ($order->products as $product) {
                     $product->sold = $product->sold + $product->pivot->qty;
                     $product->save();
                 }
                 $order->save();
+                $this->reportOrder($order, 4);
                 return redirect()->back()->with('success-alert', 'سفارش به وضعیت ارسال شده تغییر یافت');
 
             } elseif ($request->status == 3) { //user payed
@@ -90,6 +133,7 @@ class OrderController extends Controller
                 $order->pay_id = $request->pay_id;
                 $order->description = $request->description;
                 $order->save();
+                $this->reportOrder($order, 3);
                 return redirect()->back()->with('success-alert', 'سفارش شما به وضعیت آماده ارسال تغییر یافت');
 
             }
@@ -168,7 +212,7 @@ class OrderController extends Controller
             $total += ($item->pivot->qty * $item->pivot->unit_price);
         }
         $order->total_price = $total + $order->post_price;
-
+        $this->reportOrder($order, $order->status);
         $order->save();
         return response()->json('سفارش با موفقیت ویرایش شد', 200);
 //        return redirect()->to('panel/my-orders')->with('success-alert', 'سفارش با موفقیت ویرایش شد');
@@ -254,7 +298,7 @@ class OrderController extends Controller
 
             Cart::clear();
 
-            $this->reportToAdmin($order);
+            $this->reportOrder($order, 0);
         }
         return redirect()->to('panel/my-orders/search?status=2')->with('success-alert', 'سفارش شما با موفقیت ثبت شد. بزودی با شما تماس می گیریم');
     }
@@ -276,28 +320,61 @@ class OrderController extends Controller
         return view('pages.panel'/*, ['orders' => $orders]*/);
     }
 
-    private function reportToAdmin($order)
+    private function reportOrder($order, $status = 0)
     {
-        $txt = '✅ سفارش جدید' . PHP_EOL .
+        $title = '✅ سفارش جدید';
+        if ($status == 0)
+            $title = '✅ یک سفارش جدید دارید! لطفا از پنل سایت بررسی نمایید.';
+        if ($status == 1)
+            $title = '✅ یک سفارش تغییر داده شده دارید! لطفا از پنل سایت بررسی نمایید.';
+        if ($status == 2)
+            $title = '✅ سفارش شما تایید شده و آماده پرداخت می باشد. این سفارش تا 24 ساعت پس از این پیام معتبر است';
+        if ($status == 3)
+            $title = '✅ یک سفارش پرداخت شده است! لطفا از طریق پنل سفارش را تایید و ارسال نمایید';
+        if ($status == 4)
+            $title = '✅ سفارش شما آماده و به آدرس شما ارسال شد. از خرید شما متشکریم!';
+
+        $txt = $this->getOrderText($order);
+        $txt .= PHP_EOL . "🆅🅰🆁🆃🅰🆂🅷🅾🅿" . PHP_EOL . Helper::$site . PHP_EOL;
+        if ($status == 1 || $status == 3) {
+            foreach (\Helper::$logs as $log) {
+                sendTelegramMessage($log, $title . PHP_EOL . $txt);
+            }
+        } elseif ($status == 2 || $status == 4) {
+            $user = User::find($order->user_id);
+            if ($user) {
+                if ($user->telegram_id)
+                    sendTelegramMessage($user->telegram_id, $txt);
+                if ($user->email)
+                    Mail::to($user->email)->queue(new OrderMail($title, str_replace("\n", "<br>", $txt), $order->id));
+            }
+        }
+    }
+
+    private function getOrderText($order)
+    {
+        $txt =
+            "📌 شناسه سفارش: " . "#$order->id" . PHP_EOL .
+            "🔑 شناسه پرداخت: " . "$order->pay_id" . PHP_EOL .
+            "📨 کد رهگیری پست: " . "$order->post_trace" . PHP_EOL .
             "👤 نام مشتری: " . $order->name . PHP_EOL .
-            "⏰ تاریخ ثبت: " . \Morilog\Jalali\Jalalian::fromDateTime($order->created_at)->format('%A, %d %B %Y ⏰ H:i') . PHP_EOL .
+            "⏰ تاریخ ثبت: " . \Morilog\Jalali\Jalalian::fromDateTime($order->created_at ?? Carbon::now('Asia/Tehran'))->format('%A, %d %B %Y ⏰ H:i') . PHP_EOL .
             "🏩 فروشنده: " . $order->shop->name . PHP_EOL .
-            "📰 توضیح مشتری: " . $order->description . PHP_EOL .
-            "📭 آدرس: " . $order->province->name . " - " . $order->county->name . " - " . $order->address . PHP_EOL .
+
+            "📰 توضیح مشتری: " . implode('🔹', explode('$|$', $order->description ?? '')) . PHP_EOL .
+            "📭 آدرس: " . ($order->province->name ?? '') . " - " . ($order->county->name ?? '') . " - " . $order->address . PHP_EOL .
             "📤 کد پستی: " . $order->postal_code . PHP_EOL .
-            "💵 مجموع: " . number_format($order->total_price) . " ت " . PHP_EOL .
+            "📪 هزینه پست: " . number_format($order->post_price) . " ت " . PHP_EOL .
+            "💵 مجموع پرداختی: " . number_format($order->total_price) . " ت " . PHP_EOL .
             "📱 تلفن: " . $order->phone . PHP_EOL .
             "";
         foreach ($order->products as $product) {
             $txt .=
-                "📦 نام محصول: " . $product->name . PHP_EOL .
-                "🔹 تعداد: " . $product->pivot->qty . PHP_EOL .
-                "💵 قیمت واحد: " . number_format($product->pivot->unit_price) . " ت " . PHP_EOL .
+                "   📦 نام محصول: " . $product->name . PHP_EOL .
+                "   🔹 تعداد: " . $product->pivot->qty . PHP_EOL .
+                "   💵 قیمت واحد: " . number_format($product->pivot->unit_price) . " ت " . PHP_EOL .
                 "";
         }
-        foreach (\Helper::$logs as $log) {
-
-            sendTelegramMessage($log, $txt);
-        }
+        return $txt;
     }
 }

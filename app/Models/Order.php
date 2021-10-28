@@ -13,7 +13,7 @@ class Order extends Model
     protected $table = 'orders';
     //1:unready 2:in process 3:ready for send 4:sent
     protected $fillable = [
-        'id', 'user_id', 'shop_id', 'status', 'name', 'pay_id', 'county_id', 'province_id', 'address', 'postal_code', 'phone', 'post_price', 'total_price', 'description', 'created_at', 'updated_at', 'send_at',
+        'id', 'user_id', 'shop_id', 'status', 'name', 'pay_id', 'county_id', 'province_id', 'address', 'postal_code', 'phone', 'post_price', 'total_price', 'description', 'created_at', 'updated_at', 'send_at', 'post_trace',
     ];
 
 

@@ -8,6 +8,7 @@ import productsPanel from './components/ProductsPanel.vue'
 import productCreate from './components/ProductsCreate.vue'
 import orderAdmin from './components/OrderAdmin.vue'
 import OrderUser from './components/OrderUser.vue'
+import FactorMaker from './components/FactorMaker.vue'
 
 
 Vue.config.devtools = false;
@@ -25,6 +26,7 @@ const app = new Vue({
         productsPanel,
         productCreate,
         orderAdmin,
-        OrderUser
+        OrderUser,
+        FactorMaker,
     }
 });

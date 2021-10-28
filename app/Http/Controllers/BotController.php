@@ -1519,6 +1519,7 @@ class BotController extends Controller
                     $caption .= ' 🔻 ' . "توضیحات: " . PHP_EOL . "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . $product->description . PHP_EOL . "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL;
                     $caption .= $product->tags . PHP_EOL;
                     $caption .= $tag . PHP_EOL;
+                    $caption .= "🆅🅰🆁🆃🅰🆂🅷🅾🅿" . PHP_EOL . Helper::$site . PHP_EOL;
                     $caption = MarkDown($caption);
 
                     $images = [];

@@ -136,10 +136,12 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('/'
 Route::post('/order/create', [App\Http\Controllers\OrderController::class, 'create'])->name('order.create');
 Route::post('/order/delete', [App\Http\Controllers\OrderController::class, 'delete'])->name('order.delete');
 Route::post('/order/edit', [App\Http\Controllers\OrderController::class, 'edit'])->name('order.edit');
+Route::post('/factor/create', [App\Http\Controllers\OrderController::class, 'pdf'])->name('factor.create');
 
 
 Route::post('/shop/edit', [App\Http\Controllers\ShopController::class, 'edit'])->name('shop.edit');
 Route::post('/shop/create', [App\Http\Controllers\ShopController::class, 'create'])->name('shop.create');
+Route::post('/shop/delete', [App\Http\Controllers\ShopController::class, 'delete'])->name('shop.delete');
 
 Route::middleware(['auth'])->prefix('panel')->group(function () {
 

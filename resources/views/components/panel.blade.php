@@ -61,6 +61,15 @@
 
         </x-order-panel>
 
+        {{--></x-user.orders>--}}
+    @elseif(str_contains( url()->current(),'factor-maker'))
+
+        <x-admin.factor-maker
+                :section="'content'" userHasShop="{!! $userHasShop !!}"
+                shopIds="{!! $shopIds !!}">
+
+        </x-admin.factor-maker>
+
 
 
     @elseif(str_contains( url()->current(),'settings'))
@@ -70,7 +79,7 @@
         @php($shopIds=json_decode($shopIds))
         @if($userHasShop)
             <div class="row">
-                <div class="col-md-6  mx-md-auto p-1   ">
+                <div class="col-md-6   p-1   ">
                     <a href="{{url('panel/my-orders')}}" class="   ">
                         <div class="card move-on-hover">
                             <div class="card-body p-3">
@@ -103,7 +112,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-md-6  mx-md-auto p-1   ">
+                <div class="col-md-6    p-1   ">
                     <a href="{{url('panel/my-products')}}" class="   ">
                         <div class="card move-on-hover">
                             <div class="card-body p-3">
@@ -132,7 +141,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-md-6  mx-md-auto p-1   ">
+                <div class="col-md-6    p-1   ">
                     <a href="{{url('panel/my-shops')}}" class="   ">
                         <div class="card move-on-hover">
                             <div class="card-body p-3">
@@ -206,6 +215,34 @@
                                     <div class="col-4 text-end">
                                         <div class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center  ">
                                             <i class="fa fa-2x fa-cog text-white m-1"
+                                               aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6 p-1">
+                    <a href="{{url('panel/factor-maker')}}" class="   ">
+                        <div class="card move-on-hover">
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="numbers">
+                                            <h5 class="  mb-0  text-indigo font-weight-bold">
+                                                فاکتور ساز
+                                            </h5>
+                                            <h5 class=" text-sm text-black-50 font-weight-bolder mb-0">
+                                                &nbsp
+
+                                                <span class="text-danger text-sm font-weight-bolder">  </span>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <div class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center  ">
+                                            <i class="fa fa-2x fa-print text-white m-1"
                                                aria-hidden="true"></i>
                                         </div>
                                     </div>

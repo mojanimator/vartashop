@@ -267,6 +267,11 @@
                         <span class="text-primary">مبلغ پرداختی: </span>
                         <span class="text-dark">{{ totalPrice()}}</span>
                     </div>
+                    <div class="col-sm-6  ">
+                        <span v-if="order.status==3" class="text-primary">کد رهگیری پست: </span>
+                        <input v-if="order.status==3" type="text" class="form-control px-4"
+                               v-model="order.post_trace">
+                    </div>
                 </div>
                 <span v-if="errors.common"
                       class="col-12 small  text-danger p-2" role="alert">
@@ -483,7 +488,8 @@
                         id: this.order.id,
                         user_id: this.order.user_id,
                         shop_id: this.order.shop_id,
-                        description: desc
+                        description: desc,
+                        post_trace: this.order.post_trace,
                     };
                 }
                 axios.post(this.editLink,

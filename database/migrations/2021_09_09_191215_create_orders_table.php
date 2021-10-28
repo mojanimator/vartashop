@@ -26,6 +26,7 @@ class CreateOrdersTable extends Migration
             $table->integer('post_price')->unsigned()->nullable();
             $table->integer('total_price')->unsigned()->nullable();
             $table->string('description', 1024)->nullable();
+            $table->string('post_trace', 50)->nullable();
             $table->smallInteger('county_id')->unsigned();
             $table->smallInteger('province_id')->unsigned();
             $table->timestamp('send_at')->nullable();

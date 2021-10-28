@@ -8,6 +8,7 @@ use App\Mail\RegisterEditUserMail;
 use App\Models\Channel;
 use App\Models\County;
 use App\Models\Group;
+use App\Models\Image;
 use App\Models\Province;
 use App\Models\Shop;
 use App\Models\User;
@@ -49,6 +50,32 @@ class ShopController extends Controller
     {
 
         return view('user.users');
+    }
+
+    public function delete(Request $request)
+    {
+        if (auth()->user()->role != 'go')
+            return abort(403, 'مجاز به حذف فروشگاه نیستید!');
+
+        $shop = Shop::find($request->shop_id);
+        foreach ($shop->products as $product) {
+            foreach (Image::where('type', 'p')->where('for_id', $product->id)->get() as $img) {
+                if (Storage::exists("public/products/$img->id.jpg")) {
+                    Storage::delete("public/products/$img->id.jpg");
+                }
+                $img->delete();
+            }
+            $product->delete();
+        }
+        Channel::where('chat_id', "$shop->channel_address")->delete();
+        if (Storage::exists("public/shops/$shop->id.jpg")) {
+            Storage::delete("public/shops/$shop->id.jpg");
+        }
+        $shop->delete();
+        logAdmins(" ✅🛒 " . " یک فروشگاه حذف شد " . PHP_EOL . $shop->name);
+
+        return redirect()->back()->with('success-alert', 'فروشگاه با موفقیت حذف شد');
+
     }
 
     protected function create(Request $request)

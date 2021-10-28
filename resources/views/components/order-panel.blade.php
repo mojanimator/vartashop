@@ -22,6 +22,7 @@
             <x-user.orders params="{!!  $params  !!}"></x-user.orders>
 
         @endif
+
     @else
         @if($userHasShop)
             <x-admin.order-panel :section="'content'" shopIds="{!! $shopIds !!}"></x-admin.order-panel>

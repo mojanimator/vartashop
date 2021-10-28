@@ -67,6 +67,19 @@
 
 
             <div class="col-md-6 p-1  ">
+                <form id="delete-shop" method="POST"
+                      action="{{route('shop.delete')}}">
+                    @csrf
+                    <input type="hidden" name="shop_id" value="{{$shop->id}}">
+
+                </form>
+                @if(auth()->user()->role=='go')
+                    <button onclick="window.showDialog('confirm','فروشگاه و تمام محصولات آن حذف خواهد شد',()=>{event.preventDefault(); document.getElementById('delete-shop').submit();})"
+                            type="button"
+                            class="btn btn-danger   px-3 hoverable-purple position-absolute left-0 m-2 top-0 z-index-3">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                @endif
                 <a href="{{url('panel/my-shops/shop?id='.$shop->id)}}" class="   ">
                     <div class="card move-on-hover">
                         <div class="card-body p-3 ">
