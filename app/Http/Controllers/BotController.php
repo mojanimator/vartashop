@@ -662,7 +662,7 @@ class BotController extends Controller
                 $txt .= "\n-------- لیست کاربران-----\n";
                 if (in_array($from_id, Helper::$Devs))
 
-                    foreach (User::get(['id', 'name', 'telegram_username', 'telegram_id', 'channels', 'groups', 'score']) as $idx => $user) {
+                    foreach (User::get(['id', 'name', 'telegram_username', 'telegram_id', 'score']) as $idx => $user) {
 
                         $txt .= "id: $user->id\n";
                         $txt .= "name: $user->name\n";
