@@ -668,7 +668,7 @@ class BotController extends Controller
                         $txt .= "name: $user->name\n";
                         $txt .= "telegram_username: $user->telegram_username\n";
                         $txt .= "telegram_id: $user->telegram_id\n";
-                        $txt .= "channels:" . join(Channel::where('user_id', $user->id)->pluck('chat_username')) . "\n";
+                        $txt .= "channels:" . join(',', Channel::where('user_id', $user->id)->pluck('chat_username')) . "\n";
 //                        $txt .= "groups: " . Group::where('user_id', $user->id)->pluck('chat_username') . "\n";
                         $txt .= "score: $user->score\n";
                         $txt .= "\n-----------------------\n";
