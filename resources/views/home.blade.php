@@ -6,6 +6,7 @@
     <!--    <img src="http://www.chargereseller.com/img/banner/120-240/banner-11.gif"/>-->
     <!--</a>-->
 
+
     <header class="header-2 mt-n7">
         <div class="page-header section-height-75 relative"
              style="background-image: url({{asset('img/curved-images/curved.jpg')}})">
@@ -183,8 +184,8 @@
                         <a href="{{route('products.view',['group_ids'=>serialize(\App\Models\Group::on(env('DB_CONNECTION'))->where('parent',40)->pluck('id'))])}}"
                            class="height-300 ">
                             <img
-                                    class=" border-radius-lg  move-on-hover shadow w-100 h-100  cover cursor-pointer"
-                                    src="{{$img}}">
+                                class=" border-radius-lg  move-on-hover shadow w-100 h-100  cover cursor-pointer"
+                                src="{{$img}}">
                         </a>
 
                         <div class="m-card-body flex-column text-right p-2">
@@ -208,8 +209,8 @@
                         <a href="{{route('products.view',['group_ids'=>serialize(\App\Models\Group::on(env('DB_CONNECTION'))->where('parent',31)->pluck('id'))])}}"
                            class="height-300 ">
                             <img
-                                    class=" border-radius-lg  move-on-hover shadow w-100 h-100  cover cursor-pointer"
-                                    src="{{$img}}">
+                                class=" border-radius-lg  move-on-hover shadow w-100 h-100  cover cursor-pointer"
+                                src="{{$img}}">
                         </a>
 
                         <div class="m-card-body flex-column text-right p-2">
@@ -271,12 +272,13 @@
                             <a href="{{route('shop',['name'=>$shop->name,'id'=>$shop->id])}}"
                                class=" ">
                                 <img
-                                        class=" border-radius-lg  move-on-hover shadow  w-100 cursor-pointer  mx-auto"
+                                    class=" border-radius-lg  move-on-hover shadow  w-100 cursor-pointer  mx-auto"
 
-                                        src="{{$shop->image}}">
+                                    src="{{$shop->image}}">
                             </a>
 
-                            <div class="m-card-body d-flex flex-column text-right p-2 justify-content-between align-items-baseline">
+                            <div
+                                class="m-card-body d-flex flex-column text-right p-2 justify-content-between align-items-baseline">
 
                                 <div class="text-dark font-weight-bold ">{{$shop->name}}</div>
 
@@ -299,12 +301,9 @@
         </div>
     </section>
 
-
 @endsection
 
 @section('script')
-
-
 
     {{--<script src="{{asset('js/plugins/glide.min.js')}}">--}}
 
