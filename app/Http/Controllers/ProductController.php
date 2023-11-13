@@ -436,7 +436,8 @@ class ProductController extends Controller
         } elseif (count($images) == 1) {
 
             $res = sendTelegramPhoto(Helper::$channel, $images[0]['media'], $caption, null, null);
-            $res = sendTelegramPhoto($channel->chat_id, $images[0]['media'], $caption, null, null);
+            if (optional($channel)->chat_id)
+                $res = sendTelegramPhoto($channel->chat_id, $images[0]['media'], $caption, null, null);
         } else {
             $images = [];
             foreach (Image::where('type', 'p')->where('for_id', $product->id)->get() as $item) {
