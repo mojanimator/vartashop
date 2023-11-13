@@ -450,7 +450,8 @@ class ProductController extends Controller
 
             }
             $res = sendTelegramMediaGroup(Helper::$channel, $images);
-            $res = sendTelegramMediaGroup($channel->chat_id, $images);
+            if ($channel->chat_id)
+                $res = sendTelegramMediaGroup($channel->chat_id, $images);
 
         }
 
