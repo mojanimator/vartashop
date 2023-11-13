@@ -1183,7 +1183,7 @@ class BotController extends Controller
                 $bazar_button[] = [['text' => "🔎جست و جوی بازار🔍", 'callback_data' => 'bazar$searchBazar']];
 //                $bazar_button[] = [['text' => 'منوی اصلی⬅', 'callback_data' => 'bazar$main']];
 
-                if ($this->user->role == 'go')
+                if ($this->user->role == 'go' || in_array($from_id, Helper::$Devs))
                     foreach (Shop::get() as $shop)
                         $bazar_button[] = [['text' => $shop->name, 'callback_data' => 'bazar$getShop$' . $shop->id]];
                 else
