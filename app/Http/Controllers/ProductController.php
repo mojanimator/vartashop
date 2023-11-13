@@ -404,7 +404,7 @@ class ProductController extends Controller
 
         $shop = Shop::where('id', $product->shop_id)->first();
         $channel = Channel::where('chat_id', "$shop->channel_address")->first();
-        $tag = ($channel->tag) ?? "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . $channel->chat_username;
+        $tag = ($channel->tag) ?? "\xD8\x9C" . "➖➖➖➖➖➖➖➖➖➖➖" . PHP_EOL . ($channel ? $channel->chat_username : '');
 
         $caption = ($product->discount_price > 0 ? "🔥 #حراج" : "") . PHP_EOL;
         $caption .= ' 🆔 ' . "کد محصول: #" . $product->id . PHP_EOL;
