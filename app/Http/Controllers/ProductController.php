@@ -436,7 +436,7 @@ class ProductController extends Controller
         } elseif (count($images) == 1) {
 
             $res = sendTelegramPhoto(Helper::$channel, $images[0]['media'], $caption, null, null);
-            if (optional($channel)->chat_id)
+            if (optional($channel)->chat_id && Helper::$channel != optional($channel)->chat_username)
                 $res = sendTelegramPhoto($channel->chat_id, $images[0]['media'], $caption, null, null);
         } else {
             $images = [];
@@ -451,7 +451,7 @@ class ProductController extends Controller
 
             }
             $res = sendTelegramMediaGroup(Helper::$channel, $images);
-            if ($channel->chat_id)
+            if (optional($channel)->chat_id && Helper::$channel != optional($channel)->chat_username)
                 $res = sendTelegramMediaGroup($channel->chat_id, $images);
 
         }
