@@ -325,7 +325,7 @@ export default {
         }
     },
     created() {
-        this.getData();
+        // this.getData();
         this.getGroups();
         self = this;
 
@@ -387,8 +387,7 @@ export default {
                 let bottom_of_element = el.offset().top + el.outerHeight();
                 let bottom_of_screen = $(window).scrollTop() + $(window).innerHeight();
                 let top_of_screen = $(window).scrollTop();
-
-                if ((bottom_of_screen + 300 > top_of_element) && (top_of_screen < bottom_of_element + 200) && !self.loading && self.total > self.products.length) {
+                if ((bottom_of_screen + 300 > top_of_element) && (top_of_screen < bottom_of_element + 200) && !self.loading /*&& self.total > self.products.length*/) {
                     self.getData();
                     scrolled = true;
                     // the element is visible, do something
@@ -472,14 +471,14 @@ export default {
 //                            console.log(axios.getUri({url: this.url, params: response.config.params}));
 //                        this.loading.addClass('hide');
                         if (response.status === 200) {
-                            // console.log(this.page);
+                            console.log(this.page);
 
 
                             // console.log(response.data);
                             this.products = this.products.concat(response.data.data);
 
                             this.total = response.data.total;
-                            this.page = response.data.current_page + 1;
+                            // this.page = response.data.current_page + 1;
 
                             this.loading = false;
                             if (this.products.length === 0)

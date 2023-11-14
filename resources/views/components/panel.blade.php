@@ -3,7 +3,6 @@
 @php($shopIds=json_encode($shopIds))
 
 
-
 @if($section=='header')
     <x-admin.product-panel :section="'header'" shopIds="{!! $shopIds !!}"></x-admin.product-panel>
 
@@ -15,16 +14,12 @@
 
 @elseif($section=='content')
 
-
-
-
     @if(str_contains( url()->current(),'my-orders/cart'))
         {{--@php($title='سبد خرید')--}}
         <x-user.cart></x-user.cart>
     @elseif(str_contains( url()->current(),'my-orders/checkout'))
 
         <x-user.checkout></x-user.checkout>
-
 
     @elseif(str_contains( url()->current(),'my-products/create'))
         <x-admin.product-create :section="'content'" shopIds="{!! $shopIds !!}"></x-admin.product-create>
@@ -54,9 +49,9 @@
     @elseif(str_contains( url()->current(),'my-orders'))
 
         <x-order-panel
-                :section="'content'" userHasShop="{!! $userHasShop !!}"
-                shopIds="{!! $shopIds !!}"
-                params="{!! json_encode(request( )->all()) !!}"
+            :section="'content'" userHasShop="{!! $userHasShop !!}"
+            shopIds="{!! $shopIds !!}"
+            params="{!! json_encode(request( )->all()) !!}"
         >
 
         </x-order-panel>
@@ -65,16 +60,14 @@
     @elseif(str_contains( url()->current(),'factor-maker'))
 
         <x-admin.factor-maker
-                :section="'content'" userHasShop="{!! $userHasShop !!}"
-                shopIds="{!! $shopIds !!}">
+            :section="'content'" userHasShop="{!! $userHasShop !!}"
+            shopIds="{!! $shopIds !!}">
 
         </x-admin.factor-maker>
 
-
-
     @elseif(str_contains( url()->current(),'settings'))
         <x-user.settings
-                params="{!! json_encode(['status'=>request( )->status]) !!}  "></x-user.settings>
+            params="{!! json_encode(['status'=>request( )->status]) !!}  "></x-user.settings>
     @elseif(str_contains( url()->current(),'panel'))
         @php($shopIds=json_decode($shopIds))
         @if($userHasShop)
@@ -92,17 +85,20 @@
                                             <div class="row col-12">
                                                 <span class="col-6 text-sm text-black-50 font-weight-bolder mb-0">آماده ارسال &nbsp
 
-                                                    <span class="text-green text-sm font-weight-bolder"> {{ \App\Models\Order::where('status',3)->whereIn('shop_id',$shopIds)->count()}}</span>
+                                                    <span
+                                                        class="text-green text-sm font-weight-bolder"> {{ \App\Models\Order::where('status',3)->whereIn('shop_id',$shopIds)->count()}}</span>
                                                 </span>
                                                 <span class="col-6 text-sm text-black-50 font-weight-bolder mb-0"> نیاز به پردازش&nbsp
-                                                 <span class="text-primary text-sm font-weight-bolder"> {{ \App\Models\Order::where('status',1)->whereIn('shop_id',$shopIds)->count()}}</span>
+                                                 <span
+                                                     class="text-primary text-sm font-weight-bolder"> {{ \App\Models\Order::where('status',1)->whereIn('shop_id',$shopIds)->count()}}</span>
 
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-4 text-end">
-                                        <div class="icon icon-shape    shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center">
+                                        <div
+                                            class="icon icon-shape    shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center">
                                             <i class="fa fa-2x  fa-shopping-cart text-white m-1"
                                                aria-hidden="true"></i>
                                         </div>
@@ -125,14 +121,16 @@
                                             <div class="row col-12">
 
                                                 <span class="col-6 text-sm text-black-50 font-weight-bolder mb-0"> تعداد&nbsp
-                                                 <span class="text-danger text-sm font-weight-bolder"> {{ \App\Models\Product::whereIn('shop_id',$shopIds)->count()}}</span>
+                                                 <span
+                                                     class="text-danger text-sm font-weight-bolder"> {{ \App\Models\Product::whereIn('shop_id',$shopIds)->count()}}</span>
 
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-4 text-end">
-                                        <div class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center">
+                                        <div
+                                            class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center">
                                             <i class="fa fa-2x fa-gift text-white" aria-hidden="true"></i>
                                         </div>
                                     </div>
@@ -154,14 +152,16 @@
                                             <div class="row col-12">
 
                                                 <span class="col-6 text-sm text-black-50 font-weight-bolder mb-0"> تعداد&nbsp
-                                                 <span class="text-info text-sm font-weight-bolder"> {{ \App\Models\Shop::whereIn('id',$shopIds)->count()}}</span>
+                                                 <span
+                                                     class="text-info text-sm font-weight-bolder"> {{ \App\Models\Shop::whereIn('id',$shopIds)->count()}}</span>
 
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-4 text-end">
-                                        <div class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center">
+                                        <div
+                                            class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="p-2"
                                                  xmlns:xlink="http://www.w3.org/1999/xlink" id=" " version="1.1"
                                                  width="400" height="400" viewBox="0, 0, 400,400">
@@ -213,7 +213,8 @@
                                         </div>
                                     </div>
                                     <div class="col-4 text-end">
-                                        <div class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center  ">
+                                        <div
+                                            class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center  ">
                                             <i class="fa fa-2x fa-cog text-white m-1"
                                                aria-hidden="true"></i>
                                         </div>
@@ -241,7 +242,8 @@
                                         </div>
                                     </div>
                                     <div class="col-4 text-end">
-                                        <div class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center  ">
+                                        <div
+                                            class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center  ">
                                             <i class="fa fa-2x fa-print text-white m-1"
                                                aria-hidden="true"></i>
                                         </div>
@@ -267,16 +269,19 @@
                                             <div class="row col-12">
                                                 <span class="col-6 text-sm text-black-50 font-weight-bolder mb-0">سبد خرید&nbsp
 
-                                                    <span class="text-primary text-sm font-weight-bolder"> {{ \App\Models\Cart::count()}}</span>
+                                                    <span
+                                                        class="text-primary text-sm font-weight-bolder"> {{ \App\Models\Cart::count()}}</span>
                                                 </span>
                                                 <span class="col-6 text-sm text-black-50 font-weight-bolder mb-0">ثبت شده&nbsp
-                                                    <span class="text-primary text-sm font-weight-bolder"> {{\App\Models\Order::where('user_id',auth()->user()->id)->count()  }}</span>
+                                                    <span
+                                                        class="text-primary text-sm font-weight-bolder"> {{\App\Models\Order::where('user_id',auth()->user()->id)->count()  }}</span>
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-4 text-end">
-                                        <div class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center">
+                                        <div
+                                            class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center">
                                             <i class="fa fa-2x fa-shopping-cart text-white m-1"
                                                aria-hidden="true"></i>
                                         </div>
@@ -305,7 +310,8 @@
                                         </div>
                                     </div>
                                     <div class="col-4 text-end">
-                                        <div class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center  ">
+                                        <div
+                                            class="icon icon-shape   shadow border-radius-md bg-dark text-center  d-flex align-items-center justify-content-center  ">
                                             <i class="fa fa-2x fa-cog text-white m-1"
                                                aria-hidden="true"></i>
                                         </div>
