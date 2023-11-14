@@ -20,7 +20,7 @@
                     <h5 class="text-gradient-purple  text-center">{{$product->name}}</h5>
                     <h6 class="text-center   "><span class="text-info">کد محصول: </span>
                         <span
-                                class="text-gradient-dark">{{$product->id}}
+                            class="text-gradient-dark">{{$product->id}}
                             </span>
                     </h6>
 
@@ -30,7 +30,7 @@
                         {{--<span>{{$product->count}}</span>--}}
                         <h6 class="text-center   "><span class="text-info">موجودی: </span>
                             <span
-                                    class="text-gradient-dark">تماس بگیرید
+                                class="text-gradient-dark">تماس بگیرید
                             </span>
                         </h6>
 
@@ -38,10 +38,12 @@
                     </div>
                     <h6 class="d-flex  flex-row  mx-auto align-items-center">
                         {{--<i class="fa fa-money-bill-alt text-primary" aria-hidden="true"></i>--}}
-                        <div class="mx-2  text-gradient-purple   {{ $product->discount_price!=null && $product->discount_price>0  ?'text-decoration-line-through':''}}">{{number_format($product->price). ' ت '}} </div>
+                        <div
+                            class="mx-2  text-gradient-purple   {{ $product->discount_price!=null && $product->discount_price>0  ?'text-decoration-line-through':''}}">{{number_format($product->price). ' ت '}} </div>
                         <i class="fa fa-arrow-alt-circle-left text-primary {{ $product->discount_price==null || $product->discount_price==0  ?'d-none':''}}"
                            aria-hidden="true"></i>
-                        <div class="mx-2  text-gradient-indigo  {{ $product->discount_price==null || $product->discount_price==0  ?'d-none':''}}">{{$product->discount_price.' ت '}}</div>
+                        <div
+                            class="mx-2  text-gradient-indigo  {{ $product->discount_price==null || $product->discount_price==0  ?'d-none':''}}">{{$product->discount_price.' ت '}}</div>
                     </h6>
                     <hr class="horizontal dark mt-5">
                     <div class="  p-3 rounded-lg bg-gradient-faded-white">{!!  nl2br( $product->description) !!}
@@ -56,9 +58,9 @@
                         <div class="col-3">
                             <a href="{{route('shop',['id'=>$product->shop->id,'name'=>$product->shop->name])}}">
                                 <img
-                                        src="{{$product->shop->image}}"
-                                        alt=""
-                                        class="rounded-circle " style="max-width: 4rem">
+                                    src="{{$product->shop->image}}"
+                                    alt=""
+                                    class="rounded-circle " style="max-width: 4rem">
                             </a>
 
                         </div>
@@ -91,7 +93,7 @@
 
                             <div class=" btn btn-outline-dark text-lg copy "
                             >
-                                {{$product->shop->contact}}
+                                {{str_replace('+98','0',$product->shop->contact)}}
                             </div>
                         </div>
                     </div>
@@ -160,7 +162,6 @@
 
 
 @section('script')
-
 
     <script src="{{asset('js/plugins/unitegallery.js')}}" type="text/javascript"></script>
     <script src="{{asset('js/plugins/ug-theme-tiles.js')}}" type="text/javascript"></script>
