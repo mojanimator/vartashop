@@ -14,8 +14,10 @@
                         <h3 class="mx-auto text-white w-100   p-2  rounded-left   text-center bg-gradient-dark my-0">{{$shop->name}}</h3>
                         <h5 class="text-light  text-left mr-auto mt-0 bg-dark p-1 rounded-bottom  ml-4">{{\App\Models\Product::where('shop_id',$shop->id)->count(). ' محصول '}}</h5>
                         {{--<h5 class="text-dark">{{$shop->location('render')}}</h5>--}}
-                        <h6 class="text-light bg-dark rounded-left p-2 ml-auto">{{$shop->address}}
-                            <br> {{' تلفن: '.str_replace('+98','',$shop->contact)}}
+                        <h6 class="d-flex text-light bg-dark rounded-left p-2 ml-auto">
+
+                            <span> {{$shop->address}}</span>
+                            <span> {{str_replace('+98','0',"$shop->contact")}}</span>
                         </h6>
                     </div>
                 </div>
@@ -30,9 +32,10 @@
                         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g fill="#FFFFFF" fill-rule="nonzero">
                                 <g id="wave-down">
-                                    <path d="M0,60.8320331 C299.333333,115.127115 618.333333,111.165365 959,47.8320321 C1299.66667,-15.5013009 1620.66667,-15.2062179 1920,47.8320331 L1920,156.389409 L0,156.389409 L0,60.8320331 Z"
-                                          id="Path-Copy-2"
-                                          transform="translate(960.000000, 78.416017) rotate(180.000000) translate(-960.000000, -78.416017) "></path>
+                                    <path
+                                        d="M0,60.8320331 C299.333333,115.127115 618.333333,111.165365 959,47.8320321 C1299.66667,-15.5013009 1620.66667,-15.2062179 1920,47.8320331 L1920,156.389409 L0,156.389409 L0,60.8320331 Z"
+                                        id="Path-Copy-2"
+                                        transform="translate(960.000000, 78.416017) rotate(180.000000) translate(-960.000000, -78.416017) "></path>
                                 </g>
                             </g>
                         </g>
@@ -73,8 +76,9 @@
                         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g transform="translate(0.000000, 5.000000)" fill="#FFFFFF" fill-rule="nonzero">
                                 <g id="wave-up" transform="translate(0.000000, -5.000000)">
-                                    <path d="M0,70 C298.666667,105.333333 618.666667,95 960,39 C1301.33333,-17 1621.33333,-11.3333333 1920,56 L1920,165 L0,165 L0,70 Z"
-                                          fill="#ffffff"></path>
+                                    <path
+                                        d="M0,70 C298.666667,105.333333 618.666667,95 960,39 C1301.33333,-17 1621.33333,-11.3333333 1920,56 L1920,165 L0,165 L0,70 Z"
+                                        fill="#ffffff"></path>
                                 </g>
                             </g>
                         </g>
@@ -90,9 +94,10 @@
                         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g fill="#FFFFFF" fill-rule="nonzero">
                                 <g id="wave-down">
-                                    <path d="M0,60.8320331 C299.333333,115.127115 618.333333,111.165365 959,47.8320321 C1299.66667,-15.5013009 1620.66667,-15.2062179 1920,47.8320331 L1920,156.389409 L0,156.389409 L0,60.8320331 Z"
-                                          id="Path-Copy-2"
-                                          transform="translate(960.000000, 78.416017) rotate(180.000000) translate(-960.000000, -78.416017) "></path>
+                                    <path
+                                        d="M0,60.8320331 C299.333333,115.127115 618.333333,111.165365 959,47.8320321 C1299.66667,-15.5013009 1620.66667,-15.2062179 1920,47.8320331 L1920,156.389409 L0,156.389409 L0,60.8320331 Z"
+                                        id="Path-Copy-2"
+                                        transform="translate(960.000000, 78.416017) rotate(180.000000) translate(-960.000000, -78.416017) "></path>
                                 </g>
                             </g>
                         </g>
@@ -124,8 +129,9 @@
                         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g transform="translate(0.000000, 5.000000)" fill="#FFFFFF" fill-rule="nonzero">
                                 <g id="wave-up" transform="translate(0.000000, -5.000000)">
-                                    <path d="M0,70 C298.666667,105.333333 618.666667,95 960,39 C1301.33333,-17 1621.33333,-11.3333333 1920,56 L1920,165 L0,165 L0,70 Z"
-                                          fill="#ffffff"></path>
+                                    <path
+                                        d="M0,70 C298.666667,105.333333 618.666667,95 960,39 C1301.33333,-17 1621.33333,-11.3333333 1920,56 L1920,165 L0,165 L0,70 Z"
+                                        fill="#ffffff"></path>
                                 </g>
                             </g>
                         </g>
@@ -141,9 +147,10 @@
                         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g fill="#FFFFFF" fill-rule="nonzero">
                                 <g id="wave-down">
-                                    <path d="M0,60.8320331 C299.333333,115.127115 618.333333,111.165365 959,47.8320321 C1299.66667,-15.5013009 1620.66667,-15.2062179 1920,47.8320331 L1920,156.389409 L0,156.389409 L0,60.8320331 Z"
-                                          id="Path-Copy-2"
-                                          transform="translate(960.000000, 78.416017) rotate(180.000000) translate(-960.000000, -78.416017) "></path>
+                                    <path
+                                        d="M0,60.8320331 C299.333333,115.127115 618.333333,111.165365 959,47.8320321 C1299.66667,-15.5013009 1620.66667,-15.2062179 1920,47.8320331 L1920,156.389409 L0,156.389409 L0,60.8320331 Z"
+                                        id="Path-Copy-2"
+                                        transform="translate(960.000000, 78.416017) rotate(180.000000) translate(-960.000000, -78.416017) "></path>
                                 </g>
                             </g>
                         </g>
@@ -151,7 +158,7 @@
                 </div>
                 <div class="container-fluid shadow-card p-5">
                     <h3 class="  w-100  text-white  "><i
-                                class="fas  fa-lg fa-fire  text-yellow  "></i> تخفیفات ویژه </h3>
+                            class="fas  fa-lg fa-fire  text-yellow  "></i> تخفیفات ویژه </h3>
                     <products-carousel id="carouselVitrin" data-link="{{route('product.search')}}"
                                        root-link="{{route('/')}}"
                                        img-link="{{asset("storage/products/")}}"
@@ -169,8 +176,9 @@
                         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g transform="translate(0.000000, 5.000000)" fill="#FFFFFF" fill-rule="nonzero">
                                 <g id="wave-up" transform="translate(0.000000, -5.000000)">
-                                    <path d="M0,70 C298.666667,105.333333 618.666667,95 960,39 C1301.33333,-17 1621.33333,-11.3333333 1920,56 L1920,165 L0,165 L0,70 Z"
-                                          fill="#ffffff"></path>
+                                    <path
+                                        d="M0,70 C298.666667,105.333333 618.666667,95 960,39 C1301.33333,-17 1621.33333,-11.3333333 1920,56 L1920,165 L0,165 L0,70 Z"
+                                        fill="#ffffff"></path>
                                 </g>
                             </g>
                         </g>
@@ -186,9 +194,10 @@
                         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g fill="#FFFFFF" fill-rule="nonzero">
                                 <g id="wave-down">
-                                    <path d="M0,60.8320331 C299.333333,115.127115 618.333333,111.165365 959,47.8320321 C1299.66667,-15.5013009 1620.66667,-15.2062179 1920,47.8320331 L1920,156.389409 L0,156.389409 L0,60.8320331 Z"
-                                          id="Path-Copy-2"
-                                          transform="translate(960.000000, 78.416017) rotate(180.000000) translate(-960.000000, -78.416017) "></path>
+                                    <path
+                                        d="M0,60.8320331 C299.333333,115.127115 618.333333,111.165365 959,47.8320321 C1299.66667,-15.5013009 1620.66667,-15.2062179 1920,47.8320331 L1920,156.389409 L0,156.389409 L0,60.8320331 Z"
+                                        id="Path-Copy-2"
+                                        transform="translate(960.000000, 78.416017) rotate(180.000000) translate(-960.000000, -78.416017) "></path>
                                 </g>
                             </g>
                         </g>
@@ -214,8 +223,9 @@
                         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g transform="translate(0.000000, 5.000000)" fill="#FFFFFF" fill-rule="nonzero">
                                 <g id="wave-up" transform="translate(0.000000, -5.000000)">
-                                    <path d="M0,70 C298.666667,105.333333 618.666667,95 960,39 C1301.33333,-17 1621.33333,-11.3333333 1920,56 L1920,165 L0,165 L0,70 Z"
-                                          fill="#ffffff"></path>
+                                    <path
+                                        d="M0,70 C298.666667,105.333333 618.666667,95 960,39 C1301.33333,-17 1621.33333,-11.3333333 1920,56 L1920,165 L0,165 L0,70 Z"
+                                        fill="#ffffff"></path>
                                 </g>
                             </g>
                         </g>
@@ -229,7 +239,6 @@
 
 
 @section('script')
-
 
     <script type="text/javascript">
 
