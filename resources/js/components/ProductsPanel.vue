@@ -8,7 +8,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title text-primary" id="exampleModalLabel">{{selectedProd.name}}</h5>
+                        <h5 class="modal-title text-primary" id="exampleModalLabel">{{ selectedProd.name }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -59,7 +59,7 @@
                                         @change="group2=null">
                                     <option class="text-dark" v-for="group in getGroups({level:1})"
                                             :value="group.id">
-                                        {{group.name}}
+                                        {{ group.name }}
 
                                     </option>
                                 </select>
@@ -70,7 +70,7 @@
                                         v-model="group2" @change="group1=getGroups({id:group2})[0].parent">
                                     <option class="text-dark" v-for="group in getGroups({level:2,parent:group1})"
                                             :value="group.id">
-                                        {{group.name}}
+                                        {{ group.name }}
 
                                     </option>
                                 </select>
@@ -82,10 +82,10 @@
                         </div>
                         <div v-if="cmnd=='img'">
                             <image-uploader
-                                    :for-id="modifiedProd.id"
-                                    :link="editLink"
-                                    :callback="  function a(){return getImages(modifiedProd.id);} "
-                                    height="10rem" mode="edit"
+                                :for-id="modifiedProd.id"
+                                :link="editLink"
+                                :callback="  function a(){return getImages(modifiedProd.id);} "
+                                height="10rem" mode="edit"
                             >
 
                             </image-uploader>
@@ -96,9 +96,9 @@
                                              class="mw-100 rounded">
                                     </a>
                                     <button
-                                            @click.prevent="confirmDelete('del-img',img);"
-                                            type="button"
-                                            class="btn btn-danger  py-1 px-2 hoverable-purple position-absolute left-0  top-0 z-index-3">
+                                        @click.prevent="confirmDelete('del-img',img);"
+                                        type="button"
+                                        class="btn btn-danger  py-1 px-2 hoverable-purple position-absolute left-0  top-0 z-index-3">
                                         <i class="fa fa-trash" aria-hidden="true"></i>
                                     </button>
                                 </div>
@@ -117,7 +117,7 @@
                         </button>
                         <button @click="editData(cmnd)" type="button" class="btn  col-6 px-1"
                                 :class="cmnd != 'del-prod' ? 'btn-primary' : 'btn-danger'">
-                            {{cmnd != 'del-prod' ? 'ثبت' : 'حذف'}}
+                            {{ cmnd != 'del-prod' ? 'ثبت' : 'حذف' }}
                         </button>
                     </div>
                 </div>
@@ -150,8 +150,8 @@
                            aria-describedby="button-addon1" name="search" v-model="search"
                            class="form-control   px-5 py-2  " required>
                     <span
-                            @click.prevent="search=null;products.splice(0, products.length);page=1;getData()"
-                            class="btn bg-gradient-danger rounded-pill-right  align-self-center">
+                        @click.prevent="search=null;products.splice(0, products.length);page=1;getData()"
+                        class="btn bg-gradient-danger rounded-pill-right  align-self-center">
                             <i class="fa  fa-window-close" aria-hidden="true"></i>
                         </span>
                 </div>
@@ -162,7 +162,7 @@
                         @change="products.splice(0, products.length);page=1;getData()"
                 >
                     <option class="text-dark " :value="shop.id" v-for="shop in shop_ids">
-                        {{shop.name}}
+                        {{ shop.name }}
 
                     </option>
                 </select>
@@ -189,7 +189,7 @@
                                               class="text-primary hoverable-dark px-2 rounded-pill"
                                               @click.prevent="openModal('name',idx)">
 
-                                             {{prod.name}}
+                                             {{ prod.name }}
                                         </span>
                         </div>
                         <div class="col-8">
@@ -201,13 +201,13 @@
                                               class="text-info hoverable-dark px-2 rounded-pill"
                                               @click.prevent="openModal('price',idx)">
                                             <span class="text-dark small">قیمت:</span>
-                                            {{separator(prod.price)}}
+                                            {{ separator(prod.price) }}
                                         </span>
                                     <span data-bs-toggle="modal" data-bs-target="#modal"
                                           class="text-info hoverable-dark px-2 rounded-pill"
                                           @click.prevent="openModal('count',idx)">
                                             <span class="text-dark small ">تعداد:</span>
-                                            {{ prod.count}}
+                                            {{ prod.count }}
                                         </span>
 
                                 </div>
@@ -216,14 +216,14 @@
                                                class="text-info hoverable-dark px-2 rounded-pill"
                                                @click.prevent="openModal('discount_price',idx)">
                                             <span class="text-dark small">قیمت حراج:</span>
-                                            {{ separator(prod.discount_price)}}
+                                            {{ separator(prod.discount_price) }}
                                         </span>
                                     <span data-bs-toggle="modal" data-bs-target="#modal"
                                           class="  hoverable-primary px-2 rounded-pill "
                                           :class=" prod.active ? 'text-success' : 'text-danger'"
                                           @click.prevent="openModal('active',idx)">
 
-                                            {{ prod.active ? 'فعال' : 'غیر فعال'}}
+                                            {{ prod.active ? 'فعال' : 'غیر فعال' }}
                                         </span>
 
                                 </div>
@@ -253,10 +253,12 @@
                         <div @click="openModal('description',idx)" data-bs-toggle="modal" data-bs-target="#modal"
                              class="rounded-1 small text-right border border-light  hoverable-dark    pt-1 px-1">
                                          <span
-                                                 class="text-indigo small  p-2 rounded-pill"
+                                             class="text-indigo small  p-2 rounded-pill"
                                          >
 
-                                            {{prod.description && prod.description.length > 100 ? prod.description.substring(0, 100) + ' ...' : prod.description}}
+                                            {{
+                                                 prod.description && prod.description.length > 100 ? prod.description.substring(0, 100) + ' ...' : prod.description
+                                             }}
                                         </span>
 
 
@@ -265,10 +267,10 @@
                              class="rounded-1 small text-right border border-light  hoverable-dark   mt-1 pt-1 px-1">
 
                                 <span
-                                        class="text-pink small  p-2 rounded-pill"
+                                    class="text-pink small  p-2 rounded-pill"
                                 >
 
-                                            {{prod.tags }}
+                                            {{ prod.tags }}
                                         </span>
 
 
@@ -283,366 +285,365 @@
 </template>
 
 <script>
-    let scrolled = false;
-    let self;
-    import imageUploader from './image-uploader.vue';
+let scrolled = false;
+let self;
+import imageUploader from './image-uploader.vue';
 
-    export default {
-        props: ['storage', 'imagesLink', 'searchLink', 'productLink', 'editLink', 'shopIds', 'groupsLink'],
+export default {
+    props: ['storage', 'imagesLink', 'searchLink', 'productLink', 'editLink', 'shopIds', 'groupsLink'],
 
-        components: {imageUploader,},
-        data() {
-            return {
-                prod: null,
-                products: [],
-                collapsed: false,
-                selectedProd: {},
-                modifiedProd: {},
-                cmnd: null,
-                selectedIdx: null,
+    components: {imageUploader,},
+    data() {
+        return {
+            prod: null,
+            products: [],
+            collapsed: false,
+            selectedProd: {},
+            modifiedProd: {},
+            cmnd: null,
+            selectedIdx: null,
 
-                scroll: true,
-                loading: false,
-                total: -1,
-                order_by: 'created_at',
-                dir: 'DESC',
-                groups: [],
-                groups_show_tree: true,
-                noData: false,
-                errors: '',
-                attach: {},
-                group1: null,
-                group2: null,
-                images: [],
+            scroll: true,
+            loading: false,
+            total: -1,
+            order_by: 'created_at',
+            dir: 'DESC',
+            groups: [],
+            groups_show_tree: true,
+            noData: false,
+            errors: '',
+            attach: {},
+            group1: null,
+            group2: null,
+            images: [],
 
-                search: null,
-                paginate: 12,
-                page: 1,
-                shop_ids: [{id: 0, name: 'همه فروشگاههای من'}, ...JSON.parse(this.shopIds)],
-                shopId: 0,
+            search: null,
+            paginate: 12,
+            page: 1,
+            shop_ids: [{id: 0, name: 'همه فروشگاههای من'}, ...JSON.parse(this.shopIds)],
+            shopId: 0,
+        }
+    },
+    created() {
+        this.getData();
+        this.getGroups();
+        self = this;
+
+    },
+    watch: {
+
+        loading: function (val) {
+            if (val) {
+                $('#loading').removeClass('d-none');
+            } else
+                $('#loading').addClass('d-none');
+        },
+    },
+    mounted() {
+        $("#modal").on("hidden.bs.modal", function () {
+            if (!self.hidedByOkButton) {
+                self.products[self.selectedIdx] = self.selectedProd;
+                self.$forceUpdate();
+            } else {
+                self.hidedByOkButton = true;
+            }
+        });
+        this.setEvents($(".progress-line"));
+    },
+    methods: {
+        log(str) {
+            console.log(str);
+        },
+        imgError(event) {
+
+            event.target.src = '/img/vartashop_logo.png';
+            event.target.parentElement.href = '/img/noimage.png';
+        },
+        confirmDelete(cmnd, id) {
+            window.showDialog('confirm', 'از حذف تصویر اطمینان دارید؟', () => this.editData(cmnd, id));
+        },
+        openModal(cmnd, idx) {
+
+            this.cmnd = cmnd;
+            this.modifiedProd = this.products[idx];
+            this.selectedProd = {...this.modifiedProd};
+            this.selectedIdx = idx;
+            if (cmnd == 'group_id') {
+                if (this.modifiedProd.group && this.modifiedProd.group.level == 1)
+                    this.group1 = this.modifiedProd.group.id;
+                if (this.modifiedProd.group && this.modifiedProd.group.level == 2) {
+                    this.group2 = this.modifiedProd.group.id;
+                    this.group1 = this.modifiedProd.group.parent;
+                }
+            }
+            if (cmnd == 'img') {
+                this.getImages(this.modifiedProd.id);
             }
         },
-        created() {
-            this.getData();
-            this.getGroups();
-            self = this;
+        setEvents(el) {
+            $(window).scroll(function () {
 
-        },
-        watch: {
+                let top_of_element = el.offset().top;
+                let bottom_of_element = el.offset().top + el.outerHeight();
+                let bottom_of_screen = $(window).scrollTop() + $(window).innerHeight();
+                let top_of_screen = $(window).scrollTop();
 
-            loading: function (val) {
-                if (val) {
-                    $('#loading').removeClass('d-none');
-                } else
-                    $('#loading').addClass('d-none');
-            },
-        },
-        mounted() {
-            $("#modal").on("hidden.bs.modal", function () {
-                if (!self.hidedByOkButton) {
-                    self.products[self.selectedIdx] = self.selectedProd;
-                    self.$forceUpdate();
+                if ((bottom_of_screen + 300 > top_of_element) && (top_of_screen < bottom_of_element + 200) && !self.loading && self.total > self.products.length) {
+                    self.getData();
+                    scrolled = true;
+                    // the element is visible, do something
                 } else {
-                    self.hidedByOkButton = true;
+                    // the element is not visible, do something else
                 }
             });
-            this.setEvents($(".progress-line"));
         },
-        methods: {
-            log(str) {
-                console.log(str);
-            },
-            imgError(event) {
 
-                event.target.src = '/img/vartashop_logo.png';
-                event.target.parentElement.href = '/img/noimage.png';
-            },
-            confirmDelete(cmnd, id) {
-                window.showDialog('confirm', 'از حذف تصویر اطمینان دارید؟', () => this.editData(cmnd, id));
-            },
-            openModal(cmnd, idx) {
+        isVisible() {
+            $.fn.isInViewport = function () {
+                let elementTop = $(this).offset().top;
+                let elementBottom = elementTop + $(this).outerHeight();
 
-                this.cmnd = cmnd;
-                this.modifiedProd = this.products[idx];
-                this.selectedProd = {...this.modifiedProd};
-                this.selectedIdx = idx;
-                if (cmnd == 'group_id') {
-                    if (this.modifiedProd.group && this.modifiedProd.group.level == 1)
-                        this.group1 = this.modifiedProd.group.id;
-                    if (this.modifiedProd.group && this.modifiedProd.group.level == 2) {
-                        this.group2 = this.modifiedProd.group.id;
-                        this.group1 = this.modifiedProd.group.parent;
-                    }
-                }
-                if (cmnd == 'img') {
-                    this.getImages(this.modifiedProd.id);
-                }
-            },
-            setEvents(el) {
-                $(window).scroll(function () {
+                let viewportTop = $(window).scrollTop();
+                let viewportBottom = viewportTop + $(window).height();
 
-                    let top_of_element = el.offset().top;
-                    let bottom_of_element = el.offset().top + el.outerHeight();
-                    let bottom_of_screen = $(window).scrollTop() + $(window).innerHeight();
-                    let top_of_screen = $(window).scrollTop();
-
-                    if ((bottom_of_screen + 300 > top_of_element) && (top_of_screen < bottom_of_element + 200) && !self.loading && self.total > self.products.length) {
-                        self.getData();
-                        scrolled = true;
-                        // the element is visible, do something
-                    } else {
-                        // the element is not visible, do something else
-                    }
-                });
-            },
-
-            isVisible() {
-                $.fn.isInViewport = function () {
-                    let elementTop = $(this).offset().top;
-                    let elementBottom = elementTop + $(this).outerHeight();
-
-                    let viewportTop = $(window).scrollTop();
-                    let viewportBottom = viewportTop + $(window).height();
-
-                    return elementBottom > viewportTop && elementTop < viewportBottom;
-                };
-            },
-            separator(price) {
-                return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            },
-            updateCart(id) {
-                document.getElementById('cart-form-' + this.id + '-' + id).submit();
-            },
-            getImages(id) {
+                return elementBottom > viewportTop && elementTop < viewportBottom;
+            };
+        },
+        separator(price) {
+            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
+        updateCart(id) {
+            document.getElementById('cart-form-' + this.id + '-' + id).submit();
+        },
+        getImages(id) {
 //                this.log(this.params);
 
 //
-                this.loading = true;
+            this.loading = true;
 
-                axios.get(this.imagesLink, {
-                    params: {
-                        p_id: id,
+            axios.get(this.imagesLink, {
+                params: {
+                    p_id: id,
 
-                    }
-                })
-                    .then((response) => {
-
-                            if (response.status === 200) {
-                                this.loading = false;
-                                this.images = response.data;
-                                this.modifiedProd.image = this.images.length > 0 ? ( this.storage + '/products/' + this.images[0] + '.jpg') : '/img/vartashop-logo.png';
-                            }
-                        }
-                    ).catch((error) => {
-
-                    console.log(error);
-                    this.loading = false;
-                    return [];
-                });
-            },
-            getData() {
-
-                if (this.total > 0 && this.total <= this.products.length) return;
-                this.loading = true;
-
-                if (scrolled) {
-
-                    this.page++;
-                    scrolled = false;
                 }
+            })
+                .then((response) => {
+
+                        if (response.status === 200) {
+                            this.loading = false;
+                            this.images = response.data;
+                            this.modifiedProd.image = this.images.length > 0 ? (this.storage + '/products/' + this.images[0] + '.jpg') : '/img/vartashop-logo.png';
+                        }
+                    }
+                ).catch((error) => {
+
+                console.log(error);
+                this.loading = false;
+                return [];
+            });
+        },
+        getData() {
+            // console.log(this.page);
+
+            if (this.total > 0 && this.total <= this.products.length) return;
+            this.loading = true;
+
+            if (scrolled) {
+
+                this.page++;
+                scrolled = false;
+            }
 
 
 //                this.log(this.shop_ids);
 
-                axios.get(this.searchLink, {
-                    params: {
-                        order_by: this.order_by,
-                        dir: this.dir,
-                        shop_ids: this.shopId === 0 ? this.shop_ids.map((el) => el.id) : [this.shopId],
-                        search: this.search,
-                        page: this.page,
-                        paginate: this.paginate,
-                    }
-                })
-                    .then((response) => {
+            axios.get(this.searchLink, {
+                params: {
+                    order_by: this.order_by,
+                    dir: this.dir,
+                    shop_ids: this.shopId === 0 ? this.shop_ids.map((el) => el.id) : [this.shopId],
+                    search: this.search,
+                    page: this.page,
+                    paginate: this.paginate,
+                }
+            })
+                .then((response) => {
 
 //                            console.log(axios.getUri({url: this.url, params: response.config.params}));
 //                        this.loading.addClass('hide');
-                            if (response.status === 200) {
+                        if (response.status === 200) {
+                            // console.log(this.page);
 
 
-//                            console.log(response.data);
-                                this.products = this.products.concat(response.data.data);
+                            // console.log(response.data);
+                            this.products = this.products.concat(response.data.data);
 
-                                this.total = response.data.total;
-//                                this.page = response.data.current_page + 1;
+                            this.total = response.data.total;
+                            this.page = response.data.current_page + 1;
 
-                                this.loading = false;
-                                if (this.products.length === 0)
-                                    this.noData = true;
-                                if (this.page > 1 && this.products.length === 0) {
-                                    this.noData = false;
-                                    this.page = 1;
-                                    this.getData();
-                                }
+                            this.loading = false;
+                            if (this.products.length === 0)
+                                this.noData = true;
+                            if (this.page > 1 && this.products.length === 0) {
+                                this.noData = false;
+                                this.page = 1;
+                                this.getData();
+                            }
 //                                this.openModal('img', 0);
 //                                $("#modal").modal("show");
-                            }
                         }
-                    ).catch((error) => {
+                    }
+                ).catch((error) => {
 
-                    console.log(error);
-                    this.loading = false;
-                });
-            },
-            editData(cmnd, id) {
-                this.hidedByOkButton = true;
+                console.log(error);
+                this.loading = false;
+            });
+        },
+        editData(cmnd, id) {
+            this.hidedByOkButton = true;
 
-                this.loading = true;
-                switch (cmnd) {
-                    case 'name':
-                        this.attach = {name: this.modifiedProd.name};
-                        break;
-                    case 'count':
-                        this.attach = {count: this.modifiedProd.count};
-                        break;
-                    case 'price':
-                        this.attach = {price: this.modifiedProd.price};
-                        break;
-                    case 'discount_price':
-                        this.attach = {discount_price: this.modifiedProd.discount_price};
-                        break;
-                    case 'description':
-                        this.attach = {description: this.modifiedProd.description};
-                        break;
-                    case 'tags':
+            this.loading = true;
+            switch (cmnd) {
+                case 'name':
+                    this.attach = {name: this.modifiedProd.name};
+                    break;
+                case 'count':
+                    this.attach = {count: this.modifiedProd.count};
+                    break;
+                case 'price':
+                    this.attach = {price: this.modifiedProd.price};
+                    break;
+                case 'discount_price':
+                    this.attach = {discount_price: this.modifiedProd.discount_price};
+                    break;
+                case 'description':
+                    this.attach = {description: this.modifiedProd.description};
+                    break;
+                case 'tags':
 //                        console.log(this.$refs['modal-tags'].value);
-                        this.attach = {
-                            tags: this.$refs['modal-tags'].value.replace(' ', '_').replace('#', '').split('\n').map((el) => {
-                                if (el.endsWith('_'))
-                                    el = el.slice(0, -1);
-                                if (el !== '')
-                                    return '#' + el;
-                            }).join('\n')
-                        };
-                        break;
-                    case 'active':
-                        this.attach = {active: this.modifiedProd.active};
-                        break;
-                    case 'group_id':
-                        this.attach = {group_id: this.group2 ? this.group2 : this.group1};
-                        break;
-                    case 'del-img':
-                        this.cmnd = cmnd;
-                        this.attach = {img_id: id};
+                    this.attach = {
+                        tags: this.$refs['modal-tags'].value.replace(' ', '_').replace('#', '').split('\n').map((el) => {
+                            if (el.endsWith('_'))
+                                el = el.slice(0, -1);
+                            if (el !== '')
+                                return '#' + el;
+                        }).join('\n')
+                    };
+                    break;
+                case 'active':
+                    this.attach = {active: this.modifiedProd.active};
+                    break;
+                case 'group_id':
+                    this.attach = {group_id: this.group2 ? this.group2 : this.group1};
+                    break;
+                case 'del-img':
+                    this.cmnd = cmnd;
+                    this.attach = {img_id: id};
 
-                        break;
-                }
+                    break;
+            }
 
-                axios.post(this.editLink, {
-                    id: this.modifiedProd.id,
-                    cmnd: this.cmnd,
-                    ...this.attach
+            axios.post(this.editLink, {
+                id: this.modifiedProd.id,
+                cmnd: this.cmnd,
+                ...this.attach
 
-                })
-                    .then((response) => {
+            })
+                .then((response) => {
 
-                            if (this.cmnd !== 'del-img')
-                                $('#modal').modal('hide');
-                            if (response.status === 200) {
+                        if (this.cmnd !== 'del-img')
+                            $('#modal').modal('hide');
+                        if (response.status === 200) {
 
-                                this.products[this.selectedIdx] = this.selectedProd = this.modifiedProd;
-                                if (this.cmnd === 'del-prod') {
+                            this.products[this.selectedIdx] = this.selectedProd = this.modifiedProd;
+                            if (this.cmnd === 'del-prod') {
 
 //                                    this.$set(this.products, this.selectedIdx);
 //                                    this.$delete(this.products, this.selectedIdx);
 
 //                                    Vue.delete(this.products, this.selectedIdx);
-                                    this.products.splice(this.selectedIdx, 1);
-                                }
-                                else if (this.cmnd === 'tags') {
-                                    this.products[this.selectedIdx].tags = this.attach.tags;
-                                }
-                                else if (this.cmnd === 'group_id') {
-                                    this.products[this.selectedIdx].group = this.getGroups({id: this.attach.group_id})[0];
-                                }
-                                else if (this.cmnd === 'del-img') {
+                                this.products.splice(this.selectedIdx, 1);
+                            } else if (this.cmnd === 'tags') {
+                                this.products[this.selectedIdx].tags = this.attach.tags;
+                            } else if (this.cmnd === 'group_id') {
+                                this.products[this.selectedIdx].group = this.getGroups({id: this.attach.group_id})[0];
+                            } else if (this.cmnd === 'del-img') {
 
 
-                                    this.getImages(this.modifiedProd.id);
-                                    this.cmnd = 'img';
+                                this.getImages(this.modifiedProd.id);
+                                this.cmnd = 'img';
 
 //                                    $('#modal').modal("show");
-                                }
+                            }
 
 //                                this.page = response.data.current_page + 1;
 
 
-                            }
-                            this.loading = false;
-//                            this.$forceUpdate();
                         }
-                    ).catch((error) => {
+                        this.loading = false;
+//                            this.$forceUpdate();
+                    }
+                ).catch((error) => {
 //                    $('#modal').modal('hide');
 //                    console.log(error.response.data.errors);
-                    this.loading = false;
-                    this.errors = '';
-                    if (error.response && error.response.status === 422)
-                        for (let idx in error.response.data.errors)
-                            this.errors += '' + error.response.data.errors[idx] + '<br>';
-                    else {
-                        this.errors = error;
-                    }
-                    window.showDialog('danger', this.errors, onclick = null);
-                });
-            },
-            getGroups(items = {show_tree: null, id: null, level: null, parent: null}) {
+                this.loading = false;
+                this.errors = '';
+                if (error.response && error.response.status === 422)
+                    for (let idx in error.response.data.errors)
+                        this.errors += '' + error.response.data.errors[idx] + '<br>';
+                else {
+                    this.errors = error;
+                }
+                window.showDialog('danger', this.errors, onclick = null);
+            });
+        },
+        getGroups(items = {show_tree: null, id: null, level: null, parent: null}) {
 //                this.loading.removeClass('hide');
 
-                if (this.groups.length === 0) {
-                    axios.get(this.groupsLink, {
-                        params: {
-                            ...{
-                                items
+            if (this.groups.length === 0) {
+                axios.get(this.groupsLink, {
+                    params: {
+                        ...{
+                            items
 
-                            },
+                        },
 
-                        }
-                    })
-                        .then((response) => {
+                    }
+                })
+                    .then((response) => {
 //                            console.log(response.data);
 
 //                        this.loading.addClass('hide');
-                            if (response.status === 200) {
+                        if (response.status === 200) {
 //                            console.log(response.data);
-                                this.groups = response.data;
+                            this.groups = response.data;
 
 
 //                            cosnole.log(this.groups);
 
-                            }
-                        }).catch((error) => {
-                        console.log(error);
-                        this.loading = false;
-                    });
-                } else {
-                    return this.groups.filter(((el) => {
-                            let chain = true;
-                            if (items.level)
-                                chain = items.level == el.level;
-                            if (items.parent && chain)
-                                chain = items.parent == el.parent;
-                            if (items.id && chain)
-                                chain = items.id == el.id;
-                            return chain;
                         }
+                    }).catch((error) => {
+                    console.log(error);
+                    this.loading = false;
+                });
+            } else {
+                return this.groups.filter(((el) => {
+                        let chain = true;
+                        if (items.level)
+                            chain = items.level == el.level;
+                        if (items.parent && chain)
+                            chain = items.parent == el.parent;
+                        if (items.id && chain)
+                            chain = items.id == el.id;
+                        return chain;
+                    }
 
-                    ).bind(items));
+                ).bind(items));
 
 
-                }
             }
-            ,
         }
+        ,
     }
+}
 </script>
