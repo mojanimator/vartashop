@@ -43,7 +43,7 @@
                         <i class="fa fa-arrow-alt-circle-left text-primary {{ $product->discount_price==null || $product->discount_price==0  ?'d-none':''}}"
                            aria-hidden="true"></i>
                         <div
-                            class="mx-2  text-gradient-indigo  {{ $product->discount_price==null || $product->discount_price==0  ?'d-none':''}}">{{$product->discount_price.' ت '}}</div>
+                            class="mx-2  text-gradient-indigo  {{ $product->discount_price==null || $product->discount_price==0  ?'d-none':''}}">{{number_format($product->discount_price).' ت '}}</div>
                     </h6>
                     <hr class="horizontal dark mt-5">
                     <div class="  p-3 rounded-lg bg-gradient-faded-white">{!!  nl2br( $product->description) !!}
