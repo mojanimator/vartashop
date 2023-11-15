@@ -1,6 +1,5 @@
 <section class=" row justify-content-center     ">
 
-{{dd(\App\Models\Cart::get())}}
     <div class="col-md-12">
         <div class="card">
             <div class="card-header text-center text-lg text-primary font-weight-bold">ثبت اطلاعات پستی</div>
