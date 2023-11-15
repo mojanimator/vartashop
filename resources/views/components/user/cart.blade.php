@@ -144,7 +144,7 @@
                                       class="px-4 form-control "
                                       name="{{$idx}}"
                                       autocomplete="description-{{$idx}}"
-                                      autofocus>{{ $shop['desc']? json_decode($shop['desc']) ?? ''}}
+                                      autofocus>{{ $shop['desc']? json_decode($shop['desc'])  : ''}}
                             </textarea>
 
 
