@@ -129,6 +129,10 @@ Route::post('/cart/edit', function () {
         case 'setdescs':
             \App\Models\Cart::setShopDesc($descs);
             return $descs;
+        case 'checkout':
+            \App\Models\Cart::setShopDesc($descs);
+            return $descs;
+
             break;
     }
 

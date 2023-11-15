@@ -266,6 +266,7 @@ class OrderController extends Controller
             throw new ValidationException($validator);
         }
         foreach ($cart as $shop_id => $shop) {
+
             $order = Order::create([
                 'user_id' => auth()->user()->id,
                 'shop_id' => $shop_id,
@@ -275,7 +276,7 @@ class OrderController extends Controller
                 'postal_code' => $postalCode,
                 'phone' => $phone,
                 'post_price' => null,
-                'description' => substr(isset($shop['desc']) ? json_decode($shop['desc']) : '', 0, 1000),
+                'description' => $shop['desc'] ?? '',
                 'province_id' => $provinceId,
                 'county_id' => $countyId,
 

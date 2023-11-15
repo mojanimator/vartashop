@@ -41,7 +41,8 @@
                                 <img src="{{$product->image}}" alt=""
                                      class="max-width-100 max-height-100 rounded-lg  ">
                                 <div class="px-4 d-flex flex-column align-items-start">
-                                    <a href="{{route('product.view',[$product->name,$product->id])}}" target="_blank"
+                                    <a href="{{route('product.view',[$product->name,$product->id])}}"
+                                       target="_blank"
                                        class="  ">
                                         <h6
                                             class="hoverable-text-info text-primary">{{$product->name}}
@@ -87,7 +88,8 @@
                                                     <i class="fa fa-minus" aria-hidden="true"></i>
                                                     <input type="hidden" name="cmnd" value="minus"/>
                                                     <input type="hidden" name="id" value="{{$product->id}}"/>
-                                                    <input type="hidden" name="shop_id" value="{{$product->shop_id}}"/>
+                                                    <input type="hidden" name="shop_id"
+                                                           value="{{$product->shop_id}}"/>
                                                     @csrf
                                                 </form>
                                             </div>
@@ -108,7 +110,8 @@
                                                     <i class="fa fa-plus" aria-hidden="true"></i>
                                                     <input type="hidden" name="cmnd" value="plus"/>
                                                     <input type="hidden" name="id" value="{{$product->id}}"/>
-                                                    <input type="hidden" name="shop_id" value="{{$product->shop_id}}"/>
+                                                    <input type="hidden" name="shop_id"
+                                                           value="{{$product->shop_id}}"/>
                                                     @csrf
                                                 </form>
                                             </div>
@@ -138,14 +141,13 @@
                     @endforeach
                     <div class="form-group row  ">
 
-                        <div class="col-12">
+                        <div class="col-11 mx-auto   ">
                             <textarea id="desc-{{$idx}}" type="text" rows="3" maxlength="1000"
                                       placeholder=" توضیحات برای این فروشنده (اختیاری)..."
-                                      class="px-4 form-control "
+                                      class="px-4   form-control "
                                       name="{{$idx}}"
                                       autocomplete="description-{{$idx}}"
-                                      autofocus>{{ $shop['desc'] ?? ''}}
-                            </textarea>
+                                      autofocus>{{ $shop['desc'] ?? ''}}</textarea>
 
 
                         </div>
@@ -171,17 +173,18 @@
                 <li>{{'هزینه پست از هر فروشنده، جداگانه محاسبه می شود'}}</li>
                 <li>{{'ثبت سفارش شما به معنای موجود بودن آن کالا نیست و به شما اطلاع داده می شود'}}</li>
             </ul>
-            <form id="{{'checkout'}}"
-                  class="row col-12 mx-2 text-white  cursor-pointer btn btn-block bg-gradient-success  text-lg cursor-pointer"
-                  method="post" onclick="$( '#checkout' ).trigger( 'submit' )"
+            <button id="checkout"
+                    class="  text-white   btn btn-block bg-gradient-success  text-lg cursor-pointer"
+
             >
                 @csrf
-                <i class="fas fa-2x fa-cart-plus   "
+
+                <i class="fas fa-2x fa-cart-plus   text-sm "
                    aria-hidden="true"></i>
-                {{(!auth()->user()? 'ورود و ':'') . 'ثبت آدرس'}}
+                <span class=" ">   {{(!auth()->user()? 'ورود و ':'') . 'ثبت آدرس'}}</span>
 
 
-            </form>
+            </button>
 
         @endif
     </div>
@@ -204,29 +207,31 @@
             'cmnd': 'setdescs',
             'descs': descs
         });
+
 //
 
 
     }
-    window.onload = () => {
-        $("#checkout").on("submit", function (event) {
 
+    window.onload = () => {
+
+
+        $('#checkout').on('click', (event) => {
+            // event.preventDefault();
             let descs = {};
 
             $('[id^=desc-]').each((idx, el) => {
 
                 descs[el.name] = el.value;
             });
-
             axios.post("{!! route('cart.edit') !!}", {
-                'cmnd': 'setdescs',
+                'cmnd': 'checkout',
                 'descs': descs
             }).then((response) => {
                 window.location = "{!! url('panel/my-orders/checkout') !!}"
             });
+        })
 
-
-        });
     }
 
 </script>
