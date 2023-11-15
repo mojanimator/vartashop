@@ -458,7 +458,7 @@
 
                     <ul class="d-flex flex-row-reverse   nav pr-0  ">
                         <li class="nav-item ">
-                            <a class="nav-link pe-1" href="https://www.instagram.com/varta.shop/" target="_blank"
+                            <a class="nav-link pe-1" href="https://www.instagram.com/vartashop_ir/" target="_blank"
                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="اینستاگرام">
                                 <i class="fab fa-instagram text-lg opacity-8 text-primary"></i>
                             </a>
@@ -471,7 +471,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link pe-1" href="https://t.me/develowper" target="_blank"
+                            <a class="nav-link pe-1" href="https://t.me/vartashop" target="_blank"
                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="تلگرام">
                                 <i class="fab fa-telegram text-lg opacity-8 text-info"></i>
                             </a>
