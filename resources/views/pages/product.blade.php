@@ -30,7 +30,7 @@
                         {{--<span>{{$product->count}}</span>--}}
                         <h6 class="text-center   "><span class="text-info">موجودی: </span>
                             <span
-                                class="text-gradient-dark">تماس بگیرید
+                                class="text-gradient-dark">پیام دهید
                             </span>
                         </h6>
 
