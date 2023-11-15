@@ -91,19 +91,19 @@
                                title="بازارچه ورتا" data-placement="bottom">
                                 بازارچه ورتا
                             </a>
-                            @if(!auth()->user() || auth()->user()->role=='us')
-                                <div class="navbar-nav nav-item mr-auto ">
-                                    <a href="{{auth()->user()? url('panel/my-orders/cart') : route('cart.view')}}"
-                                       class="  position-relative   ">
-                                        <i class="fa fa-2x fa-cart-plus move-on-hover " aria-hidden="true"></i>
-                                        <span
-                                            class=" position-absolute top-0 start-0 translate-middle p-2 badge rounded-circle bg-danger">
+                            {{--                            @if(!auth()->user() || auth()->user()->role=='us')--}}
+                            <div class="navbar-nav nav-item mr-auto ">
+                                <a href="{{auth()->user()? url('panel/my-orders/cart') : route('cart.view')}}"
+                                   class="  position-relative   ">
+                                    <i class="fa fa-2x fa-cart-plus move-on-hover " aria-hidden="true"></i>
+                                    <span
+                                        class=" position-absolute top-0 start-0 translate-middle p-2 badge rounded-circle bg-danger">
     {{\App\Models\Cart::count()}}
                                             <span class="visually-hidden">سبد خرید</span>
   </span>
-                                    </a>
-                                </div>
-                            @endif
+                                </a>
+                            </div>
+                            {{--                            @endif--}}
                             <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false"
                                     aria-label="Toggle navigation">
