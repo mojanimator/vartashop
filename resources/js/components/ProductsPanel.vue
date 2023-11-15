@@ -471,7 +471,7 @@ export default {
 //                            console.log(axios.getUri({url: this.url, params: response.config.params}));
 //                        this.loading.addClass('hide');
                         if (response.status === 200) {
-                            console.log(this.page);
+                            // console.log(this.page);
 
 
                             // console.log(response.data);
