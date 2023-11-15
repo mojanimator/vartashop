@@ -35,6 +35,7 @@ class Cart
 
     static function setShopDesc($descs)
     {
+        dd($descs);
         $cart = session()->has('cart') ? session('cart') : [];
         foreach ($descs as $idx => $desc) {
 
