@@ -144,7 +144,7 @@
                                       class="px-4 form-control "
                                       name="{{$idx}}"
                                       autocomplete="description-{{$idx}}"
-                                      autofocus>{{ isset($shop['desc'])? json_decode($shop['desc'])  : ''}}
+                                      autofocus>{{ $shop['desc'] ?? ''}}
                             </textarea>
 
 
@@ -171,17 +171,18 @@
                 <li>{{'هزینه پست از هر فروشنده، جداگانه محاسبه می شود'}}</li>
                 <li>{{'ثبت سفارش شما به معنای موجود بودن آن کالا نیست و به شما اطلاع داده می شود'}}</li>
             </ul>
-            <div class="row col-12">
-                <a href="{{ url('panel/my-orders/checkout')}}"
-                   class="mx-2 text-white  cursor-pointer btn btn-block bg-gradient-success  text-lg"
-                >
-                    <i class="fas fa-2x fa-cart-plus   "
-                       aria-hidden="true"></i>
-                    {{(!auth()->user()? 'ورود و ':'') . 'ثبت آدرس'}}
+            <form id="{{'checkout'}}"
+                  class="row col-12 mx-2 text-white  cursor-pointer btn btn-block bg-gradient-success  text-lg cursor-pointer"
+                  method="post" onclick="$( '#checkout' ).trigger( 'submit' )"
+            >
+                @csrf
+                <i class="fas fa-2x fa-cart-plus   "
+                   aria-hidden="true"></i>
+                {{(!auth()->user()? 'ورود و ':'') . 'ثبت آدرس'}}
 
 
-                </a>
-            </div>
+            </form>
+
         @endif
     </div>
 </section>
@@ -207,6 +208,25 @@
 
 
     }
+    window.onload = () => {
+        $("#checkout").on("submit", function (event) {
 
+            let descs = {};
+
+            $('[id^=desc-]').each((idx, el) => {
+
+                descs[el.name] = el.value;
+            });
+
+            axios.post("{!! route('cart.edit') !!}", {
+                'cmnd': 'setdescs',
+                'descs': descs
+            }).then((response) => {
+                window.location = "{!! url('panel/my-orders/checkout') !!}"
+            });
+
+
+        });
+    }
 
 </script>

@@ -41,7 +41,7 @@ class Cart
 //            if (!isset($cart[$idx]))
 //                $cart[$idx] = ['desc' => $desc];
 //            else
-            $cart[$idx]['desc'] =$desc? json_encode($desc): $desc;
+            $cart[$idx]['desc'] = $desc;
         }
         session()->put('cart', $cart);
 
