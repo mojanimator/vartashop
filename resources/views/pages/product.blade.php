@@ -103,6 +103,7 @@
 
                     <input type="hidden" name="cmnd" value="plus"/>
                     <input type="hidden" name="id" value="{{$product->id}}"/>
+                    <input type="hidden" name="shop_id" value="{{$product->shop_id}}"/>
                     <div class="    text-center">
                         <small onclick="  document.getElementById('cart-form').submit();"
                                class="rounded py-3 btn-block btn-lg  bg-gradient-success text-white     px-1   move-on-hover hoverable"
