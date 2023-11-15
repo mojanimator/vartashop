@@ -1,6 +1,6 @@
 <section class=" row justify-content-center     ">
 
-
+{{dd(\App\Models\Cart::get())}}
     <div class="col-md-12">
         <div class="card">
             <div class="card-header text-center text-lg text-primary font-weight-bold">ثبت اطلاعات پستی</div>
@@ -78,7 +78,7 @@
                                 <option value="0">انتخاب استان</option>
                                 @foreach(\Illuminate\Support\Facades\DB::table('province')->get() as $p)
                                     <option value="{{$p->id}}"
-                                            {{ old('province_id')==$p->id? ' selected ':''}} >{{$p->name}}</option>
+                                        {{ old('province_id')==$p->id? ' selected ':''}} >{{$p->name}}</option>
 
                                 @endforeach
                             </select>
@@ -175,13 +175,12 @@
 
 @section('script')
 
-
     <script type="text/javascript">
 
 
-                @php
-                    $counties=\Illuminate\Support\Facades\DB::table('county')->get();
-                @endphp
+        @php
+            $counties=\Illuminate\Support\Facades\DB::table('county')->get();
+        @endphp
         let counties = @json($counties);
 
 
