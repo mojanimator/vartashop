@@ -336,7 +336,7 @@ class OrderController extends Controller
 
         $txt = $this->getOrderText($order);
         $txt .= PHP_EOL . "🆅🅰🆁🆃🅰🆂🅷🅾🅿" . PHP_EOL . Helper::$site . PHP_EOL;
-        if ($status == 1 || $status == 3) {
+        if ($status == 0 || $status == 1 || $status == 3) {
             foreach (\Helper::$logs as $log) {
                 sendTelegramMessage($log, $title . PHP_EOL . $txt);
             }
