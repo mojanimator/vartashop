@@ -41,7 +41,7 @@ class Cart
 //            if (!isset($cart[$idx]))
 //                $cart[$idx] = ['desc' => $desc];
 //            else
-            $cart[$idx]['desc'] =  $desc ;
+            $cart[$idx]['desc'] =$desc? json_encode($desc): $desc;
         }
         session()->put('cart', $cart);
 
@@ -71,7 +71,6 @@ class Cart
 
     static function plus($id, $shop_id)
     {
-
 
         $cart = session()->has('cart') ? session('cart') : [];
 

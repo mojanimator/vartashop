@@ -7,7 +7,7 @@
             <a href="{{route('/')}}"
                class="  ">
                 <h6
-                        class="hoverable-text-info text-primary text-center"> بازگشت به بازارچه
+                    class="hoverable-text-info text-primary text-center"> بازگشت به بازارچه
                 </h6>
             </a>
         @else
@@ -35,7 +35,8 @@
 
                         @php($totalPrice+=($product->discount_price>0  ?$product->discount_price:$product->price)*$cart['qty'])
                         <div class=" p-2  ">
-                            <div class="d-flex flex-row bg-gradient-white rounded justify-content-start align-items-center">
+                            <div
+                                class="d-flex flex-row bg-gradient-white rounded justify-content-start align-items-center">
 
                                 <img src="{{$product->image}}" alt=""
                                      class="max-width-100 max-height-100 rounded-lg  ">
@@ -43,7 +44,7 @@
                                     <a href="{{route('product.view',[$product->name,$product->id])}}" target="_blank"
                                        class="  ">
                                         <h6
-                                                class="hoverable-text-info text-primary">{{$product->name}}
+                                            class="hoverable-text-info text-primary">{{$product->name}}
                                         </h6>
                                     </a>
                                     {{--@if($product->shop)--}}
@@ -61,11 +62,13 @@
                                         {{--<i class="fa fa-money-bill-alt text-primary" aria-hidden="true"></i>--}}
                                         <span>  قیمت واحد:</span>
 
-                                        <div class="mx-2  text-primary     {{ $product->discount_price!=null && $product->discount_price>0  ?'text-decoration-line-through':''}}">{{ number_format($product->price/**$cart['qty']*/).' ت '}} </div>
+                                        <div
+                                            class="mx-2  text-primary     {{ $product->discount_price!=null && $product->discount_price>0  ?'text-decoration-line-through':''}}">{{ number_format($product->price/**$cart['qty']*/).' ت '}} </div>
 
                                         <i class="fa fa-arrow-alt-circle-left text-dark {{ $product->discount_price==null || $product->discount_price==0  ?'d-none':''}}"
                                            aria-hidden="true"></i>
-                                        <div class="mx-2  text-primary   {{ $product->discount_price==null || $product->discount_price==0  ?'d-none':''}}">{{ number_format($product->discount_price/**$cart['qty']*/).' ت '}}</div>
+                                        <div
+                                            class="mx-2  text-primary   {{ $product->discount_price==null || $product->discount_price==0  ?'d-none':''}}">{{ number_format($product->discount_price/**$cart['qty']*/).' ت '}}</div>
 
                                     </div>
 
@@ -141,7 +144,7 @@
                                       class="px-4 form-control "
                                       name="{{$idx}}"
                                       autocomplete="description-{{$idx}}"
-                                      autofocus>{{ $shop['desc'] ?? ''}}
+                                      autofocus>{{ $shop['desc']? json_decode($shop['desc']) ?? ''}}
                             </textarea>
 
 

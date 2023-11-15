@@ -275,7 +275,7 @@ class OrderController extends Controller
                 'postal_code' => $postalCode,
                 'phone' => $phone,
                 'post_price' => null,
-                'description' => substr($shop['desc'] ?? '', 0, 1000),
+                'description' => substr(isset($shop['desc']) ? json_decode($shop['desc']) : '', 0, 1000),
                 'province_id' => $provinceId,
                 'county_id' => $countyId,
 
