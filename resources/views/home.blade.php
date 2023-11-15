@@ -25,7 +25,7 @@
                             > <i class="fab fa-telegram" aria-hidden="true"></i>
                                 تلگرام
                             </a>
-                            <a href="https://instagram.com/vartashop" type="text" dir="rtl"
+                            <a href="https://instagram.com/vartashop_ir" type="text" dir="rtl"
                                class="move-on-hover text-white w-50 px-5 py-3 rounded-pill-right bg-gradient-primary"
                             > <i class="fab fa-instagram" aria-hidden="true"></i>
                                 اینستاگرام
