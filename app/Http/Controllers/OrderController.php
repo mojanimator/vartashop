@@ -265,8 +265,8 @@ class OrderController extends Controller
             $validator->errors()->add('cart', 'سبد خرید شما خالی است!');
             throw new ValidationException($validator);
         }
-
         foreach ($cart as $shop_id => $shop) {
+            dd($shop);
             $order = Order::create([
                 'user_id' => auth()->user()->id,
                 'shop_id' => $shop_id,
