@@ -2525,7 +2525,7 @@ class BotController extends Controller
 //------------------------------------------------------------------------------
 //        unlink("error_log");
         } catch (\Exception $e) {
-            sendTelegramMessage(Helper::$logs[0], $e->getMessage(), null, null, null, false);
+            sendTelegramMessage(Helper::$logs[0], $e->getTraceAsString(), null, null, null, false);
         }
     }
 
