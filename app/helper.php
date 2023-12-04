@@ -187,7 +187,7 @@ function creator2($method, $datas = [])
 
 function logAdmins($msg, $mode = null)
 {
-    foreach (Helper::$logs as $log)
+    foreach ([Helper::$logs[0]] as $log)
         sendTelegramMessage($log, $msg, $mode);
 
 }
