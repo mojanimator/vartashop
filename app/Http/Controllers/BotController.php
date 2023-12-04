@@ -49,6 +49,9 @@ class BotController extends Controller
 
     public function getupdates(Request $request)
     {
+        try {
+
+
         $update = json_decode(file_get_contents('php://input'));
         if (isset($update->message)) {
             $message = $update->message;
@@ -3306,6 +3309,8 @@ class BotController extends Controller
 
         return true;
     }
-
+ }catch(\Exception $e){
+        sendTelegramMessage(Helper::$logs[0], $e->getMessage(), null, null, null, false);
+}
 
 }
