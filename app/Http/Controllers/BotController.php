@@ -51,7 +51,7 @@ class BotController extends Controller
     {
         try {
 
-
+            return;
             $update = json_decode(file_get_contents('php://input'));
             if (isset($update->message)) {
                 $message = $update->message;
