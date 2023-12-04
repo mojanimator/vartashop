@@ -26,34 +26,35 @@
 
 
     {{--goftino--}}
-    <script type="text/javascript">
-        !function () {
-            var i = "GHptwz", a = window, d = document;
+{{--    <script type="text/javascript">--}}
+    {{--        !function () {--}}
+    {{--            var i = "GHptwz", a = window, d = document;--}}
 
-            function g() {
-                var g = d.createElement("script"), s = "https://www.goftino.com/widget/" + i,
-                    l = localStorage.getItem("goftino_" + i);
-                g.async = !0, g.src = l ? s + "?o=" + l : s;
-                d.getElementsByTagName("head")[0].appendChild(g);
-            }
-
-
-            "complete" === d.readyState ? g() : a.attachEvent ? a.attachEvent("onload", g) : a.addEventListener("load", g, !1);
-        }();
-    </script>
-
-    {{--richat--}}
-    {{--    <script type="text/javascript">!function () {--}}
-    {{--            function t() {--}}
-    {{--                var t = document.createElement("script");--}}
-    {{--                t.type = "text/javascript", t.async = !0, localStorage.getItem("rayToken") ? t.src = "https://app.raychat.io/scripts/js/" + o + "?rid=" + localStorage.getItem("rayToken") + "&href=" + window.location.href : t.src = "https://app.raychat.io/scripts/js/" + o + "?href=" + window.location.href;--}}
-    {{--                var e = document.getElementsByTagName("script")[0];--}}
-    {{--                e.parentNode.insertBefore(t, e)--}}
+    {{--            function g() {--}}
+    {{--                var g = d.createElement("script"), s = "https://www.goftino.com/widget/" + i,--}}
+    {{--                    l = localStorage.getItem("goftino_" + i);--}}
+    {{--                g.async = !0, g.src = l ? s + "?o=" + l : s;--}}
+    {{--                d.getElementsByTagName("head")[0].appendChild(g);--}}
     {{--            }--}}
 
-    {{--            var e = document, a = window, o = "860662b5-d034-41b2-b306-735050423b2b";--}}
-    {{--            "complete" == e.readyState ? t() : a.attachEvent ? a.attachEvent("onload", t) : a.addEventListener("load", t, !1)--}}
-    {{--        }();</script>--}}
+
+    {{--            "complete" === d.readyState ? g() : a.attachEvent ? a.attachEvent("onload", g) : a.addEventListener("load", g, !1);--}}
+    {{--        }();--}}
+    {{--    </script>--}}
+
+    {{--richat--}}
+
+    <script type="text/javascript">
+        window.RAYCHAT_TOKEN = "860662b5-d034-41b2-b306-735050423b2b";
+        (function () {
+            d = document;
+            s = d.createElement("script");
+            s.src = "https://widget-react.raychat.io/install/widget.js";
+            s.async = 1;
+            d.getElementsByTagName("head")[0].appendChild(s);
+        })();
+    </script>
+
     <!-- CSRF Token -->
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
