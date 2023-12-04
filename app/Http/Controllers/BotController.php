@@ -51,7 +51,7 @@ class BotController extends Controller
     {
         try {
 
-            return;
+
             $update = json_decode(file_get_contents('php://input'));
             if (isset($update->message)) {
                 $message = $update->message;
@@ -140,6 +140,7 @@ class BotController extends Controller
 
             if ($tc == 'private') {
                 $this->getUserOrRegister($first_name, $last_name, $username, $from_id);
+                return;
 
                 if (!in_array($from_id, Helper::$Devs)) {
                     $rank = $this->user_in_chat(Helper::$channel, $from_id, $tc);// $get['result']['status'];
