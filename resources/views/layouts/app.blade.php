@@ -26,34 +26,34 @@
 
 
     {{--goftino--}}
-{{--    <script type="text/javascript">--}}
-    {{--        !function () {--}}
-    {{--            var i = "GHptwz", a = window, d = document;--}}
+    <script type="text/javascript">
+        !function () {
+            var i = "GHptwz", a = window, d = document;
 
-    {{--            function g() {--}}
-    {{--                var g = d.createElement("script"), s = "https://www.goftino.com/widget/" + i,--}}
-    {{--                    l = localStorage.getItem("goftino_" + i);--}}
-    {{--                g.async = !0, g.src = l ? s + "?o=" + l : s;--}}
-    {{--                d.getElementsByTagName("head")[0].appendChild(g);--}}
-    {{--            }--}}
+            function g() {
+                var g = d.createElement("script"), s = "https://www.goftino.com/widget/" + i,
+                    l = localStorage.getItem("goftino_" + i);
+                g.async = !0, g.src = l ? s + "?o=" + l : s;
+                d.getElementsByTagName("head")[0].appendChild(g);
+            }
 
 
-    {{--            "complete" === d.readyState ? g() : a.attachEvent ? a.attachEvent("onload", g) : a.addEventListener("load", g, !1);--}}
-    {{--        }();--}}
-    {{--    </script>--}}
+            "complete" === d.readyState ? g() : a.attachEvent ? a.attachEvent("onload", g) : a.addEventListener("load", g, !1);
+        }();
+    </script>
 
     {{--richat--}}
 
-    <script type="text/javascript">
-        window.RAYCHAT_TOKEN = "860662b5-d034-41b2-b306-735050423b2b";
-        (function () {
-            d = document;
-            s = d.createElement("script");
-            s.src = "https://widget-react.raychat.io/install/widget.js";
-            s.async = 1;
-            d.getElementsByTagName("head")[0].appendChild(s);
-        })();
-    </script>
+{{--    <script type="text/javascript">--}}
+{{--        window.RAYCHAT_TOKEN = "860662b5-d034-41b2-b306-735050423b2b";--}}
+{{--        (function () {--}}
+{{--            d = document;--}}
+{{--            s = d.createElement("script");--}}
+{{--            s.src = "https://widget-react.raychat.io/install/widget.js";--}}
+{{--            s.async = 1;--}}
+{{--            d.getElementsByTagName("head")[0].appendChild(s);--}}
+{{--        })();--}}
+{{--    </script>--}}
 
     <!-- CSRF Token -->
 
