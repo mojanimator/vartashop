@@ -16,7 +16,7 @@ class Helper
     static $product_image_limit = 5;
     static $test = true;
     static $Devs = [72534783, 225594412, 167069519/*225594412, 871016407, 225594412*/]; // آیدی عددی ادمین را از بات @userinfobot بگیرید
-    static $logs = [72534783, 225594412, 167069519 /*225594412*/];
+    static $logs = [72534783, 167069519/*, 225594412,  225594412*/];
     static $admins = [1 => ['username' => '@develowper', 'chat_id' => 72534783], 2 => ['username' => '@fazelbabaeirudsari', 'chat_id' => 225594412],];
 
     static $chargeProductsLink = 'https://chr724.ir/services/v3/EasyCharge/initializeData';
