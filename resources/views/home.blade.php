@@ -146,7 +146,20 @@
 
     {{--products section--}}
 
-
+    {{--adsence--}}
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4161485899394281"
+            crossorigin="anonymous"></script>
+    <!-- banner -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-4161485899394281"
+         data-ad-slot="4578787105"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    {{--adsence--}}
 
     {{--@php ($products=\App\Models\Product::on(env('DB_CONNECTION'))->take(4)->get() )--}}
 
